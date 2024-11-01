@@ -18,7 +18,7 @@ GtWireDateAndTimeEncoder class >> decodeWith: aGtWireEncoderContext [
 		minute: stream packedInteger
 		second: stream packedInteger
 		nanoSecond: stream packedInteger
-		offset: stream packedInteger seconds
+		offset: stream int64 seconds
 ]
 
 { #category : #'encoding - decoding' }
@@ -33,7 +33,7 @@ GtWireDateAndTimeEncoder class >> encode: aDateAndTime with: aGtWireEncoderConte
 		packedInteger: aDateAndTime minute;
 		packedInteger: aDateAndTime second;
 		packedInteger: aDateAndTime nanoSecond;
-		packedInteger: aDateAndTime offset asSeconds.
+		int64: aDateAndTime offset asSeconds.
 ]
 
 { #category : #accessing }

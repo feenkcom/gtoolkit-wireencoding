@@ -119,7 +119,7 @@ GtWireEncodingExamples >> dateAndTime [
 	dateAndTime := DateAndTime now.
 	encoder nextPut: dateAndTime.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 23.
+	self assert: (byteArray size between: 25 and: 30).
 	next := (GtWireDecoder on: byteArray) next.
 	self assert: next class equals: DateAndTime.
 	self assert: next = dateAndTime.
