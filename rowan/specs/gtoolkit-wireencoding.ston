@@ -1,0 +1,18 @@
+RwLoadSpecificationV2 {
+	#specName : 'gtoolkit-wireencoding',
+	#projectName : 'gtoolkit-wireencoding',
+	#gitUrl : 'git@github.com:feenkcom/gtoolkit-wireencoding.git',
+	#revision : 'main',
+	#projectSpecFile : 'rowan/project.ston',
+	#componentNames : [
+		'Core'
+	],
+	#platformProperties : {
+		'gemstone' : {
+			'SystemUser' : {
+				#defaultSymbolDictName : 'Globals'
+			}
+		}
+	},
+	#comment : ''
+}
