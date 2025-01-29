@@ -4,7 +4,7 @@ Class {
 	#classVars : [
 		'DefaultMap'
 	],
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }

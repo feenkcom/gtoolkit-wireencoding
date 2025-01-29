@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireEncodingPerformance,
 	#superclass : #Object,
-	#category : #'GToolkit-WireEncoding-Examples'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }

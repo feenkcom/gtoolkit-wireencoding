@@ -3,7 +3,7 @@ Class {
 	#superclass : #Object,
 	#traits : 'TAssertable',
 	#classTraits : 'TAssertable classTrait',
-	#category : #'GToolkit-WireEncoding-Examples'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #examples }

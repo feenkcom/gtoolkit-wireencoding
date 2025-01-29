@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireReadStream,
 	#superclass : #ReadStream,
-	#category : #'GToolkit-WireEncoding-Streams'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'encoding - decoding' }

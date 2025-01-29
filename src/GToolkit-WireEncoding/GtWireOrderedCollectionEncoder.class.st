@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireOrderedCollectionEncoder,
 	#superclass : #GtWireCollectionEncoder,
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'encoding - decoding' }

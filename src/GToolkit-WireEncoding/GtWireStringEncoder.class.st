@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireStringEncoder,
 	#superclass : #GtWireCharacterArrayEncoder,
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }

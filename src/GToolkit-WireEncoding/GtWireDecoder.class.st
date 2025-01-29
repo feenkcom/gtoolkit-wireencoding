@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireDecoder,
 	#superclass : #GtWireEncoderDecoder,
-	#category : #'GToolkit-WireEncoding-Encoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }

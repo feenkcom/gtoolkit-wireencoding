@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'defaultEncoder'
 	],
-	#category : #'GToolkit-WireEncoding-Encoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }

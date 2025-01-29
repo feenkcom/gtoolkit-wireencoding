@@ -10,7 +10,7 @@ Class {
 		'DefaultMap',
 		'DefaultReverseMap'
 	],
-	#category : #'GToolkit-WireEncoding-Encoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
