@@ -8,39 +8,54 @@ Class {
 }
 
 { #category : #accessing }
-GtWireObjectEncoder class >> cleanUp [
+GtWireObjectEncoder class >> typeIdentifier [
 
-	DefaultMap := nil
+	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
+GtWireObjectEncoder class >> typeIdentifierOrNil [
+
+	^ [ self typeIdentifier ]
+		on: SubclassResponsibility
+		do: [ :ex | nil ]
+]
+
+{ #category : #test }
+GtWireObjectEncoder class >> validateTypeIdentifiers [
+	 "Validate that there aren't duplicate type identifiers and answer the maximum value"
+	| visited |
+	
+	visited := Set new.
+	self allSubclassesDo: [ :cls | | typeIdentifier |
+		typeIdentifier := cls typeIdentifierOrNil.
+		typeIdentifier ifNotNil:
+			[ (visited includes: typeIdentifier) ifTrue:
+				[ self error: 'Duplicate typeIdentifier found' ].
+			visited add: typeIdentifier ] ].
+	^ visited max
 ]
 
 { #category : #'encoding - decoding' }
-GtWireObjectEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireObjectEncoder >> decodeWith: aGtWireEncoderContext [
 	
 	^ self subclassResponsibility
 ]
 
-{ #category : #accessing }
-GtWireObjectEncoder class >> defaultMap [
-
-	^ DefaultMap ifNil: [ DefaultMap := self newDefaultMap ]
-]
-
 { #category : #'encoding - decoding' }
-GtWireObjectEncoder class >> encode: anObject with: aGtWireEncoderContext [
+GtWireObjectEncoder >> encode: anObject with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier
+	aGtWireEncoderContext putTypeIdentifier: self class typeIdentifier
 ]
 
-{ #category : #accessing }
-GtWireObjectEncoder class >> newDefaultMap [
+{ #category : #'as yet unclassified' }
+GtWireObjectEncoder >> name [
 
-	^ Dictionary new
-		yourself
+	^ self class name
 ]
 
-{ #category : #accessing }
-GtWireObjectEncoder class >> typeIdentifier [
+{ #category : #'as yet unclassified' }
+GtWireObjectEncoder >> typeIdentifier [
 
-	^ self subclassResponsibility
+	^ self class typeIdentifier
 ]

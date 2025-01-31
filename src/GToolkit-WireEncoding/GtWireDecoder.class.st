@@ -5,10 +5,10 @@ Class {
 }
 
 { #category : #'instance creation' }
-GtWireDecoder class >> on: aByteArray [
+GtWireDecoder class >> on: aReadStream [
 
 	^ self basicNew stream:
-		(GtWireReadStream on: aByteArray)
+		(GtWireStream on: aReadStream)
 ]
 
 { #category : #accessing }

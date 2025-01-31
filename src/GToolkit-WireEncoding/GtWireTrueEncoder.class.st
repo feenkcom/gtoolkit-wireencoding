@@ -4,14 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : #'encoding - decoding' }
-GtWireTrueEncoder class >> decodeWith: aGtWireEncoderContext [
-
-	^ true
-]
-
 { #category : #accessing }
 GtWireTrueEncoder class >> typeIdentifier [
 
 	^ 2
+]
+
+{ #category : #'encoding - decoding' }
+GtWireTrueEncoder >> decodeWith: aGtWireEncoderContext [
+
+	^ true
 ]

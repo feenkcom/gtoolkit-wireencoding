@@ -4,8 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireByteArrayEncoder class >> typeIdentifier [
+
+	^ 4
+]
+
 { #category : #'encoding - decoding' }
-GtWireByteArrayEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireByteArrayEncoder >> decodeWith: aGtWireEncoderContext [
 	| stream |
 
 	stream := aGtWireEncoderContext stream.
@@ -13,16 +19,10 @@ GtWireByteArrayEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireByteArrayEncoder class >> encode: aByteArray with: aGtWireEncoderContext [
+GtWireByteArrayEncoder >> encode: aByteArray with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: aByteArray size;
-		nextPutAll: aByteArray
-]
-
-{ #category : #accessing }
-GtWireByteArrayEncoder class >> typeIdentifier [
-
-	^ 4
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putSize: aByteArray size;
+		putByteArray: aByteArray
 ]

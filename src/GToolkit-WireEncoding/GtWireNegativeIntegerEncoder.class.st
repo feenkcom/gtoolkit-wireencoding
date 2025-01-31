@@ -4,22 +4,22 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireNegativeIntegerEncoder class >> typeIdentifier [
+
+	^ 14
+]
+
 { #category : #'encoding - decoding' }
-GtWireNegativeIntegerEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireNegativeIntegerEncoder >> decodeWith: aGtWireEncoderContext [
 
 	^ aGtWireEncoderContext stream packedInteger negated
 ]
 
 { #category : #'encoding - decoding' }
-GtWireNegativeIntegerEncoder class >> encode: anInteger with: aGtWireEncoderContext [
+GtWireNegativeIntegerEncoder >> encode: anInteger with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: anInteger negated
-]
-
-{ #category : #accessing }
-GtWireNegativeIntegerEncoder class >> typeIdentifier [
-
-	^ 14
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putPackedInteger: anInteger negated
 ]

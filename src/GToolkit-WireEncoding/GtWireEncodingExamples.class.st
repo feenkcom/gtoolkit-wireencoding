@@ -11,12 +11,12 @@ GtWireEncodingExamples >> array [
 	<gtExample>
 	| array encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	array := { 1. 'hello'. #hello. }.
 	encoder nextPut: array.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 26.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 18.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Array.
 	self assert: next = array.
 ]
@@ -26,14 +26,29 @@ GtWireEncodingExamples >> association [
 	<gtExample>
 	| association encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	association := 1 -> 'one'.
 	encoder nextPut: association.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 13.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 8.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Association.
 	self assert: next = association.
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> blockClosure [
+	<gtExample>
+	| blockClosure encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a :b | a + b ].
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 19.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: FullBlockClosure.
+	self assert: (next value: 4 value: 3) equals: 7.
 ]
 
 { #category : #examples }
@@ -41,12 +56,12 @@ GtWireEncodingExamples >> boolean [
 	<gtExample>
 	| encoder byteArray decoder |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: true.
 	encoder nextPut: false.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 4.
-	decoder := GtWireDecoder on: byteArray.
+	self assert: byteArray size equals: 2.
+	decoder := GtWireDecoder on: byteArray readStream.
 	self assert: decoder next.
 	self deny: decoder next.
 ]
@@ -56,12 +71,12 @@ GtWireEncodingExamples >> byteArray [
 	<gtExample>
 	| source encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	source := #[3 1 4 1 5].
 	encoder nextPut: source.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: source size + 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: source size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteArray.
 	self assert: next equals: source.
 ]
@@ -71,12 +86,12 @@ GtWireEncodingExamples >> byteString [
 	<gtExample>
 	| string encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	string := 'Hello, World'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: string size + 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: string size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteString.
 	self assert: next equals: string.
 ]
@@ -86,12 +101,12 @@ GtWireEncodingExamples >> byteSymbol [
 	<gtExample>
 	| string encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	string := #'Hello, World'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: string size + 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: string size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteSymbol.
 	self assert: next equals: string.
 ]
@@ -101,11 +116,11 @@ GtWireEncodingExamples >> character [
 	<gtExample>
 	| encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: $§.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 3.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Character.
 	self assert: next == $§.
 ]
@@ -115,12 +130,12 @@ GtWireEncodingExamples >> dateAndTime [
 	<gtExample>
 	| dateAndTime encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	dateAndTime := DateAndTime now.
 	encoder nextPut: dateAndTime.
 	byteArray := encoder contents.
-	self assert: (byteArray size between: 25 and: 30).
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: (byteArray size between: 10 and: 25).
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: DateAndTime.
 	self assert: next = dateAndTime.
 ]
@@ -130,14 +145,14 @@ GtWireEncodingExamples >> dictionary [
 	<gtExample>
 	| dictionary encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	dictionary := {
 		 1 -> 'one'.
 		 2 -> 'two' } asDictionary.
 	encoder nextPut: dictionary.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 26.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 16.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Dictionary.
 	self assert: next = dictionary.
 ]
@@ -147,14 +162,38 @@ GtWireEncodingExamples >> float [
 	<gtExample>
 	| encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	{ Float fmin. Float fmax. 1.25. } doWithIndex: [ :f :i |
 		encoder reset.
 		encoder nextPut: f.
 		byteArray := encoder contents.
-		self assert: byteArray size equals: 10.
-		next := (GtWireDecoder on: byteArray) next.
+		self assert: byteArray size equals: 9.
+		next := (GtWireDecoder on: byteArray readStream) next.
 		self assert: next equals: f ].
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> generalObject [
+	<gtExample>
+	| object encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	object := AdditionalMethodState new: 3.
+	object
+		selector: #one;
+		method: 'fake'.
+	1 to: 3 do: [ :i |
+		object basicAt: i put: 2 ** i ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 61.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: AdditionalMethodState.
+	self assert: next basicSize equals: 3.
+	1 to: 3 do: [ :i |
+		self assert: (next basicAt: i) equals: 2 ** i ].
+	self assert: next selector equals: #one.
+	self assert: next method equals: 'fake'.
 ]
 
 { #category : #examples }
@@ -162,11 +201,11 @@ GtWireEncodingExamples >> nil [
 	<gtExample>
 	| encoder byteArray |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: nil.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 2.
-	self assert: (GtWireDecoder on: byteArray) next isNil.
+	self assert: byteArray size equals: 1.
+	self assert: (GtWireDecoder on: byteArray readStream) next isNil.
 ]
 
 { #category : #examples }
@@ -174,12 +213,12 @@ GtWireEncodingExamples >> orderedCollection [
 	<gtExample>
 	| orderedCollection encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	orderedCollection := { 1. 'hello'. #hello. } asOrderedCollection.
 	encoder nextPut: orderedCollection.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 26.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 18.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: OrderedCollection.
 	self assert: next = orderedCollection.
 ]
@@ -187,21 +226,25 @@ GtWireEncodingExamples >> orderedCollection [
 { #category : #examples }
 GtWireEncodingExamples >> packedInteger [
 	<gtExample>
-	| encoder byteArray |
+	| encoder byteArray integer |
 
-	encoder := GtWireEncoder new.
-	1 to: (2 raisedTo: 18) by: 100 do: [ :i |
-		encoder reset.
-		encoder nextPut: i.
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: 0.
+	byteArray := encoder contents.
+	self assert: byteArray equals: #[13 0].
+	self assert: (GtWireDecoder on: byteArray readStream) next equals: 0.
+	integer := 1.
+	[ integer < (SmallInteger maxVal * 100) ] whileTrue:
+		[ encoder reset.
+		encoder nextPut: integer.
 		byteArray := encoder contents.
-		self assert: byteArray size equals: i bytesCount + 3.
-		self assert: (GtWireDecoder on: byteArray) next equals: i.
+		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer.
 		encoder reset.
-		encoder nextPut: i negated.
+		encoder nextPut: integer negated.
 		byteArray := encoder contents.
-		self assert: byteArray size equals: i bytesCount + 3.
 		encoder reset.
-		self assert: (GtWireDecoder on: byteArray) next equals: i negated ].
+		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer negated.
+		integer := (1.0001 * integer) ceiling. ].
 ]
 
 { #category : #examples }
@@ -209,12 +252,12 @@ GtWireEncodingExamples >> set [
 	<gtExample>
 	| set encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	set := { 1. 'hello'. true. } asSet.
 	encoder nextPut: set.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 19.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: 12.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Set.
 	self assert: next = set.
 ]
@@ -224,12 +267,12 @@ GtWireEncodingExamples >> wideString [
 	<gtExample>
 	| string encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	string := 'Hello, World§'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: string utf8Encoded size + 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: string utf8Encoded size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteString.
 	self assert: next equals: string.
 ]
@@ -239,12 +282,12 @@ GtWireEncodingExamples >> wideSymbol [
 	<gtExample>
 	| string encoder byteArray next |
 
-	encoder := GtWireEncoder new.
+	encoder := GtWireEncoder onByteArray.
 	string := #'Hello, World§'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: string utf8Encoded size + 4.
-	next := (GtWireDecoder on: byteArray) next.
+	self assert: byteArray size equals: string utf8Encoded size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteSymbol.
 	self assert: next equals: string.
 ]

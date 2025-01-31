@@ -4,8 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireDateAndTimeEncoder class >> typeIdentifier [
+
+	^ 12
+]
+
 { #category : #'encoding - decoding' }
-GtWireDateAndTimeEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireDateAndTimeEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the array on the supplied context"
 	| stream |
 
@@ -22,22 +28,16 @@ GtWireDateAndTimeEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireDateAndTimeEncoder class >> encode: aDateAndTime with: aGtWireEncoderContext [
+GtWireDateAndTimeEncoder >> encode: aDateAndTime with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: aDateAndTime year;
-		packedInteger: aDateAndTime month;
-		packedInteger: aDateAndTime dayOfMonth;
-		packedInteger: aDateAndTime hour;
-		packedInteger: aDateAndTime minute;
-		packedInteger: aDateAndTime second;
-		packedInteger: aDateAndTime nanoSecond;
-		int64: aDateAndTime offset asSeconds.
-]
-
-{ #category : #accessing }
-GtWireDateAndTimeEncoder class >> typeIdentifier [
-
-	^ 12
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putPackedInteger: aDateAndTime year;
+		putPackedInteger: aDateAndTime month;
+		putPackedInteger: aDateAndTime dayOfMonth;
+		putPackedInteger: aDateAndTime hour;
+		putPackedInteger: aDateAndTime minute;
+		putPackedInteger: aDateAndTime second;
+		putPackedInteger: aDateAndTime nanoSecond;
+		putInt64: aDateAndTime offset asSeconds.
 ]

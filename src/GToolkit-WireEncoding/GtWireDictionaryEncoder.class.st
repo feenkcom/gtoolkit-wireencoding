@@ -4,8 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireDictionaryEncoder class >> typeIdentifier [
+
+	^ 9
+]
+
 { #category : #'encoding - decoding' }
-GtWireDictionaryEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireDictionaryEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the dictionary on the supplied context"
 	| count dictionary |
 
@@ -19,19 +25,13 @@ GtWireDictionaryEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireDictionaryEncoder class >> encode: aDictionary with: aGtWireEncoderContext [
+GtWireDictionaryEncoder >> encode: aDictionary with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: aDictionary size.
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putSize: aDictionary size.
 	aDictionary associationsDo: [ :each |
 		aGtWireEncoderContext 
 			nextPut: each key;
 			nextPut: each value ].
-]
-
-{ #category : #accessing }
-GtWireDictionaryEncoder class >> typeIdentifier [
-
-	^ 9
 ]

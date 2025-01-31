@@ -4,8 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireSetEncoder class >> typeIdentifier [
+
+	^ 11
+]
+
 { #category : #'encoding - decoding' }
-GtWireSetEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireSetEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the OrderedCollection on the supplied context"
 	| count set |
 
@@ -14,10 +20,4 @@ GtWireSetEncoder class >> decodeWith: aGtWireEncoderContext [
 	count timesRepeat:
 		[ set add: aGtWireEncoderContext next ].
 	^ set
-]
-
-{ #category : #accessing }
-GtWireSetEncoder class >> typeIdentifier [
-
-	^ 11
 ]

@@ -70,7 +70,7 @@ GtWireEncodingPerformance >> testWireEncoder: anObject count: anInteger [
 
 	^ [ anInteger timesRepeat:
 		[ | encoded |
-		encoded := (GtWireEncoder new nextPut: anObject) contents.
-		(GtWireDecoder on: encoded) next ]
+		encoded := (GtWireEncoder onByteArray nextPut: anObject) contents.
+		(GtWireDecoder on: encoded readStream) next ]
 	] timeToRun
 ]

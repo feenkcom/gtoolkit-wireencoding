@@ -4,14 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : #'encoding - decoding' }
-GtWireNilEncoder class >> decodeWith: aGtWireEncoderContext [
-	
-	^ nil
-]
-
 { #category : #accessing }
 GtWireNilEncoder class >> typeIdentifier [
 
 	^ 1
+]
+
+{ #category : #'encoding - decoding' }
+GtWireNilEncoder >> decodeWith: aGtWireEncoderContext [
+	
+	^ nil
 ]

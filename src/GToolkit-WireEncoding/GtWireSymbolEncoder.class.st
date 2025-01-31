@@ -4,14 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : #'encoding - decoding' }
-GtWireSymbolEncoder class >> decodeWith: aGtWireEncoderContext [
-	
-	^ (super decodeWith: aGtWireEncoderContext) asSymbol
-]
-
 { #category : #accessing }
 GtWireSymbolEncoder class >> typeIdentifier [
 
 	^ 6
+]
+
+{ #category : #'encoding - decoding' }
+GtWireSymbolEncoder >> decodeWith: aGtWireEncoderContext [
+	
+	^ (super decodeWith: aGtWireEncoderContext) asSymbol
 ]

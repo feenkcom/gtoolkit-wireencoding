@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'encoding - decoding' }
-GtWireCollectionEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireCollectionEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the array on the supplied context"
 	| count |
 
@@ -16,11 +16,11 @@ GtWireCollectionEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireCollectionEncoder class >> encode: aCollection with: aGtWireEncoderContext [
+GtWireCollectionEncoder >> encode: aCollection with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: aCollection size.
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putSize: aCollection size.
 	aCollection do: [ :each |
 		aGtWireEncoderContext nextPut: each ].
 ]

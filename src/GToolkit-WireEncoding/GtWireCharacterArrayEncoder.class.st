@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'encoding - decoding' }
-GtWireCharacterArrayEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireCharacterArrayEncoder >> decodeWith: aGtWireEncoderContext [
 	| stream |
 
 	stream := aGtWireEncoderContext stream.
@@ -13,12 +13,12 @@ GtWireCharacterArrayEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireCharacterArrayEncoder class >> encode: aString with: aGtWireEncoderContext [
+GtWireCharacterArrayEncoder >> encode: aString with: aGtWireEncoderContext [
 	| encoded |
 
 	encoded := aString utf8Encoded.
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: encoded size;
-		nextPutAll: encoded
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putSize: encoded size;
+		putByteArray: encoded
 ]

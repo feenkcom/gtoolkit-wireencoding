@@ -4,8 +4,14 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireOrderedCollectionEncoder class >> typeIdentifier [
+
+	^ 10
+]
+
 { #category : #'encoding - decoding' }
-GtWireOrderedCollectionEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireOrderedCollectionEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the OrderedCollection on the supplied context"
 	| count |
 
@@ -13,10 +19,4 @@ GtWireOrderedCollectionEncoder class >> decodeWith: aGtWireEncoderContext [
 	^ OrderedCollection new: count streamContents: [ :arrayStream |
 		count timesRepeat:
 			[ arrayStream nextPut: aGtWireEncoderContext next ] ]
-]
-
-{ #category : #accessing }
-GtWireOrderedCollectionEncoder class >> typeIdentifier [
-
-	^ 10
 ]
