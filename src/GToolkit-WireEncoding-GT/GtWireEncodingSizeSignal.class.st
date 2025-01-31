@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'size'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
 
 { #category : #'as yet unclassified' }

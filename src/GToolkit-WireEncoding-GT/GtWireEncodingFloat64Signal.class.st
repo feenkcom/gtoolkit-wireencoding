@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'float'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
 
 { #category : #accessing }

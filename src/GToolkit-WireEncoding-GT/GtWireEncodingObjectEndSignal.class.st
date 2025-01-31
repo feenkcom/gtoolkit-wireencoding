@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'object'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
 
 { #category : #accessing }

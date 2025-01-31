@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'typeIdentifier'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
 
 { #category : #printing }

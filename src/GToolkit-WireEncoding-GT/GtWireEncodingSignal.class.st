@@ -1,5 +1,5 @@
 Class {
 	#name : #GtWireEncodingSignal,
 	#superclass : #BeaconSignal,
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
