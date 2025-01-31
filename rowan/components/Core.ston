@@ -6,7 +6,8 @@ RwSimpleProjectLoadComponentV2 {
 		'gemstone/Core'
 	],
 	#packageNames : [
-		'GToolkit-WireEncoding'
+		'GToolkit-WireEncoding',
+		'GToolkit-WireEncoding-GemStone'
 	],
 	#comment : ''
 }

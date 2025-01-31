@@ -17,7 +17,7 @@ GtWireInstVarEncoder class >> typeIdentifier [
 GtWireInstVarEncoder >> decodeWith: aGtWireEncoderContext [
 	| count instance className |
 
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	className := aGtWireEncoderContext next.
 	instance := (self class environment classOrTraitNamed: className) basicNew.
 	count timesRepeat:
@@ -31,7 +31,7 @@ GtWireInstVarEncoder >> decodeWith: aGtWireEncoderContext [
 			put: (encoder
 				ifNil: [ aGtWireEncoderContext next ]
 				ifNotNil: 
-					[ self assert: aGtWireEncoderContext stream packedInteger = encoder typeIdentifier.
+					[ self assert: aGtWireEncoderContext nextTypeIdentifier = encoder typeIdentifier.
 					encoder decodeWith: aGtWireEncoderContext ]) ].
 	^ instance
 ]

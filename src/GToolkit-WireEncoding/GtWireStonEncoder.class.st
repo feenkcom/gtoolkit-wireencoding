@@ -12,11 +12,8 @@ GtWireStonEncoder class >> typeIdentifier [
 
 { #category : #'encoding - decoding' }
 GtWireStonEncoder >> decodeWith: aGtWireEncoderContext [
-	| stream stonString|
 
-	stream := aGtWireEncoderContext stream.
-	stonString := (stream next: stream packedInteger) utf8Decoded.
-	^ STON fromString: stonString.
+	^ STON fromString: aGtWireEncoderContext nextByteArray utf8Decoded.
 ]
 
 { #category : #'encoding - decoding' }
@@ -26,6 +23,5 @@ GtWireStonEncoder >> encode: anObject with: aGtWireEncoderContext [
 	stonEncoded := (STON toString: anObject) utf8Encoded.
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
-		putSize: stonEncoded size;
 		putByteArray: stonEncoded.
 ]

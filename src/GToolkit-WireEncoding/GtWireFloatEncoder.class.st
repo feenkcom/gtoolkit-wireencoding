@@ -13,7 +13,7 @@ GtWireFloatEncoder class >> typeIdentifier [
 { #category : #'encoding - decoding' }
 GtWireFloatEncoder >> decodeWith: aGtWireEncoderContext [
 
-	^ aGtWireEncoderContext stream float64.
+	^ aGtWireEncoderContext nextFloat64.
 ]
 
 { #category : #'encoding - decoding' }

@@ -15,7 +15,7 @@ GtWireDictionaryEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the dictionary on the supplied context"
 	| count dictionary |
 
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	dictionary := Dictionary new: count * 2.
 	count timesRepeat:
 		[ dictionary

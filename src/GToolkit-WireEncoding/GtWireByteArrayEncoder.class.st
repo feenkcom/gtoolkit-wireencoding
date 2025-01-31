@@ -12,10 +12,8 @@ GtWireByteArrayEncoder class >> typeIdentifier [
 
 { #category : #'encoding - decoding' }
 GtWireByteArrayEncoder >> decodeWith: aGtWireEncoderContext [
-	| stream |
 
-	stream := aGtWireEncoderContext stream.
-	^ stream next: stream packedInteger.
+	^ aGtWireEncoderContext nextByteArray
 ]
 
 { #category : #'encoding - decoding' }
@@ -23,6 +21,5 @@ GtWireByteArrayEncoder >> encode: aByteArray with: aGtWireEncoderContext [
 
 	aGtWireEncoderContext
 		putTypeIdentifier: self typeIdentifier;
-		putSize: aByteArray size;
 		putByteArray: aByteArray
 ]

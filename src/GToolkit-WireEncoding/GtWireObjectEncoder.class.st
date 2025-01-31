@@ -17,8 +17,11 @@ GtWireObjectEncoder class >> typeIdentifier [
 GtWireObjectEncoder class >> typeIdentifierOrNil [
 
 	^ [ self typeIdentifier ]
-		on: SubclassResponsibility
-		do: [ :ex | nil ]
+		on: Error
+		do: [ :ex | 
+			self gtDo: [ ex class name = #SubclassResponsibility ifFalse: [ ex pass ] ]
+				gemstoneDo: [].
+			nil ]
 ]
 
 { #category : #test }

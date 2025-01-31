@@ -9,7 +9,7 @@ GtWireCollectionEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the array on the supplied context"
 	| count |
 
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	^ Array new: count streamContents: [ :arrayStream |
 		count timesRepeat:
 			[ arrayStream nextPut: aGtWireEncoderContext next ] ]

@@ -20,7 +20,7 @@ warnings isEmpty
 	ifTrue: [ true ]
 	ifFalse: [ warnings ]
 %
-	abort
+	commit
 
 	errorCount
 	exit

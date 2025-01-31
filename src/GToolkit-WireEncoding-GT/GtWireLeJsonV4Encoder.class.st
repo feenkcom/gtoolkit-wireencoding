@@ -5,7 +5,7 @@ Class {
 		'leJsonV4Reader',
 		'leJsonV4Writer'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-GT'
 }
 
 { #category : #accessing }
@@ -36,7 +36,6 @@ GtWireLeJsonV4Encoder >> encode: anObject with: aGtWireEncoderContext [
 			nextPut: anObject]) utf8Encoded.
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
-		putSize: leJsonEncoded size;
 		putByteArray: leJsonEncoded.
 ]
 

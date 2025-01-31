@@ -13,18 +13,16 @@ GtWireDateAndTimeEncoder class >> typeIdentifier [
 { #category : #'encoding - decoding' }
 GtWireDateAndTimeEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the array on the supplied context"
-	| stream |
 
-	stream := aGtWireEncoderContext stream.
 	^ DateAndTime
-		basicYear: stream packedInteger
-		month: stream packedInteger
-		day: stream packedInteger
-		hour: stream packedInteger
-		minute: stream packedInteger
-		second: stream packedInteger
-		nanoSecond: stream packedInteger
-		offset: stream int64 seconds
+		basicYear: aGtWireEncoderContext nextPackedInteger
+		month: aGtWireEncoderContext nextPackedInteger
+		day: aGtWireEncoderContext nextPackedInteger
+		hour: aGtWireEncoderContext nextPackedInteger
+		minute: aGtWireEncoderContext nextPackedInteger
+		second: aGtWireEncoderContext nextPackedInteger
+		nanoSecond: aGtWireEncoderContext nextPackedInteger
+		offset: aGtWireEncoderContext nextInt64 seconds
 ]
 
 { #category : #'encoding - decoding' }

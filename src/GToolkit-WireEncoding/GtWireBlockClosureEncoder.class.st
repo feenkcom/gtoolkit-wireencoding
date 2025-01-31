@@ -15,18 +15,15 @@ GtWireBlockClosureEncoder >> decodeWith: aGtWireEncoderContext [
 	| stream |
 
 	stream := aGtWireEncoderContext stream.
-	^ BlockClosure evaluate: (stream next: stream packedInteger) utf8Decoded
+	^ BlockClosure evaluate: aGtWireEncoderContext nextNullTerminatedUtf8.
 ]
 
 { #category : #'encoding - decoding' }
 GtWireBlockClosureEncoder >> encode: aBlockClosure with: aGtWireEncoderContext [
-	| bcSrc |
 
 	aBlockClosure isClean ifFalse:
 		[ self error: 'BlockClosures must be clean' ].
-	bcSrc := aBlockClosure printString utf8Encoded.
 	aGtWireEncoderContext 
 		putTypeIdentifier: self class typeIdentifier;
-		putSize: bcSrc size;
-		putByteArray: bcSrc.
+		putNullTerminatedUtf8: aBlockClosure printString.
 ]

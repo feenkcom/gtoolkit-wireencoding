@@ -10,7 +10,7 @@ Class {
 		'DefaultMap',
 		'DefaultReverseMap'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -38,13 +38,14 @@ GtWireEncoderDecoder class >> reverseMapFrom: aDictionary [
 	| reverseMap |
 
 	reverseMap := IdentityDictionary new.
-	GtWireObjectEncoder allSubclassesDo: [ :cls |
+	GtWireObjectEncoder allSubclasses do: [ :cls |
 		cls typeIdentifierOrNil ifNotNil:
 			[ :id | reverseMap at: id put: cls new ] ].
 	aDictionary associationsDo: [ :assoc |
-		reverseMap at: assoc value class typeIdentifier
-			put: assoc value ].
+		assoc value class typeIdentifierOrNil ifNotNil: [ :id |
+			reverseMap at: id put: assoc value ] ].
 	^ reverseMap
+
 ]
 
 { #category : #accessing }
@@ -56,7 +57,7 @@ GtWireEncoderDecoder class >> typeIdentifierClassName: anInteger [
 			detect: [ :cls | cls typeIdentifierOrNil = anInteger ]
 			ifNone: [ nil ] ])
 				ifNil: [ '<not found>' ]
-				ifNotNil: #name
+				ifNotNil: [ :cls | cls name ]
 ]
 
 { #category : #'as yet unclassified' }

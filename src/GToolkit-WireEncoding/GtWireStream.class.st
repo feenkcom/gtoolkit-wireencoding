@@ -130,6 +130,12 @@ GtWireStream >> packedInteger: anInteger [
 		self nextPut: byte ].
 ]
 
+{ #category : #accessing }
+GtWireStream >> position [
+
+	^ wrappedStream position
+]
+
 { #category : #'as yet unclassified' }
 GtWireStream >> reset [
 

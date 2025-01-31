@@ -6,7 +6,7 @@ Class {
 		'maxObjects',
 		'objectCount'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }
@@ -19,10 +19,10 @@ GtWireEncoder class >> on: aWriteStream [
 { #category : #'instance creation' }
 GtWireEncoder class >> onByteArray [
 
-	^ self on: (ByteArray new: 100) writeStream
+	^ self on: (WriteStream on: (ByteArray new: 100))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 GtWireEncoder >> decoderOn: aReadStream [
 	| decoder |
 	
@@ -33,7 +33,7 @@ GtWireEncoder >> decoderOn: aReadStream [
 	^ decoder
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 GtWireEncoder >> initialize [
 
 	super initialize.
@@ -66,54 +66,55 @@ GtWireEncoder >> nextPut: anObject [
 { #category : #'private - encoding' }
 GtWireEncoder >> putByteArray: aByteArray [
 
-	GtWireEncodingByteArraySignal new
+	"GtWireEncodingByteArraySignal new
 		byteArray: aByteArray;
-		emit.
+		emit."
+	self putSize: aByteArray size.
 	stream nextPutAll: aByteArray.
 ]
 
 { #category : #'private - encoding' }
 GtWireEncoder >> putFloat64: aFloat [
 
-	GtWireEncodingFloat64Signal new
+	"GtWireEncodingFloat64Signal new
 		float: aFloat;
-		emit.
+		emit."
 	stream float64: aFloat.
 ]
 
 { #category : #'private - encoding' }
 GtWireEncoder >> putInt64: anInteger [
 
-	GtWireEncodingInt64Signal new
+	"GtWireEncodingInt64Signal new
 		integer: anInteger;
-		emit.
+		emit."
 	stream int64: anInteger.
 ]
 
 { #category : #'private - encoding' }
 GtWireEncoder >> putPackedInteger: aPositiveInteger [
 
-	GtWireEncodingPositiveIntegerSignal new
+	"GtWireEncodingPositiveIntegerSignal new
 		integer: aPositiveInteger;
-		emit.
+		emit."
 	stream packedInteger: aPositiveInteger.
 ]
 
 { #category : #'private - encoding' }
 GtWireEncoder >> putSize: anInteger [
 
-	GtWireEncodingSizeSignal new
+	"GtWireEncodingSizeSignal new
 		size: anInteger;
-		emit.
+		emit."
 	stream packedInteger: anInteger.
 ]
 
 { #category : #'private - encoding' }
 GtWireEncoder >> putTypeIdentifier: anInteger [
 
-	GtWireEncodingTypeIdentifierSignal new
+	"GtWireEncodingTypeIdentifierSignal new
 		typeIdentifier: anInteger;
-		emit.
+		emit."
 	stream packedInteger: anInteger.
 ]
 

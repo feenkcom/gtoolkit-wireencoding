@@ -13,7 +13,7 @@ GtWirePositiveIntegerEncoder class >> typeIdentifier [
 { #category : #'encoding - decoding' }
 GtWirePositiveIntegerEncoder >> decodeWith: aGtWireEncoderContext [
 
-	^ aGtWireEncoderContext stream packedInteger
+	^ aGtWireEncoderContext nextPackedInteger
 ]
 
 { #category : #'encoding - decoding' }

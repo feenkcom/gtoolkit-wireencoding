@@ -15,7 +15,7 @@ GtWireSetEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the OrderedCollection on the supplied context"
 	| count set |
 
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	set := Set new: count * 2.
 	count timesRepeat:
 		[ set add: aGtWireEncoderContext next ].

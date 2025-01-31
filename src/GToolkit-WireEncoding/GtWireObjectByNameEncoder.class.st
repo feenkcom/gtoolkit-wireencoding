@@ -16,7 +16,7 @@ GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 
 	className := aGtWireEncoderContext next.
 	"Retrieve the number of variable slots"
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	cls := self class environment classOrTraitNamed: className.
 	cls ifNil: [ self error: 'Unknown class: ', className asString ].
 	instance := cls isVariable
@@ -24,7 +24,7 @@ GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 		ifFalse: [ cls basicNew ].
 	1 to: count do: [ :i |
 		instance basicAt: i put: aGtWireEncoderContext next ].
-	count := aGtWireEncoderContext stream packedInteger.
+	count := aGtWireEncoderContext nextSize.
 	count timesRepeat:
 		[ | instVarName |
 		instVarName := aGtWireEncoderContext next.
