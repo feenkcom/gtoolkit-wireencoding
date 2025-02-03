@@ -23,6 +23,8 @@ BaselineOfGToolkitWireEncoding class >> loadLepiter [
 BaselineOfGToolkitWireEncoding >> baseline: spec [
 	<baseline>
 		^ spec for: #common do: [
-			spec package: 'GToolkit-WireEncoding'
+			spec 
+				package: 'GToolkit-WireEncoding';
+				package: 'GToolkit-WireEncoding-GT'
 		]
 ]
