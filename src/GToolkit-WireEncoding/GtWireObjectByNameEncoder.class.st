@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireObjectByNameEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }
@@ -17,7 +17,7 @@ GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 	className := aGtWireEncoderContext next.
 	"Retrieve the number of variable slots"
 	count := aGtWireEncoderContext nextSize.
-	cls := self class environment classOrTraitNamed: className.
+	cls := self lookupClass: className.
 	cls ifNil: [ self error: 'Unknown class: ', className asString ].
 	instance := cls isVariable
 		ifTrue: [ cls basicNew: count ]
@@ -58,4 +58,14 @@ GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 	namesAndValues do: [ :assoc |
 		aGtWireEncoderContext nextPut: assoc key.
 		aGtWireEncoderContext nextPut: assoc value ].
+]
+
+{ #category : #private }
+GtWireObjectByNameEncoder >> lookupClass: className [
+	"Answer the class with the supplied name or nil if not found.
+	For GemStone, see STONReader>>lookupClass: for inspiration."
+
+	^ self
+		gtDo: [ self class environment classOrTraitNamed: className ]
+		gemstoneDo: [ System myUserProfile objectNamed: className asSymbol ]
 ]

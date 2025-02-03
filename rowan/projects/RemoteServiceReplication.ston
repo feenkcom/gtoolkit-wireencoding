@@ -1,0 +1,21 @@
+RwLoadSpecificationV2 {
+	#specName : 'RemoteServiceReplication',
+	#projectName : 'RemoteServiceReplication',
+	#gitUrl : 'git@github.com:feenkcom/RemoteServiceReplication.git',
+	#revision : 'martin-136PortRange',
+	#projectSpecFile : 'rowan/project.ston',
+	#componentNames : [
+		'RemoteServiceReplication'
+	],
+	#customConditionalAttributes : [
+		'tests'
+	],
+	#platformProperties : {
+		'gemstone' : {
+			'SystemUser' : {
+				#defaultSymbolDictName : 'Globals'
+			}
+		}
+	},
+	#comment : ''
+}

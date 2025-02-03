@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireDateAndTimeEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -13,29 +13,24 @@ GtWireDateAndTimeEncoder class >> typeIdentifier [
 { #category : #'encoding - decoding' }
 GtWireDateAndTimeEncoder >> decodeWith: aGtWireEncoderContext [
 	"Decode the array on the supplied context"
+	| unixSeconds nanoSeconds offset |
 
-	^ DateAndTime
-		basicYear: aGtWireEncoderContext nextPackedInteger
-		month: aGtWireEncoderContext nextPackedInteger
-		day: aGtWireEncoderContext nextPackedInteger
-		hour: aGtWireEncoderContext nextPackedInteger
-		minute: aGtWireEncoderContext nextPackedInteger
-		second: aGtWireEncoderContext nextPackedInteger
-		nanoSecond: aGtWireEncoderContext nextPackedInteger
-		offset: aGtWireEncoderContext nextInt64 seconds
+	unixSeconds :=  aGtWireEncoderContext nextPackedInteger.
+	nanoSeconds := aGtWireEncoderContext nextPackedInteger.
+	offset := aGtWireEncoderContext next.
+	^ self
+		gtDo: [ (DateAndTime fromUnixTime: unixSeconds)
+			setNanoSeconds: nanoSeconds;
+			translateTo: offset ]
+		gemstoneDo: [ DateAndTime posixSeconds: (unixSeconds + (nanoSeconds / (10 raisedTo: 9))) offset: (Duration seconds: offset) ].
 ]
 
 { #category : #'encoding - decoding' }
 GtWireDateAndTimeEncoder >> encode: aDateAndTime with: aGtWireEncoderContext [
 
 	aGtWireEncoderContext
-		putTypeIdentifier: self typeIdentifier;
-		putPackedInteger: aDateAndTime year;
-		putPackedInteger: aDateAndTime month;
-		putPackedInteger: aDateAndTime dayOfMonth;
-		putPackedInteger: aDateAndTime hour;
-		putPackedInteger: aDateAndTime minute;
-		putPackedInteger: aDateAndTime second;
+		putTypeIdentifier: self class typeIdentifier;
+		putPackedInteger: aDateAndTime asUnixTime truncated;
 		putPackedInteger: aDateAndTime nanoSecond;
-		putInt64: aDateAndTime offset asSeconds.
+		nextPut: aDateAndTime offset asSeconds.
 ]

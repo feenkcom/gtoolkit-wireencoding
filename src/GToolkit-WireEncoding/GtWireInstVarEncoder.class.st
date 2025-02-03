@@ -1,3 +1,6 @@
+"
+GtWireInstVarEncoder uses the specified mapping to encode the supplied objects.  No mapping is required for decoding.
+"
 Class {
 	#name : #GtWireInstVarEncoder,
 	#superclass : #GtWireObjectEncoder,
@@ -21,18 +24,11 @@ GtWireInstVarEncoder >> decodeWith: aGtWireEncoderContext [
 	className := aGtWireEncoderContext next.
 	instance := (self class environment classOrTraitNamed: className) basicNew.
 	count timesRepeat:
-		[ | instVarName encoder |
+		[ | instVarName |
 		instVarName := aGtWireEncoderContext next.
-		encoder := instVarMap
-			at: instVarName
-			ifAbsent: [].
 		instance
 			instVarNamed: instVarName
-			put: (encoder
-				ifNil: [ aGtWireEncoderContext next ]
-				ifNotNil: 
-					[ self assert: aGtWireEncoderContext nextTypeIdentifier = encoder typeIdentifier.
-					encoder decodeWith: aGtWireEncoderContext ]) ].
+			put: aGtWireEncoderContext next ].
 	^ instance
 ]
 

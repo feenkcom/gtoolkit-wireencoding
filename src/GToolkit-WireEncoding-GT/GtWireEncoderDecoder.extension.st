@@ -3,8 +3,11 @@ Extension { #name : #GtWireEncoderDecoder }
 { #category : #'*GToolkit-WireEncoding-GT' }
 GtWireEncoderDecoder class >> defaultMapping [
 	"The default mapping only encodes directly supported classes"
+	| mapping |
 
-	^ IdentityDictionary new
+	mapping := IdentityDictionary new.
+	self map: RsrService withSubclassesTo: GtWireGemStoneRsrEncoder new in: mapping.
+	mapping
 		at: Association put: GtWireAssociationEncoder new;
 		at: False put: GtWireFalseEncoder new;
 		at: True put: GtWireTrueEncoder new;
@@ -26,5 +29,6 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
 		at: FullBlockClosure put: GtWireBlockClosureEncoder new;
-		yourself
+		at: ConstantBlockClosure put: GtWireBlockClosureEncoder new.
+	^ mapping
 ]

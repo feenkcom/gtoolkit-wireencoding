@@ -10,7 +10,7 @@ Class {
 		'DefaultMap',
 		'DefaultReverseMap'
 	],
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -29,6 +29,16 @@ GtWireEncoderDecoder class >> defaultMap [
 GtWireEncoderDecoder class >> defaultReverseMap [
 
 	^ DefaultReverseMap ifNil: [ DefaultReverseMap := self reverseMapFrom: self defaultMap ].
+]
+
+{ #category : #private }
+GtWireEncoderDecoder class >> map: aClass withSubclassesTo: anEncoder in: mapping [
+	"Add the mapping for aClass and all its subclasses"
+	
+	"GemStone doesn't have #withAllSubclasses"
+	mapping at: aClass put: anEncoder.
+	aClass allSubclasses do: [ :cls |
+		mapping at: cls put: anEncoder ].
 ]
 
 { #category : #accessing }
@@ -62,9 +72,12 @@ GtWireEncoderDecoder class >> typeIdentifierClassName: anInteger [
 
 { #category : #'as yet unclassified' }
 GtWireEncoderDecoder >> addMapping: aClass to: anEncoder [
-
+	| typeIdentifier |
+	
 	self map at: aClass put: anEncoder.
-	self reverseMap at: anEncoder class typeIdentifier put: anEncoder
+	typeIdentifier := anEncoder class typeIdentifierOrNil.
+	typeIdentifier ifNotNil:
+		[ self reverseMap at: typeIdentifier put: anEncoder ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -82,7 +95,7 @@ GtWireEncoderDecoder >> loadDefaultMap [
 { #category : #accessing }
 GtWireEncoderDecoder >> loadReverseMap [
 
-	reverseMap := self class defaultReverseMap copy.
+	reverseMap := self class reverseMapFrom: self map.
 ]
 
 { #category : #accessing }
