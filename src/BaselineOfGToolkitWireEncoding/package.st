@@ -1,1 +1,1 @@
-Package { #name : #BaselineOfGtoolkitWireencoding }
+Package { #name : #BaselineOfGToolkitWireEncoding }

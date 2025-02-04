@@ -1,28 +1,25 @@
 Class {
 	#name : #GtWireByteArrayEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
-
-{ #category : #'encoding - decoding' }
-GtWireByteArrayEncoder class >> decodeWith: aGtWireEncoderContext [
-	| stream |
-
-	stream := aGtWireEncoderContext stream.
-	^ stream next: stream packedInteger.
-]
-
-{ #category : #'encoding - decoding' }
-GtWireByteArrayEncoder class >> encode: aByteArray with: aGtWireEncoderContext [
-
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier;
-		packedInteger: aByteArray size;
-		nextPutAll: aByteArray
-]
 
 { #category : #accessing }
 GtWireByteArrayEncoder class >> typeIdentifier [
 
 	^ 4
+]
+
+{ #category : #'encoding - decoding' }
+GtWireByteArrayEncoder >> decodeWith: aGtWireEncoderContext [
+
+	^ aGtWireEncoderContext nextByteArray
+]
+
+{ #category : #'encoding - decoding' }
+GtWireByteArrayEncoder >> encode: aByteArray with: aGtWireEncoderContext [
+
+	aGtWireEncoderContext
+		putTypeIdentifier: self typeIdentifier;
+		putByteArray: aByteArray
 ]

@@ -1,11 +1,17 @@
 Class {
 	#name : #GtWireAssociationEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
 
+{ #category : #accessing }
+GtWireAssociationEncoder class >> typeIdentifier [
+
+	^ 15
+]
+
 { #category : #'encoding - decoding' }
-GtWireAssociationEncoder class >> decodeWith: aGtWireEncoderContext [
+GtWireAssociationEncoder >> decodeWith: aGtWireEncoderContext [
 
 	^ Association
 		key: aGtWireEncoderContext next
@@ -13,17 +19,10 @@ GtWireAssociationEncoder class >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireAssociationEncoder class >> encode: anInteger with: aGtWireEncoderContext [
+GtWireAssociationEncoder >> encode: anInteger with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext stream
-		packedInteger: self typeIdentifier.
+	aGtWireEncoderContext putTypeIdentifier: self typeIdentifier.
 	aGtWireEncoderContext
 		nextPut: anInteger key;
 		nextPut: anInteger value
-]
-
-{ #category : #accessing }
-GtWireAssociationEncoder class >> typeIdentifier [
-
-	^ 15
 ]

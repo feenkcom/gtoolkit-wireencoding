@@ -10,7 +10,7 @@ Class {
 		'DefaultMap',
 		'DefaultReverseMap'
 	],
-	#category : #'GToolkit-WireEncoding-Encoder'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -26,34 +26,6 @@ GtWireEncoderDecoder class >> defaultMap [
 ]
 
 { #category : #accessing }
-GtWireEncoderDecoder class >> defaultMapping [
-	"The default mapping only encodes directly supported classes"
-
-	^ IdentityDictionary new
-		at: Association put: GtWireAssociationEncoder;
-		at: False put: GtWireFalseEncoder;
-		at: True put: GtWireTrueEncoder;
-		at: ByteArray put: GtWireByteArrayEncoder;
-		at: ByteString put: GtWireStringEncoder;
-		at: WideString put: GtWireStringEncoder;
-		at: ByteSymbol put: GtWireSymbolEncoder;
-		at: WideSymbol put: GtWireSymbolEncoder;
-		at: Character put: GtWireCharacterEncoder;
-		at: Array put: GtWireArrayEncoder;
-		at: Dictionary put: GtWireDictionaryEncoder;
-		at: OrderedCollection put: GtWireOrderedCollectionEncoder;
-		at: Set put: GtWireSetEncoder;
-		at: SmallInteger put: GtWireIntegerEncoder;
-		at: LargePositiveInteger put: GtWirePositiveIntegerEncoder;
-		at: LargeNegativeInteger put: GtWireNegativeIntegerEncoder;
-		at: SmallFloat64 put: GtWireFloatEncoder;
-		at: BoxedFloat64 put: GtWireFloatEncoder;
-		at: UndefinedObject put: GtWireNilEncoder;
-		at: DateAndTime put: GtWireDateAndTimeEncoder;
-		yourself
-]
-
-{ #category : #accessing }
 GtWireEncoderDecoder class >> defaultReverseMap [
 
 	^ DefaultReverseMap ifNil: [ DefaultReverseMap := self reverseMapFrom: self defaultMap ].
@@ -61,13 +33,38 @@ GtWireEncoderDecoder class >> defaultReverseMap [
 
 { #category : #accessing }
 GtWireEncoderDecoder class >> reverseMapFrom: aDictionary [
+	"Construct the reverse map.
+	Build a default reverse map and then  overwrite with the supplied configured encoders."
 	| reverseMap |
 
 	reverseMap := IdentityDictionary new.
+	GtWireObjectEncoder allSubclasses do: [ :cls |
+		cls typeIdentifierOrNil ifNotNil:
+			[ :id | reverseMap at: id put: cls new ] ].
 	aDictionary associationsDo: [ :assoc |
-		reverseMap at: assoc value typeIdentifier
-			put: assoc value ]. 
+		assoc value class typeIdentifierOrNil ifNotNil: [ :id |
+			reverseMap at: id put: assoc value ] ].
 	^ reverseMap
+
+]
+
+{ #category : #accessing }
+GtWireEncoderDecoder class >> typeIdentifierClassName: anInteger [
+	"Answer the class name with the supplied identifier"
+
+	^ (self defaultReverseMap at: anInteger ifAbsent:
+		[ GtWireObjectEncoder allSubclasses
+			detect: [ :cls | cls typeIdentifierOrNil = anInteger ]
+			ifNone: [ nil ] ])
+				ifNil: [ '<not found>' ]
+				ifNotNil: [ :cls | cls name ]
+]
+
+{ #category : #'as yet unclassified' }
+GtWireEncoderDecoder >> addMapping: aClass to: anEncoder [
+
+	self map at: aClass put: anEncoder.
+	self reverseMap at: anEncoder class typeIdentifier put: anEncoder
 ]
 
 { #category : #'as yet unclassified' }
@@ -79,20 +76,18 @@ GtWireEncoderDecoder >> contents [
 { #category : #accessing }
 GtWireEncoderDecoder >> loadDefaultMap [
 
-	self map: self class defaultMapping
+	self map: self class defaultMapping copy
 ]
 
 { #category : #accessing }
 GtWireEncoderDecoder >> loadReverseMap [
 
-	reverseMap := self class reverseMapFrom: map.
+	reverseMap := self class defaultReverseMap copy.
 ]
 
 { #category : #accessing }
 GtWireEncoderDecoder >> map [
-	map ifNil: 
-		[ map := self class defaultMap.
-		reverseMap := self class defaultReverseMap ].
+	map ifNil: [ self loadDefaultMap ].
 	^ map
 ]
 
@@ -103,7 +98,7 @@ GtWireEncoderDecoder >> map: aDictionary [
 	self loadReverseMap.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 GtWireEncoderDecoder >> reset [
 
 	stream reset
@@ -112,16 +107,19 @@ GtWireEncoderDecoder >> reset [
 { #category : #'as yet unclassified' }
 GtWireEncoderDecoder >> reverseMap [
 
-	reverseMap ifNil: 
-		[ map := self class defaultMap.
-		reverseMap := self class defaultReverseMap ].
+	reverseMap ifNil: [ self loadReverseMap ].
 	^ reverseMap
+]
+
+{ #category : #accessing }
+GtWireEncoderDecoder >> reverseMap: anObject [
+	reverseMap := anObject
 ]
 
 { #category : #accessing }
 GtWireEncoderDecoder >> stream [
 
-	^ stream ifNil: [ stream := GtWireReadWriteStream on:
+	^ stream ifNil: [ stream := GtWireStream on:
 		(ByteArray new: 64 * 1024) ]
 ]
 

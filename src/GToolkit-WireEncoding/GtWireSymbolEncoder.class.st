@@ -1,17 +1,17 @@
 Class {
 	#name : #GtWireSymbolEncoder,
 	#superclass : #GtWireCharacterArrayEncoder,
-	#category : #'GToolkit-WireEncoding-ObjectEncoder'
+	#category : #'GToolkit-WireEncoding'
 }
-
-{ #category : #'encoding - decoding' }
-GtWireSymbolEncoder class >> decodeWith: aGtWireEncoderContext [
-	
-	^ (super decodeWith: aGtWireEncoderContext) asSymbol
-]
 
 { #category : #accessing }
 GtWireSymbolEncoder class >> typeIdentifier [
 
 	^ 6
+]
+
+{ #category : #'encoding - decoding' }
+GtWireSymbolEncoder >> decodeWith: aGtWireEncoderContext [
+	
+	^ (super decodeWith: aGtWireEncoderContext) asSymbol
 ]

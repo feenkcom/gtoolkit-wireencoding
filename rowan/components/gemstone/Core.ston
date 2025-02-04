@@ -3,7 +3,6 @@ RwPlatformNestedProjectLoadComponentV2 {
 	#condition : [
 		'gemstone'
 	],
-	#packageNames : [
-	],
+	#packageNames : [ ],
 	#comment : ''
 }
