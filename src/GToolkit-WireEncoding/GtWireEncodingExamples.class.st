@@ -200,7 +200,7 @@ GtWireEncodingExamples >> float [
 { #category : #examples }
 GtWireEncodingExamples >> generalObject [
 	<gtExample>
-	| object encoder byteArray next decoder |
+	| object encoder byteArray next root |
 
 	encoder := GtWireEncoder onByteArray.
 	object := self gtDo:[ (self class environment classOrTraitNamed: #AdditionalMethodState) new: 3]
@@ -213,8 +213,8 @@ GtWireEncodingExamples >> generalObject [
 	encoder nextPut: object.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 61.
-	decoder := GtWireInspectionDecoder byteArray: byteArray.
-	next := decoder next.
+	root := GtWireInspectionDecoder byteArray: byteArray.
+	next := root object.
 	self assert: (#(AdditionalMethodState) includes: next class name).
 	self assert: next basicSize equals: 3.
 	1 to: 3 do: [ :i |

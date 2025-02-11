@@ -1,16 +1,16 @@
 Class {
-	#name : 'GtWireGemStoneRsrEncoder',
-	#superclass : 'GtWireObjectEncoder',
+	#name : #GtWireGemStoneRsrEncoder,
+	#superclass : #GtWireObjectEncoder,
 	#category : 'GToolkit-WireEncoding'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireGemStoneRsrEncoder class >> typeIdentifier [
 
 	^ 24
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireGemStoneRsrEncoder >> decodeWith: aGtWireEncoderContext [
 	"It is up to the user to ensure the Object isn't GCd during transfer and decoding
 	(which would allow the oop to be reused and the wrong object returned), or that the
@@ -19,7 +19,7 @@ GtWireGemStoneRsrEncoder >> decodeWith: aGtWireEncoderContext [
 	^ (self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument.
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireGemStoneRsrEncoder >> encode: aRsrService with: aGtWireEncoderContext [
 	"It is up to the user to ensure that anObject isn't GCd during transfer and decoding
 	(which would allow the oop to be reused and the wrong object returned), or that the
