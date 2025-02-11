@@ -3,19 +3,33 @@ Extension { #name : #GtWireEncoderDecoder }
 { #category : #'*GToolkit-WireEncoding-GemStone' }
 GtWireEncoderDecoder class >> defaultMapping [
 	"The default mapping only encodes directly supported classes"
+	| mapping |
 
-	^ IdentityDictionary new
+	mapping := IdentityDictionary new.
+	self map: ExecBlock withSubclassesTo: GtWireBlockClosureEncoder new in: mapping.
+	self map: RsrService withSubclassesTo: GtWireGemStoneRsrEncoder new in: mapping.
+	mapping
 		at: Association put: GtWireAssociationEncoder new;
 		at: Boolean put: GtWireBooleanEncoder new;
 		at: ByteArray put: GtWireByteArrayEncoder new;
+		at: String  put: GtWireStringEncoder new;
+		at: DoubleByteString put: GtWireStringEncoder new;
+		at: Unicode7 put: GtWireStringEncoder new;
+		at: Unicode16 put: GtWireStringEncoder new;
+		at: Unicode32 put: GtWireStringEncoder new;
 		at: Symbol put: GtWireSymbolEncoder new;
+		at: DoubleByteSymbol put: GtWireSymbolEncoder new;
 		at: Character put: GtWireCharacterEncoder new;
 		at: Array put: GtWireArrayEncoder new;
 		at: Dictionary put: GtWireDictionaryEncoder new;
 		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
 		at: Set put: GtWireSetEncoder new;
 		at: SmallInteger put: GtWireIntegerEncoder new;
+		at: LargeInteger put: GtWireIntegerEncoder new;
+		at: Float put: GtWireFloatEncoder new;
+		at: SmallDouble put: GtWireFloatEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		yourself
+		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new.
+	^ mapping
 ]

@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireBlockClosureEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -15,7 +15,14 @@ GtWireBlockClosureEncoder >> decodeWith: aGtWireEncoderContext [
 	| stream |
 
 	stream := aGtWireEncoderContext stream.
-	^ BlockClosure evaluate: aGtWireEncoderContext nextNullTerminatedUtf8.
+	^ self
+		gtDo: [ BlockClosure evaluate: aGtWireEncoderContext nextNullTerminatedUtf8 ]
+		gemstoneDo: [ | bindings receiver |
+			bindings := GsCurrentSession currentSession symbolList.
+			receiver := self.
+			aGtWireEncoderContext nextNullTerminatedUtf8 evaluate.
+				"_compileInContext: receiver symbolList: bindings" ].
+
 ]
 
 { #category : #'encoding - decoding' }
@@ -25,5 +32,7 @@ GtWireBlockClosureEncoder >> encode: aBlockClosure with: aGtWireEncoderContext [
 		[ self error: 'BlockClosures must be clean' ].
 	aGtWireEncoderContext 
 		putTypeIdentifier: self class typeIdentifier;
-		putNullTerminatedUtf8: aBlockClosure printString.
+		putNullTerminatedUtf8: (self
+			gtDo: [ aBlockClosure printString ]
+			gemstoneDo: [ aBlockClosure method _sourceStringForBlock  ]).
 ]

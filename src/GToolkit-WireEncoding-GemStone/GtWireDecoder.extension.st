@@ -2,11 +2,10 @@ Extension { #name : #GtWireDecoder }
 
 { #category : #'*GToolkit-WireEncoding-GemStone' }
 GtWireDecoder >> nextNullTerminatedUtf8 [
-	| ch byteArray wStream |
+	| ch wStream |
 
-	byteArray := ByteArray new: 1024.
-	wStream := byteArray writeStream.
-	[ (ch := stream next) codePoint = 0 ] whileFalse:
+	wStream := WriteStream on: (ByteArray new: 1024).
+	[ (ch := stream next) = 0 ] whileFalse:
 		[ wStream nextPut: ch ].
-	^ wStream contents utf8Decoded
+	^ wStream contents utf8Decoded asString
 ]

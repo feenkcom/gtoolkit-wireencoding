@@ -4,9 +4,10 @@ Class {
 	#instVars : [
 		'defaultEncoder',
 		'maxObjects',
-		'objectCount'
+		'objectCount',
+		'remainingDepth'
 	],
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }
@@ -40,6 +41,7 @@ GtWireEncoder >> initialize [
 	defaultEncoder := [ :anObject | GtWireObjectByNameEncoder new ].
 	maxObjects := 500000.
 	objectCount := 0.
+	remainingDepth := maxObjects.
 ]
 
 { #category : #accessing }
@@ -57,10 +59,15 @@ GtWireEncoder >> nextPut: anObject [
 
 	objectCount > maxObjects ifTrue:
 		[ self error: 'Exceeded maximum object count' ].
-	(self map at: anObject class
-		ifAbsent: [ defaultEncoder value: anObject ])
-			encode: anObject with: self.
+	remainingDepth := remainingDepth - 1.
+	remainingDepth < 0 ifTrue:
+		[ self putNil ]
+	ifFalse:
+		[ (self map at: anObject class
+			ifAbsent: [ defaultEncoder value: anObject ])
+				encode: anObject with: self ].
 	objectCount := objectCount + 1.
+	remainingDepth := remainingDepth + 1.
 ]
 
 { #category : #'private - encoding' }
@@ -91,6 +98,12 @@ GtWireEncoder >> putInt64: anInteger [
 	stream int64: anInteger.
 ]
 
+{ #category : #accessing }
+GtWireEncoder >> putNil [
+
+	self putTypeIdentifier: GtWireNilEncoder typeIdentifier.
+]
+
 { #category : #'private - encoding' }
 GtWireEncoder >> putPackedInteger: aPositiveInteger [
 
@@ -116,6 +129,16 @@ GtWireEncoder >> putTypeIdentifier: anInteger [
 		typeIdentifier: anInteger;
 		emit."
 	stream packedInteger: anInteger.
+]
+
+{ #category : #accessing }
+GtWireEncoder >> remainingDepth [
+	^ remainingDepth
+]
+
+{ #category : #accessing }
+GtWireEncoder >> remainingDepth: anObject [
+	remainingDepth := anObject
 ]
 
 { #category : #initialization }
