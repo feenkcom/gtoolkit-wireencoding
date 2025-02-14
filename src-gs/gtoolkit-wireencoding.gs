@@ -3176,15 +3176,7 @@ defaultMapping
 		at: SmallDouble put: GtWireFloatEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
-		at: ExecBlock put: GtWireBlockClosureEncoder new;
-		at: ExecBlock0 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock1 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock2 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock3 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock4 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock5 put: GtWireBlockClosureEncoder new;
-		at: ExecBlockN put: GtWireBlockClosureEncoder new.
+		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new.
 	^ mapping
 %
 
