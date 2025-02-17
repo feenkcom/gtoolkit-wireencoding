@@ -50,6 +50,12 @@ GtWireDecoder >> nextSize [
 ]
 
 { #category : #'as yet unclassified' }
+GtWireDecoder >> nextString [
+
+	^ (stream next: self nextSize) utf8Decoded
+]
+
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextTypeIdentifier [
 
 	^ stream packedInteger

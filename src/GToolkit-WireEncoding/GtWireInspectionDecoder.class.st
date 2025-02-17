@@ -86,15 +86,6 @@ GtWireInspectionDecoder >> nextInt64 [
 ]
 
 { #category : #accessing }
-GtWireInspectionDecoder >> nextNullTerminatedUtf8 [
-	| string |
-
-	string := super nextNullTerminatedUtf8.
-	stack last addComponent: #nullTerminatedUtf8 -> string.
-	^ string.
-]
-
-{ #category : #accessing }
 GtWireInspectionDecoder >> nextPackedInteger [
 	| packedInteger |
 
@@ -110,6 +101,15 @@ GtWireInspectionDecoder >> nextSize [
 	size := super nextSize.
 	stack last addComponent: #size -> size.
 	^ size.
+]
+
+{ #category : #accessing }
+GtWireInspectionDecoder >> nextString [
+	| string |
+
+	string := super nextString.
+	stack last addComponent: #string -> string.
+	^ string.
 ]
 
 { #category : #accessing }
