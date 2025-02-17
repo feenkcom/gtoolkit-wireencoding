@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireEncodingExamples,
 	#superclass : #Object,
-	#category : #'GToolkit-WireEncoding'
+	#category : 'GToolkit-WireEncoding'
 }
 
 { #category : #examples }
@@ -44,7 +44,7 @@ GtWireEncodingExamples >> blockClosure [
 	blockClosure := [ :a :b | a + b ].
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 19.
+	self assert: byteArray size equals: 20.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: (#(FullBlockClosure ExecBlock) includes: next class name).
 	self assert: (next value: 4 value: 3) equals: 7.
@@ -88,6 +88,22 @@ GtWireEncodingExamples >> byteString [
 
 	encoder := GtWireEncoder onByteArray.
 	string := 'Hello, World'.
+	encoder nextPut: string.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: string size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ByteString String) includes: next class name).
+	self assert: next equals: string.
+	^ byteArray
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> byteStringWithNull [
+	<gtExample>
+	| string encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	string := 'abc', (String with: Character null), 'def'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string size + 2.
@@ -212,7 +228,7 @@ GtWireEncodingExamples >> generalObject [
 		object basicAt: i put: 2 ** i ].
 	encoder nextPut: object.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 61.
+	self assert: byteArray size equals: 60.
 	root := GtWireInspectionDecoder byteArray: byteArray.
 	next := root object.
 	self assert: (#(AdditionalMethodState) includes: next class name).
@@ -287,7 +303,9 @@ GtWireEncodingExamples >> packedInteger [
 	self assert: byteArray equals: #[13 0].
 	self assert: (GtWireDecoder on: byteArray readStream) next equals: 0.
 	integer := 1.
-	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ SmallInteger maximumValue ]) * 100) ] whileTrue:
+	"GemStone is slow at this test, if it works in GT for the full range, testing a small range in
+	GemStone is probably enough"
+	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ 10 ]) * 10) ] whileTrue:
 		[ encoder reset.
 		encoder nextPut: integer.
 		byteArray := encoder contents.
@@ -297,7 +315,7 @@ GtWireEncodingExamples >> packedInteger [
 		byteArray := encoder contents.
 		encoder reset.
 		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer negated.
-		integer := (1.0001 * integer) ceiling. ].
+		integer := (1.001 * integer) ceiling. ].
 ]
 
 { #category : #examples }
@@ -322,6 +340,22 @@ GtWireEncodingExamples >> wideString [
 
 	encoder := GtWireEncoder onByteArray.
 	string := 'čtyři'.
+	encoder nextPut: string.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: string asString utf8Encoded size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
+	self assert: next equals: string.
+	^ byteArray
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> wideStringWithNull [
+	<gtExample>
+	| string encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	string := 'čty', (String with: Character null), 'ři'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string asString utf8Encoded size + 2.

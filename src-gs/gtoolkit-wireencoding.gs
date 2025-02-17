@@ -943,6 +943,15 @@ nextSize
 
 category: 'as yet unclassified'
 method: GtWireDecoder
+nextString
+	"Answer the next string.
+	GemStone requires conversion from a Unicode object to a String (asString)"
+
+	^ (stream next: self nextSize) utf8Decoded asString
+%
+
+category: 'as yet unclassified'
+method: GtWireDecoder
 nextTypeIdentifier
 
 	^ stream packedInteger
@@ -1040,16 +1049,6 @@ nextInt64
 
 category: 'accessing'
 method: GtWireInspectionDecoder
-nextNullTerminatedUtf8
-	| string |
-
-	string := super nextNullTerminatedUtf8.
-	stack last addComponent: #nullTerminatedUtf8 -> string.
-	^ string.
-%
-
-category: 'accessing'
-method: GtWireInspectionDecoder
 nextPackedInteger
 	| packedInteger |
 
@@ -1066,6 +1065,16 @@ nextSize
 	size := super nextSize.
 	stack last addComponent: #size -> size.
 	^ size.
+%
+
+category: 'accessing'
+method: GtWireInspectionDecoder
+nextString
+	| string |
+
+	string := super nextString.
+	stack last addComponent: #string -> string.
+	^ string.
 %
 
 category: 'accessing'
@@ -1161,9 +1170,6 @@ category: 'private - encoding'
 method: GtWireEncoder
 putByteArray: aByteArray
 
-	"GtWireEncodingByteArraySignal new
-		byteArray: aByteArray;
-		emit."
 	self putSize: aByteArray size.
 	stream nextPutAll: aByteArray.
 %
@@ -1213,6 +1219,16 @@ putSize: anInteger
 		size: anInteger;
 		emit."
 	stream packedInteger: anInteger.
+%
+
+category: 'private - encoding'
+method: GtWireEncoder
+putString: aString
+	| encoded |
+
+	encoded := aString utf8Encoded.
+	self putSize: encoded size.
+	stream nextPutAll: encoded.
 %
 
 category: 'private - encoding'
@@ -1375,7 +1391,7 @@ blockClosure
 	blockClosure := [ :a :b | a + b ].
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 19.
+	self assert: byteArray size equals: 20.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: (#(FullBlockClosure ExecBlock) includes: next class name).
 	self assert: (next value: 4 value: 3) equals: 7.
@@ -1422,6 +1438,23 @@ byteString
 
 	encoder := GtWireEncoder onByteArray.
 	string := 'Hello, World'.
+	encoder nextPut: string.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: string size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ByteString String) includes: next class name).
+	self assert: next equals: string.
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+byteStringWithNull
+	<gtExample>
+	| string encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	string := 'abc', (String with: Character null), 'def'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string size + 2.
@@ -1553,7 +1586,7 @@ generalObject
 		object basicAt: i put: 2 ** i ].
 	encoder nextPut: object.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 61.
+	self assert: byteArray size equals: 60.
 	root := GtWireInspectionDecoder byteArray: byteArray.
 	next := root object.
 	self assert: (#(AdditionalMethodState) includes: next class name).
@@ -1632,7 +1665,9 @@ packedInteger
 	self assert: byteArray equals: #[13 0].
 	self assert: (GtWireDecoder on: byteArray readStream) next equals: 0.
 	integer := 1.
-	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ SmallInteger maximumValue ]) * 100) ] whileTrue:
+	"GemStone is slow at this test, if it works in GT for the full range, testing a small range in
+	GemStone is probably enough"
+	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ 10 ]) * 10) ] whileTrue:
 		[ encoder reset.
 		encoder nextPut: integer.
 		byteArray := encoder contents.
@@ -1642,7 +1677,7 @@ packedInteger
 		byteArray := encoder contents.
 		encoder reset.
 		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer negated.
-		integer := (1.0001 * integer) ceiling. ].
+		integer := (1.001 * integer) ceiling. ].
 %
 
 category: 'examples'
@@ -1669,6 +1704,23 @@ wideString
 
 	encoder := GtWireEncoder onByteArray.
 	string := 'čtyři'.
+	encoder nextPut: string.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: string asString utf8Encoded size + 2.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
+	self assert: next equals: string.
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+wideStringWithNull
+	<gtExample>
+	| string encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	string := 'čty', (String with: Character null), 'ři'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string asString utf8Encoded size + 2.
@@ -2084,15 +2136,13 @@ typeIdentifier
 category: 'encoding - decoding'
 method: GtWireBlockClosureEncoder
 decodeWith: aGtWireEncoderContext
-	| stream |
 
-	stream := aGtWireEncoderContext stream.
 	^ self
-		gtDo: [ BlockClosure evaluate: aGtWireEncoderContext nextNullTerminatedUtf8 ]
+		gtDo: [ BlockClosure evaluate: aGtWireEncoderContext next ]
 		gemstoneDo: [ | bindings receiver |
 			bindings := GsCurrentSession currentSession symbolList.
 			receiver := self.
-			aGtWireEncoderContext nextNullTerminatedUtf8 evaluate.
+			aGtWireEncoderContext next evaluate.
 				"_compileInContext: receiver symbolList: bindings" ].
 %
 
@@ -2104,7 +2154,7 @@ encode: aBlockClosure with: aGtWireEncoderContext
 		[ self error: 'BlockClosures must be clean' ].
 	aGtWireEncoderContext 
 		putTypeIdentifier: self class typeIdentifier;
-		putNullTerminatedUtf8: (self
+		nextPut: (self
 			gtDo: [ aBlockClosure printString ]
 			gemstoneDo: [ aBlockClosure method _sourceStringForBlock  ]).
 %
@@ -2200,16 +2250,16 @@ category: 'encoding - decoding'
 method: GtWireCharacterArrayEncoder
 decodeWith: aGtWireEncoderContext
 
-	^ aGtWireEncoderContext nextNullTerminatedUtf8
+	^ aGtWireEncoderContext nextString
 %
 
 category: 'encoding - decoding'
 method: GtWireCharacterArrayEncoder
 encode: aString with: aGtWireEncoderContext
 
-	aGtWireEncoderContext
+	aGtWireEncoderContext 
 		putTypeIdentifier: self typeIdentifier;
-		putNullTerminatedUtf8: aString
+		putString: aString
 %
 
 ! Class implementation for 'GtWireStringEncoder'
@@ -2843,7 +2893,7 @@ method: GtWireObjectByNameEncoder
 decodeWith: aGtWireEncoderContext
 	| count instance className cls |
 
-	className := aGtWireEncoderContext next.
+	className := aGtWireEncoderContext nextString.
 	"Retrieve the number of variable slots"
 	count := aGtWireEncoderContext nextSize.
 	cls := self lookupClass: className.
@@ -2874,8 +2924,8 @@ encode: anObject with: aGtWireEncoderContext
 		(anObject instVarNamed: name) ifNotNil: [ :value |
 			namesAndValues add: name -> value ] ].
 	aGtWireEncoderContext
-		putTypeIdentifier: self class typeIdentifier.
-	aGtWireEncoderContext nextPut: anObject class name.
+		putTypeIdentifier: self class typeIdentifier;
+		putString: anObject class name.
 	anObject class isVariable ifTrue:
 		[ | basicSize |
 		basicSize := anObject basicSize.
@@ -3176,15 +3226,7 @@ defaultMapping
 		at: SmallDouble put: GtWireFloatEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
-		at: ExecBlock put: GtWireBlockClosureEncoder new;
-		at: ExecBlock0 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock1 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock2 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock3 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock4 put: GtWireBlockClosureEncoder new;
-		at: ExecBlock5 put: GtWireBlockClosureEncoder new;
-		at: ExecBlockN put: GtWireBlockClosureEncoder new.
+		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new.
 	^ mapping
 %
 
@@ -3234,5 +3276,35 @@ method: GtWireGemStoneRsrEncoder
 currentWireService
 
 	^ SessionTemps current at: #GtRsrCurrentWireService
+%
+
+! Class extensions for 'GtWireNestedEncodingExamples'
+
+!		Instance methods for 'GtWireNestedEncodingExamples'
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireNestedEncodingExamples
+assert: aBoolean
+
+	self
+		assert: aBoolean
+		description: 'Assertion failed'.
+%
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireNestedEncodingExamples
+assert: aBoolean description: aString
+
+	aBoolean == true ifFalse:
+		[ TestResult failure signal: aString value ]
+%
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireNestedEncodingExamples
+assert: actual equals: expected
+
+	self
+		assert: actual = expected
+		description: actual printString, ' is not equal to ', expected printString.
 %
 

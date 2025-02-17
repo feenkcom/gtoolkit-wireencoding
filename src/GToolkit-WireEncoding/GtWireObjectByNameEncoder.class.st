@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireObjectByNameEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #'instance creation' }
@@ -14,7 +14,7 @@ GtWireObjectByNameEncoder class >> typeIdentifier [
 GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 	| count instance className cls |
 
-	className := aGtWireEncoderContext next.
+	className := aGtWireEncoderContext nextString.
 	"Retrieve the number of variable slots"
 	count := aGtWireEncoderContext nextSize.
 	cls := self lookupClass: className.
@@ -44,8 +44,8 @@ GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 		(anObject instVarNamed: name) ifNotNil: [ :value |
 			namesAndValues add: name -> value ] ].
 	aGtWireEncoderContext
-		putTypeIdentifier: self class typeIdentifier.
-	aGtWireEncoderContext nextPut: anObject class name.
+		putTypeIdentifier: self class typeIdentifier;
+		putString: anObject class name.
 	anObject class isVariable ifTrue:
 		[ | basicSize |
 		basicSize := anObject basicSize.

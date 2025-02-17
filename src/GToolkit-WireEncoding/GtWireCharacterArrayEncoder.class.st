@@ -7,13 +7,13 @@ Class {
 { #category : #'encoding - decoding' }
 GtWireCharacterArrayEncoder >> decodeWith: aGtWireEncoderContext [
 
-	^ aGtWireEncoderContext nextNullTerminatedUtf8
+	^ aGtWireEncoderContext nextString
 ]
 
 { #category : #'encoding - decoding' }
 GtWireCharacterArrayEncoder >> encode: aString with: aGtWireEncoderContext [
 
-	aGtWireEncoderContext
+	aGtWireEncoderContext 
 		putTypeIdentifier: self typeIdentifier;
-		putNullTerminatedUtf8: aString
+		putString: aString
 ]

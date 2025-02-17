@@ -73,9 +73,6 @@ GtWireEncoder >> nextPut: anObject [
 { #category : #'private - encoding' }
 GtWireEncoder >> putByteArray: aByteArray [
 
-	"GtWireEncodingByteArraySignal new
-		byteArray: aByteArray;
-		emit."
 	self putSize: aByteArray size.
 	stream nextPutAll: aByteArray.
 ]
@@ -120,6 +117,15 @@ GtWireEncoder >> putSize: anInteger [
 		size: anInteger;
 		emit."
 	stream packedInteger: anInteger.
+]
+
+{ #category : #'private - encoding' }
+GtWireEncoder >> putString: aString [
+	| encoded |
+
+	encoded := aString utf8Encoded.
+	self putSize: encoded size.
+	stream nextPutAll: encoded.
 ]
 
 { #category : #'private - encoding' }
