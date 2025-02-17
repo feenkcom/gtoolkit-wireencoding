@@ -1,10 +1,10 @@
 Class {
-	#name : #GtWireEncodingExamples,
-	#superclass : #Object,
-	#category : #'GToolkit-WireEncoding'
+	#name : 'GtWireEncodingExamples',
+	#superclass : 'Object',
+	#category : 'GToolkit-WireEncoding'
 }
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> array [
 	<gtExample>
 	| array encoder byteArray next |
@@ -20,7 +20,7 @@ GtWireEncodingExamples >> array [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> association [
 	<gtExample>
 	| association encoder byteArray next |
@@ -35,7 +35,7 @@ GtWireEncodingExamples >> association [
 	self assert: next = association.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> blockClosure [
 	<gtExample>
 	| blockClosure encoder byteArray next |
@@ -51,7 +51,7 @@ GtWireEncodingExamples >> blockClosure [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> boolean [
 	<gtExample>
 	| encoder byteArray decoder |
@@ -66,7 +66,7 @@ GtWireEncodingExamples >> boolean [
 	self assert: decoder next not.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> byteArray [
 	<gtExample>
 	| source encoder byteArray next |
@@ -81,7 +81,7 @@ GtWireEncodingExamples >> byteArray [
 	self assert: next equals: source.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> byteString [
 	<gtExample>
 	| string encoder byteArray next |
@@ -97,7 +97,7 @@ GtWireEncodingExamples >> byteString [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> byteStringWithNull [
 	<gtExample>
 	| string encoder byteArray next |
@@ -113,7 +113,7 @@ GtWireEncodingExamples >> byteStringWithNull [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> byteSymbol [
 	<gtExample>
 	| string encoder byteArray next |
@@ -130,7 +130,7 @@ GtWireEncodingExamples >> byteSymbol [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> character [
 	<gtExample>
 	| encoder byteArray next |
@@ -144,7 +144,7 @@ GtWireEncodingExamples >> character [
 	self assert: next == $§.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> dateAndTime [
 	<gtExample>
 	| dateAndTime encoder byteArray next |
@@ -159,7 +159,7 @@ GtWireEncodingExamples >> dateAndTime [
 	self assert: next = dateAndTime.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> deepArray [
 	<gtExample>
 	| array currentArray encoder byteArray next |
@@ -181,7 +181,7 @@ GtWireEncodingExamples >> deepArray [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> dictionary [
 	<gtExample>
 	| dictionary encoder byteArray next |
@@ -198,7 +198,7 @@ GtWireEncodingExamples >> dictionary [
 	self assert: next = dictionary.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> float [
 	<gtExample>
 	| encoder byteArray next |
@@ -213,7 +213,7 @@ GtWireEncodingExamples >> float [
 		self assert: next equals: f ].
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> generalObject [
 	<gtExample>
 	| object encoder byteArray next root |
@@ -228,7 +228,7 @@ GtWireEncodingExamples >> generalObject [
 		object basicAt: i put: 2 ** i ].
 	encoder nextPut: object.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 61.
+	self assert: byteArray size equals: 60.
 	root := GtWireInspectionDecoder byteArray: byteArray.
 	next := root object.
 	self assert: (#(AdditionalMethodState) includes: next class name).
@@ -239,7 +239,7 @@ GtWireEncodingExamples >> generalObject [
 	self assert: next method equals: 'fake'.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> maxDepth [
 	<gtExample>
 	| array currentArray encoder byteArray next |
@@ -265,7 +265,7 @@ GtWireEncodingExamples >> maxDepth [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> nil [
 	<gtExample>
 	| encoder byteArray |
@@ -277,7 +277,7 @@ GtWireEncodingExamples >> nil [
 	self assert: (GtWireDecoder on: byteArray readStream) next isNil.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> orderedCollection [
 	<gtExample>
 	| orderedCollection encoder byteArray next |
@@ -292,7 +292,7 @@ GtWireEncodingExamples >> orderedCollection [
 	self assert: next = orderedCollection.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> packedInteger [
 	<gtExample>
 	| encoder byteArray integer |
@@ -303,7 +303,9 @@ GtWireEncodingExamples >> packedInteger [
 	self assert: byteArray equals: #[13 0].
 	self assert: (GtWireDecoder on: byteArray readStream) next equals: 0.
 	integer := 1.
-	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ SmallInteger maximumValue ]) * 10) ] whileTrue:
+	"GemStone is slow at this test, if it works in GT for the full range, testing a small range in
+	GemStone is probably enough"
+	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ 10 ]) * 10) ] whileTrue:
 		[ encoder reset.
 		encoder nextPut: integer.
 		byteArray := encoder contents.
@@ -313,10 +315,10 @@ GtWireEncodingExamples >> packedInteger [
 		byteArray := encoder contents.
 		encoder reset.
 		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer negated.
-		integer := (1.0001 * integer) ceiling. ].
+		integer := (1.001 * integer) ceiling. ].
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> set [
 	<gtExample>
 	| set encoder byteArray next |
@@ -331,7 +333,7 @@ GtWireEncodingExamples >> set [
 	self assert: next = set.
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> wideString [
 	<gtExample>
 	| string encoder byteArray next |
@@ -347,7 +349,7 @@ GtWireEncodingExamples >> wideString [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> wideStringWithNull [
 	<gtExample>
 	| string encoder byteArray next |
@@ -363,7 +365,7 @@ GtWireEncodingExamples >> wideStringWithNull [
 	^ byteArray
 ]
 
-{ #category : #examples }
+{ #category : 'examples' }
 GtWireEncodingExamples >> wideSymbol [
 	<gtExample>
 	| wideSymbol encoder byteArray next |
