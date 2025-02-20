@@ -1,17 +1,17 @@
 Class {
-	#name : 'GtWireDecoder',
-	#superclass : 'GtWireEncoderDecoder',
+	#name : #GtWireDecoder,
+	#superclass : #GtWireEncoderDecoder,
 	#category : 'GToolkit-WireEncoding'
 }
 
-{ #category : 'instance creation' }
+{ #category : #'instance creation' }
 GtWireDecoder class >> on: aReadStream [
 
 	^ self basicNew initialize stream:
 		(GtWireStream on: aReadStream)
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireDecoder >> next [
 	| type |
 
@@ -19,37 +19,37 @@ GtWireDecoder >> next [
 	^ (self reverseMap at: type) decodeWith: self.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextByteArray [
 
 	^ stream next: self nextSize
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextFloat64 [
 
 	^ stream float64
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextInt64 [
 
 	^ stream int64
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextPackedInteger [
 
 	^ stream packedInteger
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextSize [
 
 	^ stream packedInteger
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextString [
 	"Answer the next string.
 	GemStone requires conversion from a Unicode object to a String (asString)"
@@ -57,7 +57,7 @@ GtWireDecoder >> nextString [
 	^ (stream next: self nextSize) utf8Decoded asString
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : #'as yet unclassified' }
 GtWireDecoder >> nextTypeIdentifier [
 
 	^ stream packedInteger
