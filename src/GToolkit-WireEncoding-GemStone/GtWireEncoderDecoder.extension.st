@@ -74,6 +74,17 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: ExecBlock5 put: GtWireBlockClosureEncoder new;
 		at: ExecBlockN put: GtWireBlockClosureEncoder new;
 		at: Float put: GtWireFloatEncoder new;
+		at: GtRsrEvaluatorFeaturesService put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrEvaluatorFeaturesServiceServer put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrEvaluatorService put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrEvaluatorServiceServer put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrProxyService put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrProxyServiceServer put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrTestService put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrTestServiceClient put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrTestServiceServer put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrWireTransferService put: GtWireGemStoneRsrEncoder new;
+		at: GtRsrWireTransferServiceServer put: GtWireGemStoneRsrEncoder new;
 		at: LargeInteger put: GtWireIntegerEncoder new;
 		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
 		at: RsrPolicyRejectedService put: GtWireGemStoneRsrEncoder new;
