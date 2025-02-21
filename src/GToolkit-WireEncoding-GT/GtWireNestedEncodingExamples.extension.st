@@ -5,8 +5,6 @@ GtWireNestedEncodingExamples >> lejsonEncoding [
 	<gtExample>
 	| object encoder byteArray next |
 
-	LeJsonV4 cleanUp.
-	GtWireEncoderDecoder cleanUp.
 	encoder := GtWireEncoder onByteArray.
 	encoder addMapping: GtWireEncodingExampleInstVarObject
 		to: GtWireLeJsonV4Encoder new.
