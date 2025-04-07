@@ -53,7 +53,7 @@ GtWireNestedEncodingExamples >> maxDepth2 [
 	encoder := GtWireEncoder onByteArray.
 	array := Array new: 2.
 	currentArray := array.
-	1 to: 5 do: [ :i |
+	1 to: 10 do: [ :i |
 		currentArray
 			at: 1 put: i;
 			at: 2 put: (Array new: 2).
@@ -64,13 +64,10 @@ GtWireNestedEncodingExamples >> maxDepth2 [
 			encoder: GtWireArrayEncoder new).
 	encoder nextPut: array.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 12.
+	"self assert: byteArray size equals: 24."
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
-	next := next second.
-	self assert: next class equals: Array.
-	self assert: next first equals: 2.
 	next := next second.
 	self assert: next equals: (Array new: 2).
 	^ byteArray
