@@ -1,6 +1,6 @@
 Class {
-	#name : 'GtWireEncoderDecoder',
-	#superclass : 'Object',
+	#name : #GtWireEncoderDecoder,
+	#superclass : #Object,
 	#instVars : [
 		'stream',
 		'map',
@@ -10,10 +10,10 @@ Class {
 		'GtDefaultMap',
 		'GtDefaultReverseMap'
 	],
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultGsMapMethod [
 	"Generate and save the defaultMap method for GS.
 	Traversing a class hierarchy is very expensive, especially on GemStone.
@@ -31,7 +31,7 @@ GtWireEncoderDecoder class >> generateDefaultGsMapMethod [
 	^ source
 ]
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultGsMapMethodFrom: aDictionary [
 	"Answer the source code for the #defaultMap method from the supplied map dictionary.
 	.gs files don't allow undeclared classes to be referenced... 
@@ -59,7 +59,7 @@ GtWireEncoderDecoder class >> generateDefaultGsMapMethodFrom: aDictionary [
 	^ source
 ]
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultGsReverseMapMethod [
 	"Generate and save the defaultMap method for GS.
 	Traversing a class hierarchy is very expensive, especially on GemStone.
@@ -77,7 +77,7 @@ GtWireEncoderDecoder class >> generateDefaultGsReverseMapMethod [
 	^ source
 ]
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultGtMapMethod [
 	"Generate and save the defaultMap method for Gt.
 	Traversing a class hierarchy is very expensive, especially on GemStone.
@@ -97,7 +97,7 @@ GtWireEncoderDecoder class >> generateDefaultGtMapMethod [
 		classified: '*GToolkit-WireEncoding-GT'.
 ]
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultMapMethodFrom: aDictionary [
 	"Answer the source code for the #defaultMap method from the supplied map dictionary"
 	| source |
@@ -123,7 +123,7 @@ GtWireEncoderDecoder class >> generateDefaultMapMethodFrom: aDictionary [
 	^ source
 ]
 
-{ #category : 'maintenance' }
+{ #category : #maintenance }
 GtWireEncoderDecoder class >> generateDefaultReverseMapMethodFrom: aDictionary [
 	"Answer the source code for the #defaultMap method from the supplied map dictionary"
 	| source |
@@ -149,7 +149,7 @@ GtWireEncoderDecoder class >> generateDefaultReverseMapMethodFrom: aDictionary [
 	^ source
 ]
 
-{ #category : 'initialization' }
+{ #category : #initialization }
 GtWireEncoderDecoder class >> initialize [
 	"NOTE: GtDefaultMap and GtDefaultReverseMap should only be used on GT.
 	On GemStone they should always be nil."
@@ -157,7 +157,7 @@ GtWireEncoderDecoder class >> initialize [
 	GtDefaultMap := GtDefaultReverseMap := nil
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 GtWireEncoderDecoder class >> lookupClass: className [
 	"Answer the class with the supplied name or nil if not found.
 	For GemStone, see STONReader>>lookupClass: for inspiration."
@@ -167,7 +167,7 @@ GtWireEncoderDecoder class >> lookupClass: className [
 		gemstoneDo: [ System myUserProfile objectNamed: className asSymbol ]
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 GtWireEncoderDecoder class >> map: aClass withSubclassesTo: anEncoder in: mapping [
 	"Add the mapping for aClass and all its subclasses"
 	
@@ -177,7 +177,7 @@ GtWireEncoderDecoder class >> map: aClass withSubclassesTo: anEncoder in: mappin
 		mapping at: cls put: anEncoder ].
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder class >> reverseMapFrom: aDictionary [
 	"Construct the reverse map.
 	Build a default reverse map and then  overwrite with the supplied configured encoders."
@@ -194,7 +194,7 @@ GtWireEncoderDecoder class >> reverseMapFrom: aDictionary [
 
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> addMapping: aClass to: anEncoder [
 	"Add/Overwrite the supplied encoder.
 	Be careful not to accidentally overwrite the default map unintentionally."
@@ -206,50 +206,50 @@ GtWireEncoderDecoder >> addMapping: aClass to: anEncoder [
 		[ self reverseMap at: typeIdentifier put: anEncoder ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> contents [
 
 	^ stream contents
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> map [
 
-	^ map ifNil: [ map := self class defaultMap ]
+	^ map ifNil: [ map := self class defaultMap copy ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> map: aDictionary [
 
 	map := aDictionary.
 	reverseMap := nil.
 ]
 
-{ #category : 'initialization' }
+{ #category : #initialization }
 GtWireEncoderDecoder >> reset [
 
 	stream reset
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> reverseMap [
 
 	^ reverseMap ifNil: [ reverseMap := self class reverseMapFrom: self map ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> reverseMap: anObject [
 	reverseMap := anObject
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> stream [
 
 	^ stream ifNil: [ stream := GtWireStream on:
 		(ByteArray new: 64 * 1024) ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireEncoderDecoder >> stream: aGtWireReadWriteStream [
 
 	stream := aGtWireReadWriteStream

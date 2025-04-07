@@ -4,13 +4,45 @@ Class {
 	#instVars : [
 		'signals'
 	],
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #private }
 GtWireNestedEncodingExamples >> cleanUp [
 
 	signals ifNotNil: [ signals stop ].
+]
+
+{ #category : #examples }
+GtWireNestedEncodingExamples >> defaultMaxDepth [
+	<gtExample>
+	| array currentArray encoder byteArray next |
+
+	encoder := GtWireEncoder onByteArray.
+	encoder 
+		maxDepthEncoder: GtWireDummyProxyEncoder new;
+		remainingDepth: 4.
+	array := Array new: 2.
+	currentArray := array.
+	1 to: 10 do: [ :i |
+		currentArray
+			at: 1 put: i;
+			at: 2 put: (Array new: 2).
+		currentArray := currentArray second ].
+	encoder nextPut: array.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 60.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: Array.
+	self assert: next first equals: 1.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second second.
+	self assert: next size equals: 2.
+	self assert: (next allSatisfy: [ :each |
+		each class = GtWireEncodingDummyProxy ]).
+	^ byteArray
 ]
 
 { #category : #examples }

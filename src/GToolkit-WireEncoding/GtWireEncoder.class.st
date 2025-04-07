@@ -5,7 +5,8 @@ Class {
 		'defaultEncoder',
 		'maxObjects',
 		'objectCount',
-		'remainingDepth'
+		'remainingDepth',
+		'maxDepthEncoder'
 	],
 	#category : #'GToolkit-WireEncoding'
 }
@@ -45,6 +46,16 @@ GtWireEncoder >> initialize [
 ]
 
 { #category : #accessing }
+GtWireEncoder >> maxDepthEncoder [
+	^ maxDepthEncoder
+]
+
+{ #category : #accessing }
+GtWireEncoder >> maxDepthEncoder: anObject [
+	maxDepthEncoder := anObject
+]
+
+{ #category : #accessing }
 GtWireEncoder >> maxObjects [
 	^ maxObjects
 ]
@@ -60,8 +71,8 @@ GtWireEncoder >> nextPut: anObject [
 	objectCount > maxObjects ifTrue:
 		[ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
-	remainingDepth < 0 ifTrue:
-		[ self putNil ]
+	remainingDepth <= 0 ifTrue:
+		[ maxDepthEncoder encode: anObject with: self ]
 	ifFalse:
 		[ (self map at: anObject class
 			ifAbsent: [ defaultEncoder value: anObject ])
@@ -143,8 +154,11 @@ GtWireEncoder >> remainingDepth [
 ]
 
 { #category : #accessing }
-GtWireEncoder >> remainingDepth: anObject [
-	remainingDepth := anObject
+GtWireEncoder >> remainingDepth: anInteger [
+	"Set the remaining depth.
+	The count is relative to the first object, so increase by 1."
+
+	remainingDepth := anInteger + 1
 ]
 
 { #category : #initialization }
