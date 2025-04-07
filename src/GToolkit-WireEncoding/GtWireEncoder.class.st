@@ -47,6 +47,15 @@ GtWireEncoder >> initialize [
 ]
 
 { #category : #accessing }
+GtWireEncoder >> isMaxDepthLiteral: anObject [
+	"Answer a boolean indicating whether the supplied object is considered a literal, and so can be returned even if the max depth has been reached.
+	Based on observed behaviour by GemStone Gbs."
+
+	^ { Number. String. Boolean. } anySatisfy: [ :cls |
+		anObject isKindOf: cls ].
+]
+
+{ #category : #accessing }
 GtWireEncoder >> maxDepthEncoder [
 	^ maxDepthEncoder
 ]
@@ -68,21 +77,27 @@ GtWireEncoder >> maxObjects: anObject [
 
 { #category : #accessing }
 GtWireEncoder >> nextPut: anObject [
-
-	objectCount > maxObjects ifTrue:
-		[ self error: 'Exceeded maximum object count' ].
+	| saveDepth |
+	objectCount > maxObjects
+		ifTrue: [ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
-	"remainingDepth is relative to the first object, 
-	but we decrement on the first object as well,
-	so compare to -1."
-	remainingDepth <= -1 ifTrue:
-		[ maxDepthEncoder encode: anObject with: self ]
-	ifFalse:
-		[ (self map at: anObject class
-			ifAbsent: [ defaultEncoder value: anObject ])
-				encode: anObject with: self ].
+	saveDepth := remainingDepth.
+	"remainingDepth includes the first (root) object, so compare to -1."
+	remainingDepth <= -1 ifTrue: 
+		[ (self isMaxDepthLiteral: anObject)
+			ifTrue: [ self privateNextPutMapEncoded: anObject ]
+			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
+		ifFalse:
+			[ self privateNextPutMapEncoded: anObject ].
 	objectCount := objectCount + 1.
-	remainingDepth := remainingDepth + 1.
+	remainingDepth := remainingDepth + 1
+]
+
+{ #category : #accessing }
+GtWireEncoder >> privateNextPutMapEncoded: anObject [
+	(self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ])
+		encode: anObject
+		with: self
 ]
 
 { #category : #'private - encoding' }
@@ -160,7 +175,7 @@ GtWireEncoder >> remainingDepth [
 { #category : #accessing }
 GtWireEncoder >> remainingDepth: anInteger [
 	"Set the remaining depth.
-	The count is relative to the first object."
+	The count includes the first (root) object."
 
 	remainingDepth := anInteger
 ]

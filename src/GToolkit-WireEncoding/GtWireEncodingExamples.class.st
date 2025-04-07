@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireEncodingExamples,
 	#superclass : #Object,
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #examples }
@@ -256,12 +256,12 @@ GtWireEncodingExamples >> maxDepth [
 		remainingDepth: 2;
 		nextPut: array.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 8.
+	self assert: byteArray size equals: 9.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
 	next := next second.
-	self assert: next equals: (Array new: 2).
+	self assert: next equals: #(2 nil).
 	^ byteArray
 ]
 
