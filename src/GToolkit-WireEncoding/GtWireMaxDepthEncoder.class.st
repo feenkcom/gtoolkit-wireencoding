@@ -33,15 +33,15 @@ GtWireMaxDepthEncoder >> depth: anObject [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireMaxDepthEncoder >> encode: anInteger with: aGtWireEncoderContext [
+GtWireMaxDepthEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth min: depth).
+	aGtWireEncoderContext remainingDepth: (oldDepth min: depth) - 1.
 	encoder
-		ifNil: [ aGtWireEncoderContext nextPut: anInteger ]
-		ifNotNil: [ encoder encode: anInteger with: aGtWireEncoderContext ].
-	aGtWireEncoderContext remainingDepth: oldDepth.
+		ifNil: [ aGtWireEncoderContext nextPut: anObject ]
+		ifNotNil: [ encoder encode: anObject with: aGtWireEncoderContext ].
+	aGtWireEncoderContext remainingDepth: oldDepth - 1.
 ]
 
 { #category : #accessing }

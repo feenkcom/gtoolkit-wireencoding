@@ -10,7 +10,7 @@ Class {
 		'GtDefaultMap',
 		'GtDefaultReverseMap'
 	],
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #maintenance }
@@ -215,7 +215,7 @@ GtWireEncoderDecoder >> contents [
 { #category : #accessing }
 GtWireEncoderDecoder >> map [
 
-	^ map ifNil: [ map := self class defaultMap ]
+	^ map ifNil: [ map := self class defaultMap copy ]
 ]
 
 { #category : #accessing }
