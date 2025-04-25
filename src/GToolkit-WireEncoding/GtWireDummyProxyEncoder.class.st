@@ -4,9 +4,6 @@ GtWireDummyProxyEncoder is used for testing as the real proxy encoders require t
 Class {
 	#name : #GtWireDummyProxyEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#instVars : [
-		'object'
-	],
 	#category : #'GToolkit-WireEncoding'
 }
 
@@ -26,17 +23,18 @@ GtWireDummyProxyEncoder >> decodeWith: aGtWireEncoderContext [
 { #category : #'encoding - decoding' }
 GtWireDummyProxyEncoder >> encode: anObject with: aGtWireEncoderContext [
 
+	anObject ifNil:
+		[ ^ GtWireNilEncoder new encode: anObject with: aGtWireEncoderContext ].
+
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
-		putString: anObject printString.
+		putString: anObject storeString.
 ]
 
-{ #category : #accessing }
-GtWireDummyProxyEncoder >> object [
-	^ object
-]
+{ #category : #'as yet unclassified' }
+GtWireDummyProxyEncoder >> isProxyObjectEncoder [
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
 
-{ #category : #accessing }
-GtWireDummyProxyEncoder >> object: anObject [
-	object := anObject
+	^ true.
 ]

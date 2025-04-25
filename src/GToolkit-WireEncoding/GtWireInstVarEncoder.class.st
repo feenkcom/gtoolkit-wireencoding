@@ -10,7 +10,7 @@ Class {
 	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 GtWireInstVarEncoder class >> typeIdentifier [
 
 	^ 20
@@ -54,4 +54,16 @@ GtWireInstVarEncoder >> instVarMap [
 { #category : #accessing }
 GtWireInstVarEncoder >> instVarMap: anObject [
 	instVarMap := anObject
+]
+
+{ #category : #'private - helpers' }
+GtWireInstVarEncoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	instVarMap associationsDo: [ :assoc |
+		(matchBlock value: assoc value) ifTrue:
+			[ assoc value: replacementBlock value ]
+		ifFalse:
+			[ assoc value replaceMappingsMatching: matchBlock with: replacementBlock ] ]
 ]

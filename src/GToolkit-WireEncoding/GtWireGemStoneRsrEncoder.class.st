@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireGemStoneRsrEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
@@ -34,4 +34,12 @@ GtWireGemStoneRsrEncoder >> encode: aRsrService with: aGtWireEncoderContext [
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
 		nextPut: aRsrService _id
+]
+
+{ #category : #testing }
+GtWireGemStoneRsrEncoder >> isProxyObjectEncoder [
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
 ]

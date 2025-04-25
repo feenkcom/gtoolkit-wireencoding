@@ -83,7 +83,7 @@ GtWireEncoder >> nextPut: anObject [
 	remainingDepth := remainingDepth - 1.
 	saveDepth := remainingDepth.
 	"remainingDepth includes the first (root) object, so compare to -1."
-	remainingDepth <= -1 ifTrue: 
+	remainingDepth <= 0 ifTrue: 
 		[ (self isMaxDepthLiteral: anObject)
 			ifTrue: [ self privateNextPutMapEncoded: anObject ]
 			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
@@ -175,9 +175,11 @@ GtWireEncoder >> remainingDepth [
 { #category : #accessing }
 GtWireEncoder >> remainingDepth: anInteger [
 	"Set the remaining depth.
-	The count includes the first (root) object."
+	The count includes the first (root) object.
+	The '+ 1' is required here as the remainingDepth is being set prior to the first object being written.
+	When a {{gtClass:GtWireMaxDepthEncoder}} is used it is being set after the first object being written."
 
-	remainingDepth := anInteger
+	remainingDepth := anInteger + 1.
 ]
 
 { #category : #initialization }

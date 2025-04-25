@@ -53,3 +53,11 @@ GtWireMinDepthEncoder >> encoder [
 GtWireMinDepthEncoder >> encoder: anObject [
 	encoder := anObject
 ]
+
+{ #category : #'private - helpers' }
+GtWireMinDepthEncoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	encoder replaceMappingsMatching: matchBlock with: replacementBlock
+]

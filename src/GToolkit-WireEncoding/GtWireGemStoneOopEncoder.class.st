@@ -32,3 +32,11 @@ GtWireGemStoneOopEncoder >> encode: anObject with: aGtWireEncoderContext [
 		putTypeIdentifier: self class typeIdentifier;
 		putPackedInteger: anObject asOop
 ]
+
+{ #category : #testing }
+GtWireGemStoneOopEncoder >> isProxyObjectEncoder [
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+]
