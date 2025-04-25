@@ -5,6 +5,39 @@ Class {
 }
 
 { #category : #examples }
+GtWireGbsReplicationSpecEncodingExamples >> gbsAllInstVarsExample [
+	"Check that all instance variables are encoded with `replicate` by default"
+	<gtExample>
+	| replicationSpec object encoder byteArray decoder next now |
+
+	replicationSpec := {
+		GtWireEncodingExampleInstVarObject -> #(). } asDictionary.
+	now := DateAndTime now.
+	object := GtWireEncodingExampleInstVarObject new
+		var1: 1;
+		var2: '2';
+		var3: now;
+		var4: #(1 2 3).
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new
+		update: encoder from: replicationSpec.
+	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 equals: 1.
+	self assert: next var2 equals: '2'.
+	self assert: next var3 equals: now.
+	self assert: next var4 equals: #(1 2 3).
+	^ byteArray
+]
+
+{ #category : #examples }
 GtWireGbsReplicationSpecEncodingExamples >> gbsMaxDepthToWireExample [
 	"Demonstrate `max` and `min` keywords in a replication spec"
 	<gtExample>
@@ -51,6 +84,7 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsToWireExample1 [
 			#(var1 replicate)
 			#(var2 forwarder)
 			#(var3 stub)
+			"var4 is default, replicate"
 			). } asDictionary.
 	object := GtWireEncodingExampleInstVarObject new
 		var1: (GtWireEncodingExampleInstVarObject new
@@ -60,7 +94,7 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsToWireExample1 [
 		var3: (GtWireEncodingExampleInstVarObject new
 					var1: 'stub (proxy)');
 		var4: (GtWireEncodingExampleInstVarObject new
-					var1: 'not sent').
+					var1: 'default replication').
 	encoder := GtWireEncoder onByteArray.
 	GtWireGbsReplicationSpecConverter new
 		update: encoder from: replicationSpec.
@@ -81,5 +115,5 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsToWireExample1 [
 	self assert: next var2 description equals: '(GtWireEncodingExampleInstVarObject basicNew instVarAt: 1 put: ''forwarded (proxy)''; instVarAt: 2 put: nil; instVarAt: 3 put: nil; instVarAt: 4 put: nil; yourself)'.
 	self assert: next var3 class equals: GtWireEncodingDummyProxy.
 	self assert: next var3 description equals: '(GtWireEncodingExampleInstVarObject basicNew instVarAt: 1 put: ''stub (proxy)''; instVarAt: 2 put: nil; instVarAt: 3 put: nil; instVarAt: 4 put: nil; yourself)'.
-	self assert: next var4 isNil.
+	self assert: next var4 var1 equals: 'default replication'.
 ]

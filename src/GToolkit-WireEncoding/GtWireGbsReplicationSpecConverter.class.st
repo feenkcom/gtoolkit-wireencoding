@@ -85,13 +85,14 @@ GtWireGbsReplicationSpecConverter >> stubEncodingFor: aGtWireEncoder class: aCla
 
 { #category : #actions }
 GtWireGbsReplicationSpecConverter >> update: aGtWireEncoder class: aClass spec: aSpecArray [
-	| flattenedSpec objectEncoder rsWireMap instVarMap |
+	| flattenedSpec objectEncoder rsWireMap instVarMap defaultSpec |
 
-	flattenedSpec := self flattenSpec: aSpecArray.
+	defaultSpec := aClass allInstVarNames collect: [ :name | { name. #replicate. } ].
+	flattenedSpec := self flattenSpec: defaultSpec, aSpecArray.
 	rsWireMap := self replicationSpecKeywordToWireObjectEncoderMap.
 	objectEncoder := GtWireInstVarEncoder new.
 	instVarMap := Dictionary new.
-	aSpecArray do: [ :anArray |
+	flattenedSpec do: [ :anArray |
 		self perform: (rsWireMap at: anArray second)
 			withArguments: { aGtWireEncoder. aClass. objectEncoder. instVarMap. anArray. }
 		].

@@ -188,3 +188,12 @@ GtWireEncoder >> reset [
 	super reset.
 	objectCount := 0.
 ]
+
+{ #category : #'private - encoding' }
+GtWireEncoder >> setRemainingDepth: anInteger [
+	"Set the remaining depth.
+	The count includes the first (root) object.
+	This method is internal and should only be used during encoding."
+
+	remainingDepth := anInteger.
+]

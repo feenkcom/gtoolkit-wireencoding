@@ -37,7 +37,7 @@ GtWireMaxDepthEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth min: depth).
+	aGtWireEncoderContext setRemainingDepth: (oldDepth min: depth).
 	encoder
 		ifNil: [ aGtWireEncoderContext nextPut: anObject ]
 		ifNotNil: [ encoder encode: anObject with: aGtWireEncoderContext ].
