@@ -51,13 +51,28 @@ GtWireObjectEncoder >> encode: anObject with: aGtWireEncoderContext [
 	aGtWireEncoderContext putTypeIdentifier: self class typeIdentifier
 ]
 
+{ #category : #testing }
+GtWireObjectEncoder >> isProxyObjectEncoder [
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ false.
+]
+
 { #category : #'as yet unclassified' }
 GtWireObjectEncoder >> name [
 
 	^ self class name
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'private - helpers' }
+GtWireObjectEncoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers.
+	Overwritten by encoders as required."
+]
+
+{ #category : #accessing }
 GtWireObjectEncoder >> typeIdentifier [
 
 	^ self class typeIdentifier

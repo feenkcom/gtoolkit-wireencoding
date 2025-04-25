@@ -37,11 +37,11 @@ GtWireMaxDepthEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth min: depth) - 1.
+	aGtWireEncoderContext setRemainingDepth: (oldDepth min: depth).
 	encoder
 		ifNil: [ aGtWireEncoderContext nextPut: anObject ]
 		ifNotNil: [ encoder encode: anObject with: aGtWireEncoderContext ].
-	aGtWireEncoderContext remainingDepth: oldDepth - 1.
+	aGtWireEncoderContext remainingDepth: oldDepth.
 ]
 
 { #category : #accessing }
@@ -52,4 +52,13 @@ GtWireMaxDepthEncoder >> encoder [
 { #category : #accessing }
 GtWireMaxDepthEncoder >> encoder: anObject [
 	encoder := anObject
+]
+
+{ #category : #'private - helpers' }
+GtWireMaxDepthEncoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	encoder ifNotNil:
+		[ encoder replaceMappingsMatching: matchBlock with: replacementBlock ]
 ]

@@ -225,6 +225,18 @@ GtWireEncoderDecoder >> map: aDictionary [
 	reverseMap := nil.
 ]
 
+{ #category : #'private - helpers' }
+GtWireEncoderDecoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	self map associationsDo: [ :assoc |
+		(matchBlock value: assoc value) ifTrue:
+			[ assoc value: replacementBlock value ]
+		ifFalse:
+			[ assoc value replaceMappingsMatching: matchBlock with: replacementBlock ] ]
+]
+
 { #category : #initialization }
 GtWireEncoderDecoder >> reset [
 
