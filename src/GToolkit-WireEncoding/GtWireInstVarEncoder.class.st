@@ -40,10 +40,9 @@ GtWireInstVarEncoder >> encode: anObject with: aGtWireEncoderContext [
 		putSize: instVarMap size.
 	aGtWireEncoderContext nextPut: anObject class name.
 	instVarMap keysAndValuesDo: [ :key :value |
-		aGtWireEncoderContext nextPut: key.
-		value
-			ifNil: [ aGtWireEncoderContext nextPut: (anObject instVarNamed: key) ]
-			ifNotNil: [ value encode: (anObject instVarNamed: key) with: aGtWireEncoderContext ] ].
+		aGtWireEncoderContext 
+			nextPut: key;
+			nextPut: (anObject instVarNamed: key) objectEncoder: value ].
 ]
 
 { #category : #accessing }
