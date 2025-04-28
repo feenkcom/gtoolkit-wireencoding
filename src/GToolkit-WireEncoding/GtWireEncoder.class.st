@@ -67,29 +67,43 @@ GtWireEncoder >> maxDepthEncoder: anObject [
 
 { #category : #accessing }
 GtWireEncoder >> maxObjects [
+	"Answer the maximum number of objects encoded.
+	This is intended as a guard against infinite recursion and is only approximate,
+	as enforcing max or min depth is currently counted as an object."
+	<return: #Integer>
+
 	^ maxObjects
 ]
 
 { #category : #accessing }
-GtWireEncoder >> maxObjects: anObject [
-	maxObjects := anObject
+GtWireEncoder >> maxObjects: anInteger [
+	"Set the maximum number of objects encoded.
+	This is intended as a guard against infinite recursion and is only approximate,
+	as enforcing max or min depth is currently counted as an object."
+
+	maxObjects := anInteger
 ]
 
 { #category : #accessing }
 GtWireEncoder >> nextPut: anObject [
+
+	self nextPut: anObject objectEncoder: nil
+]
+
+{ #category : #accessing }
+GtWireEncoder >> nextPut: anObject objectEncoder: objectEncoder [
 	| saveDepth |
 	objectCount > maxObjects
 		ifTrue: [ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
 	saveDepth := remainingDepth.
 	"remainingDepth includes the first (root) object, so compare to -1."
-	remainingDepth <= 0 ifTrue: 
+	remainingDepth < 0 ifTrue: 
 		[ (self isMaxDepthLiteral: anObject)
-			ifTrue: [ self privateNextPutMapEncoded: anObject ]
+			ifTrue: [ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ]
 			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
 		ifFalse:
-			[ self privateNextPutMapEncoded: anObject ].
-	objectCount := objectCount + 1.
+			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ].
 	remainingDepth := remainingDepth + 1
 ]
 
@@ -98,6 +112,16 @@ GtWireEncoder >> privateNextPutMapEncoded: anObject [
 	(self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ])
 		encode: anObject
 		with: self
+]
+
+{ #category : #accessing }
+GtWireEncoder >> privateNextPutMapEncoded: anObject objectEncoder: objectEncoder [
+
+	( objectEncoder ifNil:
+		[ self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ] ])
+			encode: anObject
+			with: self.
+	objectCount := objectCount + 1.
 ]
 
 { #category : #'private - encoding' }
@@ -175,11 +199,9 @@ GtWireEncoder >> remainingDepth [
 { #category : #accessing }
 GtWireEncoder >> remainingDepth: anInteger [
 	"Set the remaining depth.
-	The count includes the first (root) object.
-	The '+ 1' is required here as the remainingDepth is being set prior to the first object being written.
-	When a {{gtClass:GtWireMaxDepthEncoder}} is used it is being set after the first object being written."
+	The count includes the first (root) or current object."
 
-	remainingDepth := anInteger + 1.
+	remainingDepth := anInteger
 ]
 
 { #category : #initialization }
@@ -187,13 +209,4 @@ GtWireEncoder >> reset [
 
 	super reset.
 	objectCount := 0.
-]
-
-{ #category : #'private - encoding' }
-GtWireEncoder >> setRemainingDepth: anInteger [
-	"Set the remaining depth.
-	The count includes the first (root) object.
-	This method is internal and should only be used during encoding."
-
-	remainingDepth := anInteger.
 ]

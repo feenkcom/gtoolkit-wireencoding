@@ -34,13 +34,13 @@ GtWireMaxDepthEncoder >> depth: anObject [
 
 { #category : #'encoding - decoding' }
 GtWireMaxDepthEncoder >> encode: anObject with: aGtWireEncoderContext [
+	"Ensure the remaining depth is no more than the receiver's depth - 1.
+	Subtract one from the depth since we are inside anObject's nextPut:objectEncoder: and the remaining depth has already been decremented for anObject."
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext setRemainingDepth: (oldDepth min: depth).
-	encoder
-		ifNil: [ aGtWireEncoderContext nextPut: anObject ]
-		ifNotNil: [ encoder encode: anObject with: aGtWireEncoderContext ].
+	aGtWireEncoderContext remainingDepth: (oldDepth min: (depth - 1)).
+	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 ]
 

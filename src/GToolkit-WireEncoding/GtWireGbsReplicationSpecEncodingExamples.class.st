@@ -41,7 +41,6 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsAllInstVarsExample [
 GtWireGbsReplicationSpecEncodingExamples >> gbsMaxDepthToWireExample [
 	"Demonstrate `max` and `min` keywords in a replication spec"
 	<gtExample>
-	<noTest>
 	| replicationSpec object encoder byteArray decoder next array currentArray |
 
 	replicationSpec := {
