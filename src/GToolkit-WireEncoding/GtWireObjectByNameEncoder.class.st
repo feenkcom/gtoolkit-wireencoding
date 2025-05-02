@@ -38,7 +38,7 @@ GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| instVarNames namesAndValues |
 
-	anObject isGtProxyObject ifTrue:
+	(anObject isKindOf: RsrService) ifTrue:
 		[ self error: 'Attempt to encode proxy by name' ].
 	instVarNames := anObject class allInstVarNames.
 	namesAndValues := OrderedCollection new.
