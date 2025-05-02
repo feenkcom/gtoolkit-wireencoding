@@ -65,6 +65,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: False put: GtWireFalseEncoder new;
 		at: FullBlockClosure put: GtWireBlockClosureEncoder new;
 		at: GspoByteArray put: GtWireGemStoneRsrEncoder new;
+		at: GspoDictionary put: GtWireGemStoneRsrEncoder new;
 		at: GspoGtRemotePhlowDeclarativeTestForCustomProxyInspectable put: GtWireGemStoneRsrEncoder new;
 		at: GspoGtRemotePhlowDeclarativeTestInspectable put: GtWireGemStoneRsrEncoder new;
 		at: GspoGtRmGeoGpsRecord put: GtWireGemStoneRsrEncoder new;
@@ -85,7 +86,9 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: GtRsrTestServiceServer put: GtWireGemStoneRsrEncoder new;
 		at: GtRsrWireTransferService put: GtWireGemStoneRsrEncoder new;
 		at: GtRsrWireTransferServiceClient put: GtWireGemStoneRsrEncoder new;
+		at: GtpoBehavior put: GtWireGemStoneRsrEncoder new;
 		at: GtpoBlockClosure put: GtWireGemStoneRsrEncoder new;
+		at: GtpoClass put: GtWireGemStoneRsrEncoder new;
 		at: GtpoDateTime put: GtWireGemStoneRsrEncoder new;
 		at: GtpoExecBlock put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGsNMethod put: GtWireGemStoneRsrEncoder new;
@@ -106,6 +109,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: GtpoGtRemotePhlowViewedObject put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRsrEvaluationExceptionInformation put: GtWireGemStoneRsrEncoder new;
 		at: GtpoMetaclass3 put: GtWireGemStoneRsrEncoder new;
+		at: GtpoModule put: GtWireGemStoneRsrEncoder new;
 		at: LargeNegativeInteger put: GtWireNegativeIntegerEncoder new;
 		at: LargePositiveInteger put: GtWirePositiveIntegerEncoder new;
 		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
@@ -190,6 +194,7 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 22 put: GtWireObjectByNameEncoder new;
 		at: 23 put: GtWireGemStoneOopEncoder new;
 		at: 24 put: GtWireGemStoneRsrEncoder new;
+		at: 25 put: GtWireDummyProxyEncoder new;
 		yourself.
 
 ]
