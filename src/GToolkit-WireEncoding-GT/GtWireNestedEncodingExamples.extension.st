@@ -3,10 +3,11 @@ Extension { #name : #GtWireNestedEncodingExamples }
 { #category : #'*GToolkit-WireEncoding-GT' }
 GtWireNestedEncodingExamples >> lejsonEncoding [
 	<gtExample>
+	<return: #GtWireNestedEncodingExamples>
 	| object encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	encoder addMapping: GtWireEncodingExampleInstVarObject
+	encoder
+		addMapping: GtWireEncodingExampleInstVarObject
 		to: GtWireLeJsonV4Encoder new.
 	object := GtWireEncodingExampleInstVarObject new.
 	object
@@ -17,25 +18,23 @@ GtWireNestedEncodingExamples >> lejsonEncoding [
 	self assert: byteArray size equals: 88.
 	next := (GtWireInspectionDecoder on: byteArray readStream) next.
 	self assert: next class equals: GtWireEncodingExampleInstVarObject.
-	self assert: next = object.
+	self assert: next = object
 ]
 
 { #category : #'*GToolkit-WireEncoding-GT' }
 GtWireNestedEncodingExamples >> mixedEncoding [
 	<gtExample>
 	<after: #cleanUp>
+	<return: #GtWireNestedEncodingExamples>
 	| object mixedMapping encoder decoder byteArray next |
-
 	"signals := CircularMemoryLogger new startFor: GtWireEncodingSignal."
 	encoder := GtWireEncoder onByteArray.
 	mixedMapping := GtWireInstVarEncoder new.
-	mixedMapping instVarMap: {
-			#var1 -> nil.
-			#var2 -> GtWireLeJsonV4Encoder new.
-			#var3 -> GtWireStonEncoder new.
-		} asDictionary.
-	encoder addMapping: GtWireEncodingExampleInstVarObject
-		to: mixedMapping.
+	mixedMapping
+		instVarMap: {#var1 -> nil.
+				#var2 -> GtWireLeJsonV4Encoder new.
+				#var3 -> GtWireStonEncoder new} asDictionary.
+	encoder addMapping: GtWireEncodingExampleInstVarObject to: mixedMapping.
 	object := GtWireEncodingExampleInstVarObject new.
 	object
 		var1: #[1 2 3 4];
@@ -51,5 +50,5 @@ GtWireNestedEncodingExamples >> mixedEncoding [
 	self assert: next var1 = object var1.
 	self assert: next var2 = object var2.
 	self assert: next var3 = object var3.
-	self assert: next var4 isNil.
+	self assert: next var4 isNil
 ]
