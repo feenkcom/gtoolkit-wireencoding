@@ -18,6 +18,7 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: Association put: GtWireAssociationEncoder new;
 		at: False put: GtWireFalseEncoder new;
 		at: True put: GtWireTrueEncoder new;
+		at: Bitmap put: GtWireBitmapEncoder new;
 		at: ByteArray put: GtWireByteArrayEncoder new;
 		at: ByteString put: GtWireStringEncoder new;
 		at: WideString put: GtWireStringEncoder new;
@@ -54,6 +55,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 	^ IdentityDictionary new
 		at: Array put: GtWireArrayEncoder new;
 		at: Association put: GtWireAssociationEncoder new;
+		at: Bitmap put: GtWireBitmapEncoder new;
 		at: BoxedFloat64 put: GtWireFloatEncoder new;
 		at: ByteArray put: GtWireByteArrayEncoder new;
 		at: ByteString put: GtWireStringEncoder new;
@@ -195,6 +197,7 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 23 put: GtWireGemStoneOopEncoder new;
 		at: 24 put: GtWireGemStoneRsrEncoder new;
 		at: 25 put: GtWireDummyProxyEncoder new;
+		at: 26 put: GtWireBitmapEncoder new;
 		yourself.
 
 ]

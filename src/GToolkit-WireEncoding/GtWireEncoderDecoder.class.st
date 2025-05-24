@@ -95,6 +95,7 @@ GtWireEncoderDecoder class >> generateDefaultGtMapMethod [
 	self class
 		compile: source
 		classified: '*GToolkit-WireEncoding-GT'.
+	self  initialize.
 ]
 
 { #category : #maintenance }
