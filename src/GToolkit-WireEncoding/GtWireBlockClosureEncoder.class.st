@@ -14,7 +14,8 @@ GtWireBlockClosureEncoder class >> typeIdentifier [
 GtWireBlockClosureEncoder >> decodeWith: aGtWireEncoderContext [
 
 	^ self
-		gtDo: [ BlockClosure evaluate: aGtWireEncoderContext next ]
+		gtDo: [ BlockClosure compiler 
+			evaluate: aGtWireEncoderContext next ]
 		gemstoneDo: [ | bindings receiver |
 			bindings := GsCurrentSession currentSession symbolList.
 			receiver := self.
