@@ -76,7 +76,7 @@ removeallclassmethods GtWireInspectionDecoder
 doit
 (GtWireEncoderDecoder
 	subclass: 'GtWireEncoder'
-	instVarNames: #(defaultEncoder maxObjects objectCount remainingDepth)
+	instVarNames: #(defaultEncoder maxObjects objectCount remainingDepth maxDepthEncoder)
 	classVars: #()
 	classInstVars: #()
 	poolDictionaries: #()
@@ -90,6 +90,24 @@ true.
 
 removeallmethods GtWireEncoder
 removeallclassmethods GtWireEncoder
+
+doit
+(Object
+	subclass: 'GtWireEncodingDummyProxy'
+	instVarNames: #(description)
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireEncodingDummyProxy
+removeallclassmethods GtWireEncodingDummyProxy
 
 doit
 (Object
@@ -144,6 +162,61 @@ true.
 
 removeallmethods GtWireEncodingInspectionObject
 removeallclassmethods GtWireEncodingInspectionObject
+
+doit
+(Object
+	subclass: 'GtWireGbsReplicationSpecConverter'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireGbsReplicationSpecConverter takes a dictionary of Gbs replicationSpecs and modifies the supplied {{gtClass:GtWireEncoder}} to match the dictionary.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGbsReplicationSpecConverter
+removeallclassmethods GtWireGbsReplicationSpecConverter
+
+doit
+(Object
+	subclass: 'GtWireGbsReplicationSpecConverterExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGbsReplicationSpecConverterExamples
+removeallclassmethods GtWireGbsReplicationSpecConverterExamples
+
+doit
+(Object
+	subclass: 'GtWireGbsReplicationSpecEncodingExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGbsReplicationSpecEncodingExamples
+removeallclassmethods GtWireGbsReplicationSpecEncodingExamples
 
 doit
 (Object
@@ -471,6 +544,25 @@ removeallclassmethods GtWireDateAndTimeEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireDummyProxyEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireDummyProxyEncoder is used for testing as the real proxy encoders require the associated environment to be instantiated.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireDummyProxyEncoder
+removeallclassmethods GtWireDummyProxyEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireFloatEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -670,6 +762,25 @@ removeallclassmethods GtWireObjectByNameEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireReplicationEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireReplicationEncoder uses the current mapping for the supplied object, unless it would return a type of proxy, in which case {{gtClass:GtWireObjectByNameEncoder}} is used.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireReplicationEncoder
+removeallclassmethods GtWireReplicationEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireStonEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -822,6 +933,7 @@ generateDefaultGtMapMethod
 	self class
 		compile: source
 		classified: '*GToolkit-WireEncoding-GT'.
+	self  initialize.
 %
 
 category: 'maintenance'
@@ -952,7 +1064,7 @@ category: 'accessing'
 method: GtWireEncoderDecoder
 map
 
-	^ map ifNil: [ map := self class defaultMap ]
+	^ map ifNil: [ map := self class defaultMap copy ]
 %
 
 category: 'accessing'
@@ -961,6 +1073,19 @@ map: aDictionary
 
 	map := aDictionary.
 	reverseMap := nil.
+%
+
+category: 'private - helpers'
+method: GtWireEncoderDecoder
+replaceMappingsMatching: matchBlock with: replacementBlock
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	self map associationsDo: [ :assoc |
+		(matchBlock value: assoc value) ifTrue:
+			[ assoc value: replacementBlock value ]
+		ifFalse:
+			[ assoc value replaceMappingsMatching: matchBlock with: replacementBlock ] ]
 %
 
 category: 'initialization'
@@ -1250,35 +1375,94 @@ initialize
 	maxObjects := 500000.
 	objectCount := 0.
 	remainingDepth := maxObjects.
+	maxDepthEncoder := GtWireNilEncoder new.
+%
+
+category: 'accessing'
+method: GtWireEncoder
+isMaxDepthLiteral: anObject
+	"Answer a boolean indicating whether the supplied object is considered a literal, and so can be returned even if the max depth has been reached.
+	Based on observed behaviour by GemStone Gbs."
+
+	^ { Number. String. Boolean. } anySatisfy: [ :cls |
+		anObject isKindOf: cls ].
+%
+
+category: 'accessing'
+method: GtWireEncoder
+maxDepthEncoder
+	^ maxDepthEncoder
+%
+
+category: 'accessing'
+method: GtWireEncoder
+maxDepthEncoder: anObject
+	maxDepthEncoder := anObject
 %
 
 category: 'accessing'
 method: GtWireEncoder
 maxObjects
+	"Answer the maximum number of objects encoded.
+	This is intended as a guard against infinite recursion and is only approximate,
+	as enforcing max or min depth is currently counted as an object."
+	<return: #Integer>
+
 	^ maxObjects
 %
 
 category: 'accessing'
 method: GtWireEncoder
-maxObjects: anObject
-	maxObjects := anObject
+maxObjects: anInteger
+	"Set the maximum number of objects encoded.
+	This is intended as a guard against infinite recursion and is only approximate,
+	as enforcing max or min depth is currently counted as an object."
+
+	maxObjects := anInteger
 %
 
 category: 'accessing'
 method: GtWireEncoder
 nextPut: anObject
 
-	objectCount > maxObjects ifTrue:
-		[ self error: 'Exceeded maximum object count' ].
+	self nextPut: anObject objectEncoder: nil
+%
+
+category: 'accessing'
+method: GtWireEncoder
+nextPut: anObject objectEncoder: objectEncoder
+	| saveDepth |
+	objectCount > maxObjects
+		ifTrue: [ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
-	remainingDepth < 0 ifTrue:
-		[ self putNil ]
-	ifFalse:
-		[ (self map at: anObject class
-			ifAbsent: [ defaultEncoder value: anObject ])
-				encode: anObject with: self ].
+	saveDepth := remainingDepth.
+	"remainingDepth includes the first (root) object, so compare to -1."
+	remainingDepth < 0 ifTrue: 
+		[ (self isMaxDepthLiteral: anObject)
+			ifTrue: [ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ]
+			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
+		ifFalse:
+			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ].
+	remainingDepth := remainingDepth + 1
+%
+
+category: 'accessing'
+method: GtWireEncoder
+privateNextPutMapEncoded: anObject
+	(self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ])
+		encode: anObject
+		with: self
+%
+
+category: 'accessing'
+method: GtWireEncoder
+privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
+
+	( objectEncoder ifNil:
+		[ self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ] ])
+			encode: anObject
+			with: self.
 	objectCount := objectCount + 1.
-	remainingDepth := remainingDepth + 1.
 %
 
 category: 'private - encoding'
@@ -1364,8 +1548,11 @@ remainingDepth
 
 category: 'accessing'
 method: GtWireEncoder
-remainingDepth: anObject
-	remainingDepth := anObject
+remainingDepth: anInteger
+	"Set the remaining depth.
+	The count includes the first (root) or current object."
+
+	remainingDepth := anInteger
 %
 
 category: 'initialization'
@@ -1374,6 +1561,22 @@ reset
 
 	super reset.
 	objectCount := 0.
+%
+
+! Class implementation for 'GtWireEncodingDummyProxy'
+
+!		Instance methods for 'GtWireEncodingDummyProxy'
+
+category: 'accessing'
+method: GtWireEncodingDummyProxy
+description
+	^ description
+%
+
+category: 'accessing'
+method: GtWireEncodingDummyProxy
+description: anObject
+	description := anObject
 %
 
 ! Class implementation for 'GtWireEncodingExampleInstVarObject'
@@ -1467,10 +1670,12 @@ category: 'examples'
 method: GtWireEncodingExamples
 array
 	<gtExample>
+	<return: #ByteArray>
 	| array encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	array := { 1. 'hello'. #hello. }.
+	array := {1.
+			'hello'.
+			#hello}.
 	encoder nextPut: array.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 18.
@@ -1484,8 +1689,8 @@ category: 'examples'
 method: GtWireEncodingExamples
 association
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| association encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	association := 1 -> 'one'.
 	encoder nextPut: association.
@@ -1493,15 +1698,15 @@ association
 	self assert: byteArray size equals: 8.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Association.
-	self assert: next = association.
+	self assert: next = association
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 blockClosure
 	<gtExample>
+	<return: #ByteArray>
 	| blockClosure encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a :b | a + b ].
 	encoder nextPut: blockClosure.
@@ -1517,8 +1722,8 @@ category: 'examples'
 method: GtWireEncodingExamples
 boolean
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| encoder byteArray decoder |
-
 	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: true.
 	encoder nextPut: false.
@@ -1526,15 +1731,15 @@ boolean
 	self assert: byteArray size equals: 2.
 	decoder := GtWireDecoder on: byteArray readStream.
 	self assert: decoder next.
-	self assert: decoder next not.
+	self assert: decoder next not
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 byteArray
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| source encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	source := #[3 1 4 1 5].
 	encoder nextPut: source.
@@ -1542,15 +1747,15 @@ byteArray
 	self assert: byteArray size equals: source size + 2.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: ByteArray.
-	self assert: next equals: source.
+	self assert: next equals: source
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 byteString
 	<gtExample>
+	<return: #ByteArray>
 	| string encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	string := 'Hello, World'.
 	encoder nextPut: string.
@@ -1566,10 +1771,10 @@ category: 'examples'
 method: GtWireEncodingExamples
 byteStringWithNull
 	<gtExample>
+	<return: #ByteArray>
 	| string encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	string := 'abc', (String with: Character null), 'def'.
+	string := 'abc' , (String with: Character null) , 'def'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string size + 2.
@@ -1583,15 +1788,14 @@ category: 'examples'
 method: GtWireEncodingExamples
 byteSymbol
 	<gtExample>
+	<return: #ByteArray>
 	| string encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	string := #'Hello, World'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string size + 2.
-	next := (GtWireDecoder on: byteArray readStream) next.
-	"Allow for differences in GT & GS class hierarchy"
+	next := (GtWireDecoder on: byteArray readStream) next.	"Allow for differences in GT & GS class hierarchy"
 	self assert: (#(ByteSymbol Symbol) includes: next class name).
 	self assert: next equals: string.
 	^ byteArray
@@ -1601,23 +1805,23 @@ category: 'examples'
 method: GtWireEncodingExamples
 character
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: $§.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 3.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Character.
-	self assert: next == $§.
+	self assert: next == $§
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 dateAndTime
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| dateAndTime encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	dateAndTime := DateAndTime now.
 	encoder nextPut: dateAndTime.
@@ -1625,23 +1829,25 @@ dateAndTime
 	self assert: (byteArray size between: 10 and: 25).
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: (next isKindOf: DateAndTime).
-	self assert: next = dateAndTime.
+	self assert: next = dateAndTime
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 deepArray
 	<gtExample>
+	<return: #ByteArray>
 	| array currentArray encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	array := Array new: 2.
 	currentArray := array.
-	1 to: 5 do: [ :i |
-		currentArray
-			at: 1 put: i;
-			at: 2 put: (Array new: 2).
-		currentArray := currentArray second ].
+	1
+		to: 5
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
 	encoder nextPut: array.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 24.
@@ -1655,50 +1861,52 @@ category: 'examples'
 method: GtWireEncodingExamples
 dictionary
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| dictionary encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	dictionary := {
-		 1 -> 'one'.
-		 2 -> 'two' } asDictionary.
+	dictionary := {1 -> 'one'.
+			2 -> 'two'} asDictionary.
 	encoder nextPut: dictionary.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 16.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Dictionary.
-	self assert: next = dictionary.
+	self assert: next = dictionary
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 float
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	{ Float fmin. Float fmax. 1.25. } doWithIndex: [ :f :i |
-		encoder reset.
-		encoder nextPut: f.
-		byteArray := encoder contents.
-		self assert: byteArray size equals: 9.
-		next := (GtWireDecoder on: byteArray readStream) next.
-		self assert: next equals: f ].
+	{Float fmin.
+		Float fmax.
+		1.25}
+		doWithIndex: [ :f :i | 
+			encoder reset.
+			encoder nextPut: f.
+			byteArray := encoder contents.
+			self assert: byteArray size equals: 9.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 generalObject
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| object encoder byteArray next root |
-
 	encoder := GtWireEncoder onByteArray.
-	object := self gtDo:[ (self class environment classOrTraitNamed: #AdditionalMethodState) new: 3]
-		gemstoneDo: [ ^ self ].
+	object := self
+			gtDo: [ (self class environment classOrTraitNamed: #AdditionalMethodState) new: 3 ]
+			gemstoneDo: [ ^ self ].
 	object
 		selector: #one;
 		method: 'fake'.
-	1 to: 3 do: [ :i |
-		object basicAt: i put: 2 ** i ].
+	1 to: 3 do: [ :i | object basicAt: i put: 2 ** i ].
 	encoder nextPut: object.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 60.
@@ -1706,36 +1914,37 @@ generalObject
 	next := root object.
 	self assert: (#(AdditionalMethodState) includes: next class name).
 	self assert: next basicSize equals: 3.
-	1 to: 3 do: [ :i |
-		self assert: (next basicAt: i) equals: 2 ** i ].
+	1 to: 3 do: [ :i | self assert: (next basicAt: i) equals: 2 ** i ].
 	self assert: next selector equals: #one.
-	self assert: next method equals: 'fake'.
+	self assert: next method equals: 'fake'
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 maxDepth
 	<gtExample>
+	<return: #ByteArray>
 	| array currentArray encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	array := Array new: 2.
 	currentArray := array.
-	1 to: 5 do: [ :i |
-		currentArray
-			at: 1 put: i;
-			at: 2 put: (Array new: 2).
-		currentArray := currentArray second ].
-	encoder 
+	1
+		to: 5
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	encoder
 		remainingDepth: 2;
 		nextPut: array.
 	byteArray := encoder contents.
-	self assert: byteArray size equals: 8.
+	self assert: byteArray size equals: 9.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
 	next := next second.
-	self assert: next equals: (Array new: 2).
+	self assert: next equals: #(2 nil).
 	^ byteArray
 %
 
@@ -1743,87 +1952,93 @@ category: 'examples'
 method: GtWireEncodingExamples
 nil
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| encoder byteArray |
-
 	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: nil.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 1.
-	self assert: (GtWireDecoder on: byteArray readStream) next isNil.
+	self assert: (GtWireDecoder on: byteArray readStream) next isNil
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 orderedCollection
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| orderedCollection encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	orderedCollection := { 1. 'hello'. #hello. } asOrderedCollection.
+	orderedCollection := {1.
+			'hello'.
+			#hello} asOrderedCollection.
 	encoder nextPut: orderedCollection.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 18.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: OrderedCollection.
-	self assert: next = orderedCollection.
+	self assert: next = orderedCollection
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 packedInteger
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| encoder byteArray integer |
-
 	encoder := GtWireEncoder onByteArray.
 	encoder nextPut: 0.
 	byteArray := encoder contents.
 	self assert: byteArray equals: #[13 0].
 	self assert: (GtWireDecoder on: byteArray readStream) next equals: 0.
-	integer := 1.
-	"GemStone is slow at this test, if it works in GT for the full range, testing a small range in
+	integer := 1.	"GemStone is slow at this test, if it works in GT for the full range, testing a small range in
 	GemStone is probably enough"
-	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ 10 ]) * 10) ] whileTrue:
-		[ encoder reset.
-		encoder nextPut: integer.
-		byteArray := encoder contents.
-		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer.
-		encoder reset.
-		encoder nextPut: integer negated.
-		byteArray := encoder contents.
-		encoder reset.
-		self assert: (GtWireDecoder on: byteArray readStream) next equals: integer negated.
-		integer := (1.001 * integer) ceiling. ].
+	[ integer < ((self gtDo: [ SmallInteger maxVal ] gemstoneDo: [ 10 ]) * 10) ]
+		whileTrue: [ encoder reset.
+			encoder nextPut: integer.
+			byteArray := encoder contents.
+			self assert: (GtWireDecoder on: byteArray readStream) next equals: integer.
+			encoder reset.
+			encoder nextPut: integer negated.
+			byteArray := encoder contents.
+			encoder reset.
+			self
+				assert: (GtWireDecoder on: byteArray readStream) next
+				equals: integer negated.
+			integer := (1.001 * integer) ceiling ]
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 set
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| set encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	set := { 1. 'hello'. true. } asSet.
+	set := {1.
+			'hello'.
+			true} asSet.
 	encoder nextPut: set.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 12.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Set.
-	self assert: next = set.
+	self assert: next = set
 %
 
 category: 'examples'
 method: GtWireEncodingExamples
 wideString
 	<gtExample>
+	<return: #ByteArray>
 	| string encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	string := 'čtyři'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string asString utf8Encoded size + 2.
 	next := (GtWireDecoder on: byteArray readStream) next.
-	self assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
+	self
+		assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
 	self assert: next equals: string.
 	^ byteArray
 %
@@ -1832,15 +2047,16 @@ category: 'examples'
 method: GtWireEncodingExamples
 wideStringWithNull
 	<gtExample>
+	<return: #ByteArray>
 	| string encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
-	string := 'čty', (String with: Character null), 'ři'.
+	string := 'čty' , (String with: Character null) , 'ři'.
 	encoder nextPut: string.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: string asString utf8Encoded size + 2.
 	next := (GtWireDecoder on: byteArray readStream) next.
-	self assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
+	self
+		assert: (#(WideString DoubleByteString Unicode16) includes: next class name).
 	self assert: next equals: string.
 	^ byteArray
 %
@@ -1849,8 +2065,8 @@ category: 'examples'
 method: GtWireEncodingExamples
 wideSymbol
 	<gtExample>
+	<return: #GtWireEncodingExamples>
 	| wideSymbol encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	wideSymbol := #'kancelař'.
 	encoder nextPut: wideSymbol.
@@ -1858,7 +2074,7 @@ wideSymbol
 	self assert: byteArray size equals: wideSymbol asString utf8Encoded size + 2.
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: (#(WideSymbol DoubleByteSymbol) includes: next class name).
-	self assert: next equals: wideSymbol.
+	self assert: next equals: wideSymbol
 %
 
 ! Class implementation for 'GtWireEncodingInspectionObject'
@@ -2036,6 +2252,252 @@ typeIndicator
 	^ (GtWireDecoder on: stream) stream packedInteger.
 %
 
+! Class implementation for 'GtWireGbsReplicationSpecConverter'
+
+!		Instance methods for 'GtWireGbsReplicationSpecConverter'
+
+category: 'actions'
+method: GtWireGbsReplicationSpecConverter
+flattenSpec: anArray
+	"Remove entries that are later overridden.
+	This answers the array in reverse order, which doesn't affect the final outcome."
+	| seen |
+
+	seen := Set new.
+	^ Array streamContents: [ :stream |
+		anArray size to: 1 by: -1 do: [ :i | | iVarEntry |
+			iVarEntry := anArray at: i.
+			(seen includes: iVarEntry first) ifFalse:
+				[ stream nextPut: iVarEntry.
+				seen add: iVarEntry first. ] ] ].
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+forwarderEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+
+	instVarMap
+		at: replicationSpecArray first
+		put: GtWireGemStoneRsrEncoder new.
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+indexablePartEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+	"Indexable objects aren't supported at the moment"
+
+	self notYetImplemented
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+maxEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+
+	instVarMap
+		at: replicationSpecArray first
+		put: (GtWireMaxDepthEncoder new depth: replicationSpecArray third).
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+minEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+
+	instVarMap
+		at: replicationSpecArray first
+		put: (GtWireMinDepthEncoder new depth: replicationSpecArray third).
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+replicateEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+
+	instVarMap
+		at: replicationSpecArray first
+		put: GtWireReplicationEncoder new.
+%
+
+category: 'actions'
+method: GtWireGbsReplicationSpecConverter
+replicationSpecKeywordToWireObjectEncoderMap
+	"Answer the map from replicationSpec keyword to Wire encoder.
+	#replicate and #indexable_part are special cases."
+
+	^ {
+		#stub -> #stubEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+		#forwarder -> #forwarderEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+		#min -> #minEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+		#max -> #maxEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+		#replicate -> #replicateEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+		#indexable_part -> #indexablePartEncodingFor:class:objectEncoder:instVarMap:replicationSpec:.
+	} asDictionary.
+%
+
+category: 'private'
+method: GtWireGbsReplicationSpecConverter
+stubEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+	"Stubs aren't supported at the moment, return a proxy (forwarder)"
+
+	self forwarderEncodingFor: aGtWireEncoder class: aClass objectEncoder: aGtWireInstVarEncoder instVarMap: instVarMap replicationSpec: replicationSpecArray
+%
+
+category: 'actions'
+method: GtWireGbsReplicationSpecConverter
+update: aGtWireEncoder class: aClass spec: aSpecArray
+	| flattenedSpec objectEncoder rsWireMap instVarMap defaultSpec |
+
+	defaultSpec := aClass allInstVarNames collect: [ :name | { name. #replicate. } ].
+	flattenedSpec := self flattenSpec: defaultSpec, aSpecArray.
+	rsWireMap := self replicationSpecKeywordToWireObjectEncoderMap.
+	objectEncoder := GtWireInstVarEncoder new.
+	instVarMap := Dictionary new.
+	flattenedSpec do: [ :anArray |
+		self perform: (rsWireMap at: anArray second)
+			withArguments: { aGtWireEncoder. aClass. objectEncoder. instVarMap. anArray. }
+		].
+	objectEncoder instVarMap: instVarMap.
+	aGtWireEncoder map at: aClass put: objectEncoder.
+%
+
+category: 'actions'
+method: GtWireGbsReplicationSpecConverter
+update: aGtWireEncoder from: aGbsReplicationSpecDictionary
+
+	aGbsReplicationSpecDictionary associationsDo: [ :assoc |
+		self update: aGtWireEncoder class: assoc key spec: assoc value ].
+%
+
+! Class implementation for 'GtWireGbsReplicationSpecConverterExamples'
+
+!		Instance methods for 'GtWireGbsReplicationSpecConverterExamples'
+
+category: 'examples'
+method: GtWireGbsReplicationSpecConverterExamples
+flattenSpec
+	"Check that the spec is correctly flattened."
+
+	<gtExample>
+	<return: #GtWireGbsReplicationSpecConverterExamples>
+	| spec actual expected |
+	spec := #(#(a 1) #(b 1) #(a 2)).
+	actual := GtWireGbsReplicationSpecConverter new flattenSpec: spec.
+	expected := #(#(a 2) #(b 1)).
+	self assert: actual equals: expected
+%
+
+! Class implementation for 'GtWireGbsReplicationSpecEncodingExamples'
+
+!		Instance methods for 'GtWireGbsReplicationSpecEncodingExamples'
+
+category: 'examples'
+method: GtWireGbsReplicationSpecEncodingExamples
+gbsAllInstVarsExample
+	"Check that all instance variables are encoded with `replicate` by default"
+
+	<gtExample>
+	<return: #ByteArray>
+	| replicationSpec object encoder byteArray decoder next now |
+	replicationSpec := {GtWireEncodingExampleInstVarObject -> #()} asDictionary.
+	now := DateAndTime now.
+	object := GtWireEncodingExampleInstVarObject new
+			var1: 1;
+			var2: '2';
+			var3: now;
+			var4: #(1 2 3).
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new update: encoder from: replicationSpec.	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder
+		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 equals: 1.
+	self assert: next var2 equals: '2'.
+	self assert: next var3 equals: now.
+	self assert: next var4 equals: #(1 2 3).
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireGbsReplicationSpecEncodingExamples
+gbsMaxDepthToWireExample
+	"Demonstrate `max` and `min` keywords in a replication spec"
+
+	<gtExample>
+	<return: #GtWireGbsReplicationSpecEncodingExamples>
+	| replicationSpec object encoder byteArray decoder next array currentArray |
+	replicationSpec := {GtWireEncodingExampleInstVarObject -> #(#(var1 max 2))}
+			asDictionary.
+	array := Array new: 2.
+	currentArray := array.
+	1
+		to: 10
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	object := GtWireEncodingExampleInstVarObject new var1: array.
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new update: encoder from: replicationSpec.	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder
+		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 class equals: Array.
+	self assert: next var1 first equals: 1.
+	self assert: next var1 second equals: #(2 nil)
+%
+
+category: 'examples'
+method: GtWireGbsReplicationSpecEncodingExamples
+gbsToWireExample1
+	"Demonstrate `replicate`, `forwarder` and `stub` keywords in a replication spec"
+
+	<gtExample>
+	<return: #GtWireGbsReplicationSpecEncodingExamples>
+	| replicationSpec object encoder byteArray decoder next |
+	replicationSpec := {GtWireEncodingExampleInstVarObject
+				-> #(#(var1 replicate) #(var2 forwarder) #(var3 stub))} asDictionary.	"var4 is default, replicate"
+	object := GtWireEncodingExampleInstVarObject new
+			var1: (GtWireEncodingExampleInstVarObject new var1: 'replicated');
+			var2: (GtWireEncodingExampleInstVarObject new var1: 'forwarded (proxy)');
+			var3: (GtWireEncodingExampleInstVarObject new var1: 'stub (proxy)');
+			var4: (GtWireEncodingExampleInstVarObject new var1: 'default replication').
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new update: encoder from: replicationSpec.	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder
+		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next var1 class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 var1 equals: 'replicated'.
+	self assert: next var1 var2 isNil.
+	self assert: next var1 var3 isNil.
+	self assert: next var1 var4 isNil.
+	self assert: next var2 class equals: GtWireEncodingDummyProxy.
+	self
+		assert: next var2 description
+		equals: '(GtWireEncodingExampleInstVarObject basicNew instVarAt: 1 put: ''forwarded (proxy)''; instVarAt: 2 put: nil; instVarAt: 3 put: nil; instVarAt: 4 put: nil; yourself)'.
+	self assert: next var3 class equals: GtWireEncodingDummyProxy.
+	self
+		assert: next var3 description
+		equals: '(GtWireEncodingExampleInstVarObject basicNew instVarAt: 1 put: ''stub (proxy)''; instVarAt: 2 put: nil; instVarAt: 3 put: nil; instVarAt: 4 put: nil; yourself)'.
+	self assert: next var4 var1 equals: 'default replication'
+%
+
 ! Class implementation for 'GtWireNestedEncodingExamples'
 
 !		Instance methods for 'GtWireNestedEncodingExamples'
@@ -2049,33 +2511,101 @@ cleanUp
 
 category: 'examples'
 method: GtWireNestedEncodingExamples
-maxDepth2
+defaultMaxDepth
 	<gtExample>
+	<return: #ByteArray>
 	| array currentArray encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
+	encoder
+		maxDepthEncoder: GtWireDummyProxyEncoder new;
+		remainingDepth: 4.
 	array := Array new: 2.
 	currentArray := array.
-	1 to: 5 do: [ :i |
-		currentArray
-			at: 1 put: i;
-			at: 2 put: (Array new: 2).
-		currentArray := currentArray second ].
-	encoder addMapping: Array to: 
-		(GtWireMaxDepthEncoder
-			depth: 2
-			encoder: GtWireArrayEncoder new).
+	1
+		to: 10
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
 	encoder nextPut: array.
-	byteArray := encoder contents.
-	self assert: byteArray size equals: 12.
+	byteArray := encoder contents.	"self assert: byteArray size equals: 57."
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
 	next := next second.
 	self assert: next class equals: Array.
 	self assert: next first equals: 2.
+	next := next second second.
+	self assert: next size equals: 2.
+	self assert: next first equals: 4.
+	self assert: next second class = GtWireEncodingDummyProxy.
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireNestedEncodingExamples
+maxDepth2
+	<gtExample>
+	<return: #ByteArray>
+	| array currentArray encoder byteArray next object |
+	encoder := GtWireEncoder onByteArray
+			maxDepthEncoder: GtWireDummyProxyEncoder new.
+	array := Array new: 2.
+	currentArray := array.
+	1
+		to: 10
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	object := GtWireEncodingExampleInstVarObject new var1: array.
+	encoder
+		addMapping: Array
+		to: (GtWireMaxDepthEncoder depth: 2 encoder: GtWireArrayEncoder new).
+	encoder nextPut: object.
+	byteArray := encoder contents.	"self assert: byteArray size equals: 24."
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	next := next var1.
+	self assert: next class equals: Array.
+	self assert: next first equals: 1.
 	next := next second.
-	self assert: next equals: (Array new: 2).
+	self assert: next first equals: 2.
+	self assert: next second class equals: GtWireEncodingDummyProxy.
+	self
+		assert: next second description
+		equals: '#(3 #(4 #(5 #(6 #(7 #(8 #(9 #(10 #(nil nil)))))))))'.
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireNestedEncodingExamples
+maxDepth2RootObject
+	<gtExample>
+	<return: #ByteArray>
+	| array currentArray encoder byteArray next |
+	encoder := GtWireEncoder onByteArray.
+	array := Array new: 2.
+	currentArray := array.
+	1
+		to: 10
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	encoder
+		addMapping: Array
+		to: (GtWireMaxDepthEncoder depth: 2 encoder: GtWireArrayEncoder new).
+	encoder nextPut: array.
+	byteArray := encoder contents.	"self assert: byteArray size equals: 24."
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: Array.
+	self assert: next first equals: 1.
+	next := next second.
+	self assert: next equals: #(2 nil).
 	^ byteArray
 %
 
@@ -2083,21 +2613,22 @@ category: 'examples'
 method: GtWireNestedEncodingExamples
 minDepth2
 	<gtExample>
+	<return: #ByteArray>
 	| array currentArray encoder byteArray next |
-
 	encoder := GtWireEncoder onByteArray.
 	array := Array new: 2.
 	currentArray := array.
-	1 to: 5 do: [ :i |
-		currentArray
-			at: 1 put: i;
-			at: 2 put: (Array new: 2).
-		currentArray := currentArray second ].
-	encoder addMapping: Array to: 
-		(GtWireMinDepthEncoder
-			depth: 2
-			encoder: GtWireArrayEncoder new).
-	encoder 
+	1
+		to: 5
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	encoder
+		addMapping: Array
+		to: (GtWireMinDepthEncoder depth: 2 encoder: GtWireArrayEncoder new).
+	encoder
 		remainingDepth: 2;
 		nextPut: array.
 	byteArray := encoder contents.
@@ -2110,13 +2641,52 @@ minDepth2
 
 category: 'examples'
 method: GtWireNestedEncodingExamples
+proxyScaledDecimal
+	"Configure the encoding to always return scaled decimals as proxies
+	(as opposed to the general GtWireObjectByNameEncoder serialisation)."
+
+	<gtExample>
+	<return: #ByteArray>
+	| array currentArray encoder byteArray next |
+	encoder := GtWireEncoder onByteArray.
+	encoder map at: ScaledDecimal put: GtWireDummyProxyEncoder new.
+	array := Array new: 2.
+	currentArray := array.
+	1
+		to: 5
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			i = 3 ifTrue: [ currentArray at: 1 put: 1.25 asScaledDecimal ].
+			currentArray := currentArray second ].
+	encoder nextPut: array.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 43.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next class equals: Array.
+	self assert: next first equals: 1.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second.
+	self assert: next size equals: 2.
+	self assert: next first class equals: GtWireEncodingDummyProxy.
+	self assert: next first description equals: '1.25000000000000s14'.
+	self assert: next second class equals: Array.
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireNestedEncodingExamples
 stonEncoding
 	<gtExample>
+	<return: #GtWireNestedEncodingExamples>
 	| object encoder decoder byteArray next |
-
 	"signals := CircularMemoryLogger new startFor: GtWireEncodingSignal."
 	encoder := GtWireEncoder onByteArray.
-	encoder addMapping: GtWireEncodingExampleInstVarObject
+	encoder
+		addMapping: GtWireEncodingExampleInstVarObject
 		to: GtWireStonEncoder new.
 	object := GtWireEncodingExampleInstVarObject new.
 	object
@@ -2126,12 +2696,12 @@ stonEncoding
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 57.
 	decoder := GtWireDecoder on: byteArray readStream.
-	decoder 
+	decoder
 		map: encoder map;
 		reverseMap: encoder reverseMap.
 	next := decoder next.
 	self assert: next class equals: GtWireEncodingExampleInstVarObject.
-	self assert: next = object.
+	self assert: next = object
 %
 
 ! Class implementation for 'GtWireObjectEncoder'
@@ -2189,6 +2759,15 @@ encode: anObject with: aGtWireEncoderContext
 	aGtWireEncoderContext putTypeIdentifier: self class typeIdentifier
 %
 
+category: 'testing'
+method: GtWireObjectEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ false.
+%
+
 category: 'as yet unclassified'
 method: GtWireObjectEncoder
 name
@@ -2196,7 +2775,15 @@ name
 	^ self class name
 %
 
-category: 'as yet unclassified'
+category: 'private - helpers'
+method: GtWireObjectEncoder
+replaceMappingsMatching: matchBlock with: replacementBlock
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers.
+	Overwritten by encoders as required."
+%
+
+category: 'accessing'
 method: GtWireObjectEncoder
 typeIdentifier
 
@@ -2253,7 +2840,8 @@ method: GtWireBlockClosureEncoder
 decodeWith: aGtWireEncoderContext
 
 	^ self
-		gtDo: [ BlockClosure evaluate: aGtWireEncoderContext next ]
+		gtDo: [ BlockClosure compiler 
+			evaluate: aGtWireEncoderContext next ]
 		gemstoneDo: [ | bindings receiver |
 			bindings := GsCurrentSession currentSession symbolList.
 			receiver := self.
@@ -2607,6 +3195,48 @@ encode: aDateAndTime with: aGtWireEncoderContext
 		nextPut: aDateAndTime offset asSeconds.
 %
 
+! Class implementation for 'GtWireDummyProxyEncoder'
+
+!		Class methods for 'GtWireDummyProxyEncoder'
+
+category: 'access'
+classmethod: GtWireDummyProxyEncoder
+typeIdentifier
+
+	^ 25
+%
+
+!		Instance methods for 'GtWireDummyProxyEncoder'
+
+category: 'encoding - decoding'
+method: GtWireDummyProxyEncoder
+decodeWith: aGtWireEncoderContext
+	"Decode the object on the supplied context"
+
+	^ GtWireEncodingDummyProxy new description: aGtWireEncoderContext nextString.
+%
+
+category: 'encoding - decoding'
+method: GtWireDummyProxyEncoder
+encode: anObject with: aGtWireEncoderContext
+
+	anObject ifNil:
+		[ ^ GtWireNilEncoder new encode: anObject with: aGtWireEncoderContext ].
+
+	aGtWireEncoderContext
+		putTypeIdentifier: self class typeIdentifier;
+		putString: anObject storeString.
+%
+
+category: 'as yet unclassified'
+method: GtWireDummyProxyEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+%
+
 ! Class implementation for 'GtWireFloatEncoder'
 
 !		Class methods for 'GtWireFloatEncoder'
@@ -2674,6 +3304,15 @@ encode: anObject with: aGtWireEncoderContext
 		putPackedInteger: anObject asOop
 %
 
+category: 'testing'
+method: GtWireGemStoneOopEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+%
+
 ! Class implementation for 'GtWireGemStoneRsrEncoder'
 
 !		Class methods for 'GtWireGemStoneRsrEncoder'
@@ -2715,11 +3354,20 @@ encode: aRsrService with: aGtWireEncoderContext
 		nextPut: aRsrService _id
 %
 
+category: 'testing'
+method: GtWireGemStoneRsrEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+%
+
 ! Class implementation for 'GtWireInstVarEncoder'
 
 !		Class methods for 'GtWireInstVarEncoder'
 
-category: 'as yet unclassified'
+category: 'accessing'
 classmethod: GtWireInstVarEncoder
 typeIdentifier
 
@@ -2754,10 +3402,9 @@ encode: anObject with: aGtWireEncoderContext
 		putSize: instVarMap size.
 	aGtWireEncoderContext nextPut: anObject class name.
 	instVarMap keysAndValuesDo: [ :key :value |
-		aGtWireEncoderContext nextPut: key.
-		value
-			ifNil: [ aGtWireEncoderContext nextPut: (anObject instVarNamed: key) ]
-			ifNotNil: [ value encode: (anObject instVarNamed: key) with: aGtWireEncoderContext ] ].
+		aGtWireEncoderContext 
+			nextPut: key;
+			nextPut: (anObject instVarNamed: key) objectEncoder: value ].
 %
 
 category: 'accessing'
@@ -2770,6 +3417,19 @@ category: 'accessing'
 method: GtWireInstVarEncoder
 instVarMap: anObject
 	instVarMap := anObject
+%
+
+category: 'private - helpers'
+method: GtWireInstVarEncoder
+replaceMappingsMatching: matchBlock with: replacementBlock
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	instVarMap associationsDo: [ :assoc |
+		(matchBlock value: assoc value) ifTrue:
+			[ assoc value: replacementBlock value ]
+		ifFalse:
+			[ assoc value replaceMappingsMatching: matchBlock with: replacementBlock ] ]
 %
 
 ! Class implementation for 'GtWireIntegerEncoder'
@@ -2888,14 +3548,14 @@ depth: anObject
 
 category: 'encoding - decoding'
 method: GtWireMaxDepthEncoder
-encode: anInteger with: aGtWireEncoderContext
+encode: anObject with: aGtWireEncoderContext
+	"Ensure the remaining depth is no more than the receiver's depth - 1.
+	Subtract one from the depth since we are inside anObject's nextPut:objectEncoder: and the remaining depth has already been decremented for anObject."
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth min: depth).
-	encoder
-		ifNil: [ aGtWireEncoderContext nextPut: anInteger ]
-		ifNotNil: [ encoder encode: anInteger with: aGtWireEncoderContext ].
+	aGtWireEncoderContext remainingDepth: (oldDepth min: (depth - 1)).
+	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 %
 
@@ -2909,6 +3569,16 @@ category: 'accessing'
 method: GtWireMaxDepthEncoder
 encoder: anObject
 	encoder := anObject
+%
+
+category: 'private - helpers'
+method: GtWireMaxDepthEncoder
+replaceMappingsMatching: matchBlock with: replacementBlock
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	encoder ifNotNil:
+		[ encoder replaceMappingsMatching: matchBlock with: replacementBlock ]
 %
 
 ! Class implementation for 'GtWireMinDepthEncoder'
@@ -2948,13 +3618,13 @@ depth: anObject
 category: 'encoding - decoding'
 method: GtWireMinDepthEncoder
 encode: anObject with: aGtWireEncoderContext
+	"Ensure the remaining depth is at least the receiver's depth - 1.
+	Subtract one from the depth since we are inside anObject's nextPut:objectEncoder: and the remaining depth has already been decremented for anObject."
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth max: depth).
-	encoder
-		ifNil: [ aGtWireEncoderContext nextPut: anObject ]
-		ifNotNil: [ encoder encode: anObject with: aGtWireEncoderContext ].
+	aGtWireEncoderContext remainingDepth: (oldDepth max: (depth - 1)).
+	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 %
 
@@ -2968,6 +3638,15 @@ category: 'accessing'
 method: GtWireMinDepthEncoder
 encoder: anObject
 	encoder := anObject
+%
+
+category: 'private - helpers'
+method: GtWireMinDepthEncoder
+replaceMappingsMatching: matchBlock with: replacementBlock
+	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.
+	Used by examples to avoid needing live servers."
+
+	encoder replaceMappingsMatching: matchBlock with: replacementBlock
 %
 
 ! Class implementation for 'GtWireNilEncoder'
@@ -3033,6 +3712,8 @@ method: GtWireObjectByNameEncoder
 encode: anObject with: aGtWireEncoderContext
 	| instVarNames namesAndValues |
 
+	(anObject isKindOf: RsrService) ifTrue:
+		[ self error: 'Attempt to encode proxy by name' ].
 	instVarNames := anObject class allInstVarNames.
 	namesAndValues := OrderedCollection new.
 	instVarNames do: [ :name |
@@ -3064,6 +3745,29 @@ lookupClass: className
 	^ self
 		gtDo: [ self class environment classOrTraitNamed: className ]
 		gemstoneDo: [ System myUserProfile objectNamed: className asSymbol ]
+%
+
+! Class implementation for 'GtWireReplicationEncoder'
+
+!		Instance methods for 'GtWireReplicationEncoder'
+
+category: 'encoding - decoding'
+method: GtWireReplicationEncoder
+decodeWith: aGtWireEncoderContext
+	
+	^ self error: 'This can''t be serialised directly'
+%
+
+category: 'as yet unclassified'
+method: GtWireReplicationEncoder
+encode: anObject with: aGtWireEncoderContext
+	"Encode the supplied object using its default encoding, unless it would return a type of proxy, in which case {{gtClass:GtWireObjectByNameEncoder}} is used."
+	| encoder |
+
+	encoder := aGtWireEncoderContext map at: anObject class.
+	encoder isProxyObjectEncoder ifTrue:
+		[ encoder := GtWireObjectByNameEncoder new ].
+	encoder encode: anObject with: aGtWireEncoderContext.
 %
 
 ! Class implementation for 'GtWireStonEncoder'
