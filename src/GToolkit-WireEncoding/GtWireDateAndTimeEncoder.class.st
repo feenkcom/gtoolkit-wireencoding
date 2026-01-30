@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireDateAndTimeEncoder,
 	#superclass : #GtWireObjectEncoder,
-	#category : 'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding'
 }
 
 { #category : #accessing }
