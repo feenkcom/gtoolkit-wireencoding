@@ -1064,7 +1064,9 @@ category: 'accessing'
 method: GtWireEncoderDecoder
 map
 
-	^ map ifNil: [ map := self class defaultMap copy ]
+	^ map ifNil: 
+		[ reverseMap := self class defaultReverseMap copy.
+		map := self class defaultMap copy ]
 %
 
 category: 'accessing'
@@ -1099,7 +1101,12 @@ category: 'accessing'
 method: GtWireEncoderDecoder
 reverseMap
 
-	^ reverseMap ifNil: [ reverseMap := self class reverseMapFrom: self map ]
+	^ reverseMap ifNil: 
+		[ "Requesting the map will potentially also load the reverseMap.
+		Check if it still needs to be calculated."
+		self map.
+		reverseMap ifNil:
+			[ reverseMap := self class defaultReverseMap ] ]
 %
 
 category: 'accessing'
