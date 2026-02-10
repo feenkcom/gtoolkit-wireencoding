@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireEncodingExamples,
 	#superclass : #Object,
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-Examples'
 }
 
 { #category : #examples }
@@ -325,6 +325,50 @@ GtWireEncodingExamples >> packedInteger [
 				assert: (GtWireDecoder on: byteArray readStream) next
 				equals: integer negated.
 			integer := (1.001 * integer) ceiling ]
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> rsrProxy [
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| object encoder rsrConnection wireService session byteArray next root |
+
+	encoder := GtWireEncoder onByteArray.
+	"Configure the encoder to use the fallback GemStone encoder 
+	and remove the default map to force the fallback to be used."
+	encoder defaultEncoder: GtWireEncoder gemStoneEncoder.
+	encoder map removeKey: GtRsrProxyServiceClient.
+	rsrConnection := RsrConnection
+			channel: RsrNullChannel new
+			transactionSpigot: RsrThreadSafeNumericSpigot naturals
+			oidSpigot: RsrThreadSafeNumericSpigot naturals.
+	session := GtGemStoneSession new.
+	session connection: rsrConnection.
+	object := GtRsrProxyServiceClient new.
+	object
+		remoteClass: self class name;
+		gtSession: session;
+		_id: 42 connection: rsrConnection.
+	wireService := GtRsrWireTransferServiceClient new
+		_id: 41 connection: rsrConnection;
+		encoder: encoder.
+	GtRsrCurrentWireService
+		value: wireService
+		during: [ GtGemStoneCurrentSession
+			value: session
+			during: [ wireService bufferObject: object ] ].
+	rsrConnection _register: object as: 42.
+	byteArray := wireService buffer.
+	self assert: byteArray size equals: 3.
+	root := GtRsrCurrentWireService
+		value: wireService
+		during: [ GtGemStoneCurrentSession
+			value: session
+			during: [ GtWireInspectionDecoder byteArray: byteArray ] ].
+	next := root object.
+	self assert: next class equals: GtRsrProxyServiceClient.
+	self assert: next _id equals: 42.
+	self assert: next remoteClass equals: self class name.
 ]
 
 { #category : #examples }

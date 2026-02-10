@@ -1,7 +1,7 @@
 Class {
 	#name : #GtWireGbsReplicationSpecConverterExamples,
 	#superclass : #Object,
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-Examples'
 }
 
 { #category : #examples }
