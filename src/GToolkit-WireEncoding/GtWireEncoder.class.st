@@ -47,7 +47,7 @@ GtWireEncoder class >> gemStoneEncoder [
 	This encoder will dynamically handle adding proxy classes at the cost of doing additional lookup for each unmapped object."
 
 	^ [ :anObject | 
-		(anObject isKindOf: GtRsrProxyServiceClient)
+		(anObject isKindOf: (self lookupClass: #GtRsrProxyServiceClient))
 			ifTrue: [ GtWireGemStoneRsrEncoder new ]
 			ifFalse: [ GtWireObjectByNameEncoder new ] ]
 ]
