@@ -8,8 +8,55 @@ Class {
 		'remainingDepth',
 		'maxDepthEncoder'
 	],
+	#classVars : [
+		'DefaultEncoder'
+	],
 	#category : #'GToolkit-WireEncoding'
 }
+
+{ #category : #accessing }
+GtWireEncoder class >> byNameEncoder [
+
+	^ [ :anObject | GtWireObjectByNameEncoder new ]
+]
+
+{ #category : #cleanup }
+GtWireEncoder class >> cleanUp [
+
+	DefaultEncoder := nil
+]
+
+{ #category : #accessing }
+GtWireEncoder class >> defaultEncoder [
+	"Answer the default encoder.
+	Normally fall back to encoding objects by name."
+
+	^ DefaultEncoder ifNil: [ self byNameEncoder ]
+]
+
+{ #category : #accessing }
+GtWireEncoder class >> defaultEncoder: aBlockClosure [
+
+	DefaultEncoder := aBlockClosure
+]
+
+{ #category : #encoding }
+GtWireEncoder class >> gemStoneEncoder [
+	"For performance reasons the mapping of proxies is normally statically configured in {{gtMethod:GtWireEncoderDecoder class>>#getDefaultMap}},
+	however encoding will fail if a GemStone Rsr proxy class is added without regenerating the mapping.
+	This encoder will dynamically handle adding proxy classes at the cost of doing additional lookup for each unmapped object."
+
+	^ [ :anObject | 
+		(anObject isKindOf: (self lookupClass: #GtRsrProxyServiceClient))
+			ifTrue: [ GtWireGemStoneRsrEncoder new ]
+			ifFalse: [ GtWireObjectByNameEncoder new ] ]
+]
+
+{ #category : #testing }
+GtWireEncoder class >> hasDefaultEncoder [
+
+	^ DefaultEncoder isNotNil
+]
 
 { #category : #'instance creation' }
 GtWireEncoder class >> on: aWriteStream [
@@ -24,6 +71,16 @@ GtWireEncoder class >> onByteArray [
 	^ self on: (WriteStream on: (ByteArray new: 100))
 ]
 
+{ #category : #encoding }
+GtWireEncoder class >> setDefaultGemStoneEncoder [
+	"Set the default encoder to handle GtRsrProxyServiceClients.
+	For performance reasons the mapping of proxies is normally statically configured in {{gtMethod:GtWireEncoderDecoder class>>#getDefaultMap}},
+	however encoding will fail if a GemStone Rsr proxy class is added without regenerating the mapping.
+	This encoder will dynamically handle adding proxy classes at the cost of doing additional lookup for each unmapped object."
+
+	self defaultEncoder: self gemStoneEncoder
+]
+
 { #category : #accessing }
 GtWireEncoder >> decoderOn: aReadStream [
 	| decoder |
@@ -35,11 +92,21 @@ GtWireEncoder >> decoderOn: aReadStream [
 	^ decoder
 ]
 
+{ #category : #accessing }
+GtWireEncoder >> defaultEncoder [
+
+	^ defaultEncoder ifNil: [ defaultEncoder := self class defaultEncoder ]
+]
+
+{ #category : #accessing }
+GtWireEncoder >> defaultEncoder: anObject [
+	defaultEncoder := anObject
+]
+
 { #category : #initialization }
 GtWireEncoder >> initialize [
 
 	super initialize.
-	defaultEncoder := [ :anObject | GtWireObjectByNameEncoder new ].
 	maxObjects := 500000.
 	objectCount := 0.
 	remainingDepth := maxObjects.
@@ -109,7 +176,7 @@ GtWireEncoder >> nextPut: anObject objectEncoder: objectEncoder [
 
 { #category : #accessing }
 GtWireEncoder >> privateNextPutMapEncoded: anObject [
-	(self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ])
+	(self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ])
 		encode: anObject
 		with: self
 ]
@@ -118,7 +185,7 @@ GtWireEncoder >> privateNextPutMapEncoded: anObject [
 GtWireEncoder >> privateNextPutMapEncoded: anObject objectEncoder: objectEncoder [
 
 	( objectEncoder ifNil:
-		[ self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ] ])
+		[ self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ] ])
 			encode: anObject
 			with: self.
 	objectCount := objectCount + 1.

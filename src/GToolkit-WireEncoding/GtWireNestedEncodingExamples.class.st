@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'signals'
 	],
-	#category : #'GToolkit-WireEncoding'
+	#category : #'GToolkit-WireEncoding-Examples'
 }
 
 { #category : #private }
