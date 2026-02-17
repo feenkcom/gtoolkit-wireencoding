@@ -40,18 +40,6 @@ GtWireEncoder class >> defaultEncoder: aBlockClosure [
 	DefaultEncoder := aBlockClosure
 ]
 
-{ #category : #encoding }
-GtWireEncoder class >> gemStoneEncoder [
-	"For performance reasons the mapping of proxies is normally statically configured in {{gtMethod:GtWireEncoderDecoder class>>#getDefaultMap}},
-	however encoding will fail if a GemStone Rsr proxy class is added without regenerating the mapping.
-	This encoder will dynamically handle adding proxy classes at the cost of doing additional lookup for each unmapped object."
-
-	^ [ :anObject | 
-		(anObject isKindOf: (self lookupClass: #GtRsrProxyServiceClient))
-			ifTrue: [ GtWireGemStoneRsrEncoder new ]
-			ifFalse: [ GtWireObjectByNameEncoder new ] ]
-]
-
 { #category : #testing }
 GtWireEncoder class >> hasDefaultEncoder [
 
@@ -69,16 +57,6 @@ GtWireEncoder class >> on: aWriteStream [
 GtWireEncoder class >> onByteArray [
 
 	^ self on: (WriteStream on: (ByteArray new: 100))
-]
-
-{ #category : #encoding }
-GtWireEncoder class >> setDefaultGemStoneEncoder [
-	"Set the default encoder to handle GtRsrProxyServiceClients.
-	For performance reasons the mapping of proxies is normally statically configured in {{gtMethod:GtWireEncoderDecoder class>>#getDefaultMap}},
-	however encoding will fail if a GemStone Rsr proxy class is added without regenerating the mapping.
-	This encoder will dynamically handle adding proxy classes at the cost of doing additional lookup for each unmapped object."
-
-	self defaultEncoder: self gemStoneEncoder
 ]
 
 { #category : #accessing }
