@@ -77,7 +77,7 @@ doit
 (GtWireEncoderDecoder
 	subclass: 'GtWireEncoder'
 	instVarNames: #(defaultEncoder maxObjects objectCount remainingDepth maxDepthEncoder)
-	classVars: #()
+	classVars: #(DefaultEncoder)
 	classInstVars: #()
 	poolDictionaries: #()
 	inDictionary: Globals
@@ -137,7 +137,7 @@ doit
 	inDictionary: Globals
 	options: #( #logCreation )
 )
-		category: 'GToolkit-WireEncoding';
+		category: 'GToolkit-WireEncoding-Examples';
 		immediateInvariant.
 true.
 %
@@ -192,7 +192,7 @@ doit
 	inDictionary: Globals
 	options: #( #logCreation )
 )
-		category: 'GToolkit-WireEncoding';
+		category: 'GToolkit-WireEncoding-Examples';
 		immediateInvariant.
 true.
 %
@@ -210,7 +210,7 @@ doit
 	inDictionary: Globals
 	options: #( #logCreation )
 )
-		category: 'GToolkit-WireEncoding';
+		category: 'GToolkit-WireEncoding-Examples';
 		immediateInvariant.
 true.
 %
@@ -228,7 +228,7 @@ doit
 	inDictionary: Globals
 	options: #( #logCreation )
 )
-		category: 'GToolkit-WireEncoding';
+		category: 'GToolkit-WireEncoding-Examples';
 		immediateInvariant.
 true.
 %
@@ -1344,6 +1344,43 @@ root
 
 !		Class methods for 'GtWireEncoder'
 
+category: 'accessing'
+classmethod: GtWireEncoder
+byNameEncoder
+
+	^ [ :anObject | GtWireObjectByNameEncoder new ]
+%
+
+category: 'cleanup'
+classmethod: GtWireEncoder
+cleanUp
+
+	DefaultEncoder := nil
+%
+
+category: 'accessing'
+classmethod: GtWireEncoder
+defaultEncoder
+	"Answer the default encoder.
+	Normally fall back to encoding objects by name."
+
+	^ DefaultEncoder ifNil: [ self byNameEncoder ]
+%
+
+category: 'accessing'
+classmethod: GtWireEncoder
+defaultEncoder: aBlockClosure
+
+	DefaultEncoder := aBlockClosure
+%
+
+category: 'testing'
+classmethod: GtWireEncoder
+hasDefaultEncoder
+
+	^ DefaultEncoder isNotNil
+%
+
 category: 'instance creation'
 classmethod: GtWireEncoder
 on: aWriteStream
@@ -1373,12 +1410,24 @@ decoderOn: aReadStream
 	^ decoder
 %
 
+category: 'accessing'
+method: GtWireEncoder
+defaultEncoder
+
+	^ defaultEncoder ifNil: [ defaultEncoder := self class defaultEncoder ]
+%
+
+category: 'accessing'
+method: GtWireEncoder
+defaultEncoder: anObject
+	defaultEncoder := anObject
+%
+
 category: 'initialization'
 method: GtWireEncoder
 initialize
 
 	super initialize.
-	defaultEncoder := [ :anObject | GtWireObjectByNameEncoder new ].
 	maxObjects := 500000.
 	objectCount := 0.
 	remainingDepth := maxObjects.
@@ -1456,7 +1505,7 @@ nextPut: anObject objectEncoder: objectEncoder
 category: 'accessing'
 method: GtWireEncoder
 privateNextPutMapEncoded: anObject
-	(self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ])
+	(self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ])
 		encode: anObject
 		with: self
 %
@@ -1466,7 +1515,7 @@ method: GtWireEncoder
 privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
 
 	( objectEncoder ifNil:
-		[ self map at: anObject class ifAbsent: [ defaultEncoder value: anObject ] ])
+		[ self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ] ])
 			encode: anObject
 			with: self.
 	objectCount := objectCount + 1.
