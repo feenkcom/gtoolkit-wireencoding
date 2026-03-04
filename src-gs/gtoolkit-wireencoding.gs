@@ -2510,7 +2510,12 @@ gbsMaxDepthToWireExample
 	self assert: next class equals: GtWireEncodingExampleInstVarObject.
 	self assert: next var1 class equals: Array.
 	self assert: next var1 first equals: 1.
-	self assert: next var1 second equals: #(2 nil)
+	next := next var1 second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next equals: #(3 nil)
 %
 
 category: 'examples'
@@ -3382,34 +3387,6 @@ typeIdentifier
 
 !		Instance methods for 'GtWireGemStoneRsrEncoder'
 
-category: 'encoding - decoding'
-method: GtWireGemStoneRsrEncoder
-decodeWith: aGtWireEncoderContext
-	"It is up to the user to ensure the Object isn't GCd during transfer and decoding
-	(which would allow the oop to be reused and the wrong object returned), or that the
-	session is aborted."
-
-	^ (self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument.
-%
-
-category: 'encoding - decoding'
-method: GtWireGemStoneRsrEncoder
-encode: aRsrService with: aGtWireEncoderContext
-	"It is up to the user to ensure that anObject isn't GCd during transfer and decoding
-	(which would allow the oop to be reused and the wrong object returned), or that the
-	session is aborted."
-
-	"Ensure that the service is at least registered so that it has an _id
-	and has a reference in the service.
-	Remaining set up will be done during snapshot analysis."
-
-	self connection _ensureRegistered: aRsrService.
-	self currentWireService addRoot: aRsrService.
-	aGtWireEncoderContext
-		putTypeIdentifier: self class typeIdentifier;
-		nextPut: aRsrService _id
-%
-
 category: 'testing'
 method: GtWireGemStoneRsrEncoder
 isProxyObjectEncoder
@@ -3610,7 +3587,7 @@ encode: anObject with: aGtWireEncoderContext
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth min: (depth - 1)).
+	aGtWireEncoderContext remainingDepth: (oldDepth min: depth).
 	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 %
@@ -3679,7 +3656,7 @@ encode: anObject with: aGtWireEncoderContext
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth max: (depth - 1)).
+	aGtWireEncoderContext remainingDepth: (oldDepth max: depth).
 	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 %
@@ -4261,6 +4238,16 @@ method: GtWireGemStoneRsrEncoder
 currentWireService
 
 	^ SessionTemps current at: #GtRsrCurrentWireService
+%
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireGemStoneRsrEncoder
+decodeWith: aGtWireEncoderContext
+	"It is up to the user to ensure the Object isn't GCd during transfer and decoding
+	(which would allow the oop to be reused and the wrong object returned), or that the
+	session is aborted."
+
+	^ (self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument
 %
 
 ! Class extensions for 'GtWireNestedEncodingExamples'
