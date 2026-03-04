@@ -1,16 +1,16 @@
 Class {
-	#name : 'GtWireGemStoneRsrEncoder',
-	#superclass : 'GtWireObjectEncoder',
-	#category : 'GToolkit-WireEncoding'
+	#name : #GtWireGemStoneRsrEncoder,
+	#superclass : #GtWireObjectEncoder,
+	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireGemStoneRsrEncoder class >> typeIdentifier [
 
 	^ 24
 ]
 
-{ #category : 'testing' }
+{ #category : #testing }
 GtWireGemStoneRsrEncoder >> isProxyObjectEncoder [
 	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
 	Proxy encoding is platform dependent."

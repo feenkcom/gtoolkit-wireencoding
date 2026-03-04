@@ -74,11 +74,15 @@ GtWireNestedEncodingExamples >> maxDepth2 [
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
 	next := next second.
+	self assert: next class equals: Array.
 	self assert: next first equals: 2.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 3.
 	self assert: next second class equals: GtWireEncodingDummyProxy.
 	self
 		assert: next second description
-		equals: '#(3 #(4 #(5 #(6 #(7 #(8 #(9 #(10 #(nil nil)))))))))'.
+		equals: '#(4 #(5 #(6 #(7 #(8 #(9 #(10 #(nil nil))))))))'.
 	^ byteArray
 ]
 
@@ -106,7 +110,11 @@ GtWireNestedEncodingExamples >> maxDepth2RootObject [
 	self assert: next class equals: Array.
 	self assert: next first equals: 1.
 	next := next second.
-	self assert: next equals: #(2 nil).
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next equals: #(3 nil).
 	^ byteArray
 ]
 
