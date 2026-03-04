@@ -39,7 +39,7 @@ GtWireMinDepthEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| oldDepth |
 
 	oldDepth := aGtWireEncoderContext remainingDepth.
-	aGtWireEncoderContext remainingDepth: (oldDepth max: (depth - 1)).
+	aGtWireEncoderContext remainingDepth: (oldDepth max: depth).
 	aGtWireEncoderContext privateNextPutMapEncoded: anObject objectEncoder: encoder.
 	aGtWireEncoderContext remainingDepth: oldDepth.
 ]
