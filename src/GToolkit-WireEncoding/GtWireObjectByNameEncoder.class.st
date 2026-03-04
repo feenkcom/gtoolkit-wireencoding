@@ -51,6 +51,8 @@ GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 	anObject class isVariable ifTrue:
 		[ | basicSize |
 		basicSize := anObject basicSize.
+		self gtDo: [] gemstoneDo:
+			[ basicSize := basicSize - instVarNames size ].
 		aGtWireEncoderContext putSize: basicSize.
 		1 to: basicSize do: [ :i |
 			aGtWireEncoderContext nextPut: (anObject basicAt: i) ] ]
