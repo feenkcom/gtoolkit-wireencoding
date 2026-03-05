@@ -37,6 +37,90 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsAllInstVarsExample [
 ]
 
 { #category : #examples }
+GtWireGbsReplicationSpecEncodingExamples >> gbsDefaultMaxDepthToWireExample [
+	"Demonstrate the default max depth in a replication spec"
+	<gtExample>
+	<return: #GtWireGbsReplicationSpecEncodingExamples>
+	| object encoder byteArray decoder next array currentArray |
+
+	array := Array new: 2.
+	currentArray := array.
+	1
+		to: 10
+		do: [ :i | 
+			currentArray
+				at: 1 put: i;
+				at: 2 put: (Array new: 2).
+			currentArray := currentArray second ].
+	object := GtWireEncodingExampleInstVarObject new var1: array.
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new 
+		maxDepth: 4;
+		update: encoder from: Dictionary new.
+	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder
+		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 class equals: Array.
+	self assert: next var1 first equals: 1.
+	next := next var1 second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next equals: #(3 nil)
+]
+
+{ #category : #examples }
+GtWireGbsReplicationSpecEncodingExamples >> gbsMaxDepthIncreaseToWireExample [
+	"Demonstrate `max` and `min` keywords in a replication spec.
+	Since the replicationSpec max is greater than the default, it has no 
+	effect in practice."
+	<gtExample>
+	<return: #GtWireGbsReplicationSpecEncodingExamples>
+	| replicationSpec object encoder byteArray decoder next array currentArray |
+
+	replicationSpec := {GtWireEncodingExampleInstVarObject -> #(#(var1 max 8))}
+			asDictionary.
+	array := Array new: 2.
+	currentArray := array.
+	1 to: 10 do: [ :i | 
+		currentArray
+			at: 1 put: i;
+			at: 2 put: (Array new: 2).
+		currentArray := currentArray second ].
+	object := GtWireEncodingExampleInstVarObject new var1: array.
+	encoder := GtWireEncoder onByteArray.
+	GtWireGbsReplicationSpecConverter new 
+		maxDepth: 4;
+		update: encoder from: replicationSpec.
+	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	encoder
+		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
+		with: [ GtWireDummyProxyEncoder new ].
+	encoder nextPut: object.
+	byteArray := encoder contents.
+	decoder := GtWireDecoder on: byteArray readStream.
+	next := decoder next.
+
+	self assert: next class equals: GtWireEncodingExampleInstVarObject.
+	self assert: next var1 class equals: Array.
+	self assert: next var1 first equals: 1.
+	next := next var1 second.
+	self assert: next class equals: Array.
+	self assert: next first equals: 2.
+	next := next second.
+	self assert: next class equals: Array.
+	self assert: next equals: #(3 nil)
+]
+
+{ #category : #examples }
 GtWireGbsReplicationSpecEncodingExamples >> gbsMaxDepthToWireExample [
 	"Demonstrate `max` and `min` keywords in a replication spec"
 
@@ -56,7 +140,10 @@ GtWireGbsReplicationSpecEncodingExamples >> gbsMaxDepthToWireExample [
 			currentArray := currentArray second ].
 	object := GtWireEncodingExampleInstVarObject new var1: array.
 	encoder := GtWireEncoder onByteArray.
-	GtWireGbsReplicationSpecConverter new update: encoder from: replicationSpec.	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
+	GtWireGbsReplicationSpecConverter new 
+		maxDepth: 100;
+		update: encoder from: replicationSpec.
+	"GemStone isn't available here, so replace all GtGemStoneRsrEncoders with dummies"
 	encoder
 		replaceMappingsMatching: [ :each | each isKindOf: GtWireGemStoneRsrEncoder ]
 		with: [ GtWireDummyProxyEncoder new ].

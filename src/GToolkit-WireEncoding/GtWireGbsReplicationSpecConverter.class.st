@@ -4,6 +4,9 @@ GtWireGbsReplicationSpecConverter takes a dictionary of Gbs replicationSpecs and
 Class {
 	#name : #GtWireGbsReplicationSpecConverter,
 	#superclass : #Object,
+	#instVars : [
+		'maxDepth'
+	],
 	#category : #'GToolkit-WireEncoding'
 }
 
@@ -35,6 +38,19 @@ GtWireGbsReplicationSpecConverter >> indexablePartEncodingFor: aGtWireEncoder cl
 	"Indexable objects aren't supported at the moment"
 
 	self notYetImplemented
+]
+
+{ #category : #accessing }
+GtWireGbsReplicationSpecConverter >> maxDepth [
+	"Answer the maximum depth to replicate to.
+	The default (4) is taken from the GBS User's Guide faultLevelRpc."
+
+	^ maxDepth ifNil: [ 4 ]
+]
+
+{ #category : #accessing }
+GtWireGbsReplicationSpecConverter >> maxDepth: anObject [
+	maxDepth := anObject
 ]
 
 { #category : #private }
@@ -105,4 +121,5 @@ GtWireGbsReplicationSpecConverter >> update: aGtWireEncoder from: aGbsReplicatio
 
 	aGbsReplicationSpecDictionary associationsDo: [ :assoc |
 		self update: aGtWireEncoder class: assoc key spec: assoc value ].
+	aGtWireEncoder remainingDepth: self maxDepth.
 ]
