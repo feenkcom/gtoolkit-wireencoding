@@ -47,6 +47,19 @@ GtWireNestedEncodingExamples >> defaultMaxDepth [
 ]
 
 { #category : #examples }
+GtWireNestedEncodingExamples >> defaultReverseMapIsArray [
+	<gtExample>
+	<return: #Array>
+	| reverseMap |
+
+	reverseMap := GtWireEncoderDecoder defaultReverseMap.
+	self assert: reverseMap isArray.
+	self assert: reverseMap size equals: 27.
+	self assert: (reverseMap at: 1) class equals: GtWireNilEncoder.
+	^ reverseMap
+]
+
+{ #category : #examples }
 GtWireNestedEncodingExamples >> maxDepth2 [
 	<gtExample>
 	<return: #ByteArray>

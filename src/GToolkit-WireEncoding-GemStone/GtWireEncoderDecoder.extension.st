@@ -137,5 +137,7 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 22 put: GtWireObjectByNameEncoder new;
 		at: 23 put: GtWireGemStoneOopEncoder new;
 		at: 24 put: GtWireGemStoneRsrEncoder new;
+		at: 25 put: GtWireDummyProxyEncoder new;
+		at: 27 put: GtWireGemStoneWithRsrEncoder new;
 		yourself.
 ]
