@@ -40,7 +40,7 @@ removeallclassmethods GtWireEncoderDecoder
 doit
 (GtWireEncoderDecoder
 	subclass: 'GtWireDecoder'
-	instVarNames: #()
+	instVarNames: #(proxyObjectMap)
 	classVars: #()
 	classInstVars: #()
 	poolDictionaries: #()
@@ -90,6 +90,24 @@ true.
 
 removeallmethods GtWireEncoder
 removeallclassmethods GtWireEncoder
+
+doit
+(GtWireEncoder
+	subclass: 'GtRemoteObjectWireEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtRemoteObjectWireEncoder
+removeallclassmethods GtRemoteObjectWireEncoder
 
 doit
 (Object
@@ -614,6 +632,24 @@ true.
 
 removeallmethods GtWireGemStoneRsrEncoder
 removeallclassmethods GtWireGemStoneRsrEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireGemStoneWithRsrEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGemStoneWithRsrEncoder
+removeallclassmethods GtWireGemStoneWithRsrEncoder
 
 doit
 (GtWireObjectEncoder
@@ -1153,42 +1189,42 @@ next
 	^ (self reverseMap at: type) decodeWith: self.
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextByteArray
 
 	^ stream next: self nextSize
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextFloat64
 
 	^ stream float64
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextInt64
 
 	^ stream int64
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextPackedInteger
 
 	^ stream packedInteger
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextSize
 
 	^ stream packedInteger
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextString
 	"Answer the next string.
@@ -1197,7 +1233,7 @@ nextString
 	^ (stream next: self nextSize) utf8Decoded asString
 %
 
-category: 'as yet unclassified'
+category: 'decoding'
 method: GtWireDecoder
 nextTypeIdentifier
 
@@ -1617,6 +1653,24 @@ reset
 
 	super reset.
 	objectCount := 0.
+%
+
+! Class implementation for 'GtRemoteObjectWireEncoder'
+
+!		Instance methods for 'GtRemoteObjectWireEncoder'
+
+category: 'encoding'
+method: GtRemoteObjectWireEncoder
+privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
+	| encoder |
+	
+	encoder := objectEncoder ifNil:
+		[ self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ] ].
+	(anObject isNil or: [ encoder isProxyObjectEncoder ]) ifTrue:
+		[ encoder encode: anObject with: self. ]
+	ifFalse:
+		[ GtWireGemStoneWithRsrEncoder new encode: anObject with: self objectEncoder: encoder ].
+	objectCount := objectCount + 1.
 %
 
 ! Class implementation for 'GtWireEncodingDummyProxy'
@@ -3509,6 +3563,28 @@ isProxyObjectEncoder
 	^ true.
 %
 
+! Class implementation for 'GtWireGemStoneWithRsrEncoder'
+
+!		Class methods for 'GtWireGemStoneWithRsrEncoder'
+
+category: 'accessing'
+classmethod: GtWireGemStoneWithRsrEncoder
+typeIdentifier
+
+	^ 27
+%
+
+!		Instance methods for 'GtWireGemStoneWithRsrEncoder'
+
+category: 'testing'
+method: GtWireGemStoneWithRsrEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+%
+
 ! Class implementation for 'GtWireInstVarEncoder'
 
 !		Class methods for 'GtWireInstVarEncoder'
@@ -4363,6 +4439,31 @@ decodeWith: aGtWireEncoderContext
 	session is aborted."
 
 	^ (self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument
+%
+
+! Class extensions for 'GtWireGemStoneWithRsrEncoder'
+
+!		Instance methods for 'GtWireGemStoneWithRsrEncoder'
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireGemStoneWithRsrEncoder
+connection
+
+	^ (SessionTemps current at: #GtRsrServer) connection
+%
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireGemStoneWithRsrEncoder
+currentWireService
+
+	^ SessionTemps current at: #GtRsrCurrentWireService
+%
+
+category: '*GToolkit-WireEncoding-GemStone'
+method: GtWireGemStoneWithRsrEncoder
+decodeWith: aGtWireEncoderContext
+
+	self notYetImplemented
 %
 
 ! Class extensions for 'GtWireNestedEncodingExamples'
