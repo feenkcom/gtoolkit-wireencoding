@@ -135,21 +135,21 @@ GtWireEncoder >> nextPut: anObject [
 	self nextPut: anObject objectEncoder: nil
 ]
 
-{ #category : #accessing }
+{ #category : #'private - encoding' }
 GtWireEncoder >> nextPut: anObject objectEncoder: objectEncoder [
 	| saveDepth |
 	objectCount > maxObjects
 		ifTrue: [ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
-	saveDepth := remainingDepth.
+	[ saveDepth := remainingDepth.
 	"remainingDepth includes the first (root) object, so compare to -1."
 	remainingDepth < 0 ifTrue: 
 		[ (self isMaxDepthLiteral: anObject)
 			ifTrue: [ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ]
 			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
 		ifFalse:
-			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ].
-	remainingDepth := remainingDepth + 1
+			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ] ]
+				ensure: [ remainingDepth := remainingDepth + 1 ].
 ]
 
 { #category : #accessing }

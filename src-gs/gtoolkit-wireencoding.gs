@@ -94,7 +94,7 @@ removeallclassmethods GtWireEncoder
 doit
 (GtWireEncoder
 	subclass: 'GtRemoteObjectWireEncoder'
-	instVarNames: #()
+	instVarNames: #(maxProxyDepth currentProxyDepth)
 	classVars: #()
 	classInstVars: #()
 	poolDictionaries: #()
@@ -1523,22 +1523,22 @@ nextPut: anObject
 	self nextPut: anObject objectEncoder: nil
 %
 
-category: 'accessing'
+category: 'private - encoding'
 method: GtWireEncoder
 nextPut: anObject objectEncoder: objectEncoder
 	| saveDepth |
 	objectCount > maxObjects
 		ifTrue: [ self error: 'Exceeded maximum object count' ].
 	remainingDepth := remainingDepth - 1.
-	saveDepth := remainingDepth.
+	[ saveDepth := remainingDepth.
 	"remainingDepth includes the first (root) object, so compare to -1."
 	remainingDepth < 0 ifTrue: 
 		[ (self isMaxDepthLiteral: anObject)
 			ifTrue: [ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ]
 			ifFalse: [ maxDepthEncoder encode: anObject with: self ] ]
 		ifFalse:
-			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ].
-	remainingDepth := remainingDepth + 1
+			[ self privateNextPutMapEncoded: anObject objectEncoder: objectEncoder ] ]
+				ensure: [ remainingDepth := remainingDepth + 1 ].
 %
 
 category: 'accessing'
@@ -1662,6 +1662,49 @@ reset
 
 !		Instance methods for 'GtRemoteObjectWireEncoder'
 
+category: 'accessing'
+method: GtRemoteObjectWireEncoder
+currentProxyDepth
+	^ currentProxyDepth
+%
+
+category: 'accessing'
+method: GtRemoteObjectWireEncoder
+currentProxyDepth: anObject
+	^ currentProxyDepth := anObject
+%
+
+category: 'initialization'
+method: GtRemoteObjectWireEncoder
+initialize
+	super initialize.
+	currentProxyDepth := -1
+%
+
+category: 'accessing'
+method: GtRemoteObjectWireEncoder
+maxProxyDepth
+	"Answer the maximum depth to which proxy objects will be returned along with the object by value.
+	nil = unlimited"
+
+	^ maxProxyDepth
+%
+
+category: 'accessing'
+method: GtRemoteObjectWireEncoder
+maxProxyDepth: anIntegerOrNil
+
+	maxProxyDepth := anIntegerOrNil
+%
+
+category: 'private - encoding'
+method: GtRemoteObjectWireEncoder
+nextPut: anObject objectEncoder: objectEncoder
+	currentProxyDepth := currentProxyDepth + 1.
+	^ [ super nextPut: anObject objectEncoder: objectEncoder ] 
+		ensure: [ currentProxyDepth := currentProxyDepth - 1 ]
+%
+
 category: 'encoding'
 method: GtRemoteObjectWireEncoder
 privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
@@ -1669,11 +1712,20 @@ privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
 	
 	encoder := objectEncoder ifNil:
 		[ self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ] ].
-	(anObject isNil or: [ encoder isProxyObjectEncoder ]) ifTrue:
+	(anObject isNil or: 
+	[ encoder isProxyObjectEncoder or:
+	[ self shouldEncodeWithProxyAtCurrentDepth not ] ]) ifTrue:
 		[ encoder encode: anObject with: self. ]
 	ifFalse:
 		[ GtWireGemStoneWithRsrEncoder new encode: anObject with: self objectEncoder: encoder ].
 	objectCount := objectCount + 1.
+%
+
+category: 'testing'
+method: GtRemoteObjectWireEncoder
+shouldEncodeWithProxyAtCurrentDepth
+	maxProxyDepth ifNil: [ ^ true ].
+	^ currentProxyDepth <= maxProxyDepth
 %
 
 ! Class implementation for 'GtWireEncodingDummyProxy'
