@@ -33,7 +33,7 @@ GtWireGemStoneWithRsrEncoder >> encode: aRsrService with: aGtWireEncoderContext 
 ]
 
 { #category : #'*GToolkit-WireEncoding-GT' }
-GtWireGemStoneWithRsrEncoder >> encode: aRsrService with: aGtWireEncoderContext objectEncoder: objectEncoder [
+GtWireGemStoneWithRsrEncoder >> encode: anObject with: aGtWireEncoderContext objectEncoder: objectEncoder [
 
 	self error: 'Rsr client encoding not yet supported'.
 ]

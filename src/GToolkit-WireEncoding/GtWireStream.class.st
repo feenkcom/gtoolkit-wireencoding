@@ -137,6 +137,15 @@ GtWireStream >> position [
 ]
 
 { #category : #'as yet unclassified' }
+GtWireStream >> postCopy [
+	"Creating a copy of a WriteStream doesn't copy the underlying collection.
+	For now, create a new WriteStream."
+	
+	 super postCopy.
+	 wrappedStream := WriteStream on: (ByteArray new: 100).
+]
+
+{ #category : #'as yet unclassified' }
 GtWireStream >> reset [
 
 	wrappedStream reset

@@ -1,3 +1,6 @@
+"
+GtWireGemStoneRsrEncoder is used to pass GemStone Rsr proxy objects via wire encoding.
+"
 Class {
 	#name : #GtWireGemStoneRsrEncoder,
 	#superclass : #GtWireObjectEncoder,
