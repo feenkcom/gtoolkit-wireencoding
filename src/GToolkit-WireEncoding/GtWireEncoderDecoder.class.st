@@ -231,6 +231,13 @@ GtWireEncoderDecoder >> map: aDictionary [
 	reverseMap := nil.
 ]
 
+{ #category : #copying }
+GtWireEncoderDecoder >> postCopy [
+
+	super postCopy.
+	stream := stream copy.
+]
+
 { #category : #'private - helpers' }
 GtWireEncoderDecoder >> replaceMappingsMatching: matchBlock with: replacementBlock [
 	"Replace all the mappings matching matchBlock with the encoder returned by replacementBlock.

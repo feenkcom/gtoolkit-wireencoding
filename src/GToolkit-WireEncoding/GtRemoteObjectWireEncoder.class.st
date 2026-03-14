@@ -1,3 +1,6 @@
+"
+GtRemoteObjectWireEncoder is used when all objects up to the specified depth are to be returned as remote objects, i.e. they are returned by value with a proxy object registered with GtRsrProxyServiceClient.
+"
 Class {
 	#name : #GtRemoteObjectWireEncoder,
 	#superclass : #GtWireEncoder,

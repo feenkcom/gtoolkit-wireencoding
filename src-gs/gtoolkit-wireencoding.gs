@@ -102,6 +102,7 @@ doit
 	options: #( #logCreation )
 )
 		category: 'GToolkit-WireEncoding';
+		comment: 'GtRemoteObjectWireEncoder is used when all objects up to the specified depth are to be returned as remote objects, i.e. they are returned by value with a proxy object registered with GtRsrProxyServiceClient.';
 		immediateInvariant.
 true.
 %
@@ -617,6 +618,27 @@ removeallclassmethods GtWireGemStoneOopEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireGemStoneRemoteObjectEncoder'
+	instVarNames: #(encoder)
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireGemStoneRemoteObjectEncoder is used in a replication spec to specify that instances of the registered class should be returned as remote objects, i.e. they are returned by value and a proxy is registered with GtRsrProxyServiceClient.
+
+Note that GtWireGemStoneRemoteObjectEncoder has no typeIdentifier as it doesn''t directly encode objects, they are encoded by GtWireGemStoneWithRsrEncoder and the appropriate value encoder.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGemStoneRemoteObjectEncoder
+removeallclassmethods GtWireGemStoneRemoteObjectEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireGemStoneRsrEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -626,6 +648,7 @@ doit
 	options: #( #logCreation )
 )
 		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireGemStoneRsrEncoder is used to pass GemStone Rsr proxy objects via wire encoding.';
 		immediateInvariant.
 true.
 %
@@ -644,6 +667,11 @@ doit
 	options: #( #logCreation )
 )
 		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireGemStoneWithRsrEncoder is used to pass a remote object back from GemStone to GT.
+
+A remote object is one which is passed back by value, but is also registered with GtRsrProxyServiceClient so that it''s proxy object automatically accessible.
+
+GtWireGemStoneWithRsrEncoder is not used directly in a replication spec, but either by the GtRemoteObjectWireEncoder or GtWireGemStoneRemoteObjectEncoder.';
 		immediateInvariant.
 true.
 %
@@ -1114,6 +1142,14 @@ map: aDictionary
 
 	map := aDictionary.
 	reverseMap := nil.
+%
+
+category: 'copying'
+method: GtWireEncoderDecoder
+postCopy
+
+	super postCopy.
+	stream := stream copy.
 %
 
 category: 'private - helpers'
@@ -3610,6 +3646,40 @@ isProxyObjectEncoder
 	^ true.
 %
 
+! Class implementation for 'GtWireGemStoneRemoteObjectEncoder'
+
+!		Instance methods for 'GtWireGemStoneRemoteObjectEncoder'
+
+category: 'encoding - decoding'
+method: GtWireGemStoneRemoteObjectEncoder
+decodeWith: aGtWireEncoderContext
+
+	self error: self class name asString, ' should never need decoding'
+%
+
+category: 'encoding - decoding'
+method: GtWireGemStoneRemoteObjectEncoder
+encode: anObject with: aGtWireEncoderContext
+	"Encode the supplied object as a remote object, i.e. it is returned by value and a proxy is registered with GtRsrProxyServiceClient"
+
+	GtWireGemStoneWithRsrEncoder new
+		encode: anObject 
+		with: aGtWireEncoderContext
+		objectEncoder: encoder.
+%
+
+category: 'accessing'
+method: GtWireGemStoneRemoteObjectEncoder
+encoder
+	^ encoder
+%
+
+category: 'accessing'
+method: GtWireGemStoneRemoteObjectEncoder
+encoder: anObject
+	encoder := anObject
+%
+
 ! Class implementation for 'GtWireGemStoneRsrEncoder'
 
 !		Class methods for 'GtWireGemStoneRsrEncoder'
@@ -4240,6 +4310,16 @@ method: GtWireStream
 position
 
 	^ wrappedStream position
+%
+
+category: 'as yet unclassified'
+method: GtWireStream
+postCopy
+	"Creating a copy of a WriteStream doesn't copy the underlying collection.
+	For now, create a new WriteStream."
+	
+	 super postCopy.
+	 wrappedStream := WriteStream on: (ByteArray new: 100).
 %
 
 category: 'as yet unclassified'
