@@ -216,6 +216,13 @@ GtWireEncoderDecoder >> contents [
 	^ stream contents
 ]
 
+{ #category : #testing }
+GtWireEncoderDecoder >> hasValidConfiguration [
+
+	^ (self map values allSatisfy: [ :each | each hasValidConfiguration ]) and:
+		[ self reverseMap allSatisfy: [ :each | each hasValidConfiguration ] ]
+]
+
 { #category : #accessing }
 GtWireEncoderDecoder >> map [
 
