@@ -1579,8 +1579,16 @@ nextPut: anObject objectEncoder: objectEncoder
 
 category: 'accessing'
 method: GtWireEncoder
+objectEncoderFor: anObject
+
+	^ self map  at: anObject class ifAbsent: [ self defaultEncoder value: anObject ]
+%
+
+category: 'accessing'
+method: GtWireEncoder
 privateNextPutMapEncoded: anObject
-	(self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ])
+
+	(self objectEncoderFor: anObject)
 		encode: anObject
 		with: self
 %
@@ -1589,8 +1597,7 @@ category: 'accessing'
 method: GtWireEncoder
 privateNextPutMapEncoded: anObject objectEncoder: objectEncoder
 
-	( objectEncoder ifNil:
-		[ self map at: anObject class ifAbsent: [ self defaultEncoder value: anObject ] ])
+	(objectEncoder ifNil: [ self objectEncoderFor: anObject ])
 			encode: anObject
 			with: self.
 	objectCount := objectCount + 1.
