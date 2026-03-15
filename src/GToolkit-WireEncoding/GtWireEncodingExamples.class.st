@@ -201,6 +201,34 @@ GtWireEncodingExamples >> dictionary [
 ]
 
 { #category : #examples }
+GtWireEncodingExamples >> encoderDecoderHasInvalidConfigurationWithInvalidMapping [
+	<gtExample>
+	| encoder |
+	encoder := GtWireEncoder onByteArray.
+	encoder addMapping: Object to: GtWireGemStoneRemoteObjectEncoder new.
+	self assert: encoder hasValidConfiguration not.
+	^ encoder
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> encoderDecoderHasValidConfigurationWithDefaultMap [
+	<gtExample>
+	| encoder |
+	encoder := GtWireEncoder onByteArray.
+	self assert: encoder hasValidConfiguration.
+	^ encoder
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> encoderHasValidConfigurationByDefault [
+	<gtExample>
+	| encoder |
+	encoder := GtWireObjectEncoder new.
+	self assert: encoder hasValidConfiguration.
+	^ encoder
+]
+
+{ #category : #examples }
 GtWireEncodingExamples >> float [
 	<gtExample>
 	<return: #GtWireEncodingExamples>
@@ -216,6 +244,15 @@ GtWireEncodingExamples >> float [
 			self assert: byteArray size equals: 9.
 			next := (GtWireDecoder on: byteArray readStream) next.
 			self assert: next equals: f ]
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> gemStoneRemoteObjectEncoderHasInvalidConfigurationWithoutEncoder [
+	<gtExample>
+	| encoder |
+	encoder := GtWireGemStoneRemoteObjectEncoder new.
+	self assert: encoder hasValidConfiguration not.
+	^ encoder
 ]
 
 { #category : #examples }

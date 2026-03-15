@@ -52,6 +52,12 @@ GtWireObjectEncoder >> encode: anObject with: aGtWireEncoderContext [
 ]
 
 { #category : #testing }
+GtWireObjectEncoder >> hasValidConfiguration [
+
+	^ true
+]
+
+{ #category : #testing }
 GtWireObjectEncoder >> isProxyObjectEncoder [
 	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
 	Proxy encoding is platform dependent."

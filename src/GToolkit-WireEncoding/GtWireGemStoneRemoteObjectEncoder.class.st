@@ -37,3 +37,10 @@ GtWireGemStoneRemoteObjectEncoder >> encoder [
 GtWireGemStoneRemoteObjectEncoder >> encoder: anObject [
 	encoder := anObject
 ]
+
+{ #category : #testing }
+GtWireGemStoneRemoteObjectEncoder >> hasValidConfiguration [
+	"An encoder must be supplied as using the default encoder will result in an infinite loop"
+	
+	^ encoder isKindOf: GtWireObjectEncoder
+]
