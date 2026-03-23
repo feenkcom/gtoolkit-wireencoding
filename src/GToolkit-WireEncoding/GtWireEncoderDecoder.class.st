@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'stream',
 		'map',
-		'reverseMap'
+		'reverseMap',
+		'classCache'
 	],
 	#classVars : [
 		'GtDefaultMap',
@@ -208,6 +209,12 @@ GtWireEncoderDecoder >> addMapping: aClass to: anEncoder [
 	typeIdentifier := anEncoder class typeIdentifierOrNil.
 	typeIdentifier ifNotNil:
 		[ self reverseMap at: typeIdentifier put: anEncoder ]
+]
+
+{ #category : #'as yet unclassified' }
+GtWireEncoderDecoder >> classCache [
+
+	^ classCache ifNil: [ classCache := Dictionary new ]
 ]
 
 { #category : #accessing }
