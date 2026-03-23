@@ -22,7 +22,7 @@ removeallclassmethods GtWireUnsupportedObject
 doit
 (Object
 	subclass: 'GtWireEncoderDecoder'
-	instVarNames: #(stream map reverseMap)
+	instVarNames: #(stream map reverseMap classCache)
 	classVars: #(GtDefaultMap GtDefaultReverseMap)
 	classInstVars: #()
 	poolDictionaries: #()
@@ -1120,11 +1120,26 @@ addMapping: aClass to: anEncoder
 		[ self reverseMap at: typeIdentifier put: anEncoder ]
 %
 
+category: 'as yet unclassified'
+method: GtWireEncoderDecoder
+classCache
+
+	^ classCache ifNil: [ classCache := Dictionary new ]
+%
+
 category: 'accessing'
 method: GtWireEncoderDecoder
 contents
 
 	^ stream contents
+%
+
+category: 'testing'
+method: GtWireEncoderDecoder
+hasValidConfiguration
+
+	^ (self map values allSatisfy: [ :each | each hasValidConfiguration ]) and:
+		[ self reverseMap allSatisfy: [ :each | each hasValidConfiguration ] ]
 %
 
 category: 'accessing'
@@ -2084,6 +2099,37 @@ dictionary
 
 category: 'examples'
 method: GtWireEncodingExamples
+encoderDecoderHasInvalidConfigurationWithInvalidMapping
+	<gtExample>
+	| encoder |
+	encoder := GtWireEncoder onByteArray.
+	encoder addMapping: Object to: GtWireGemStoneRemoteObjectEncoder new.
+	self assert: encoder hasValidConfiguration not.
+	^ encoder
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+encoderDecoderHasValidConfigurationWithDefaultMap
+	<gtExample>
+	| encoder |
+	encoder := GtWireEncoder onByteArray.
+	self assert: encoder hasValidConfiguration.
+	^ encoder
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+encoderHasValidConfigurationByDefault
+	<gtExample>
+	| encoder |
+	encoder := GtWireObjectEncoder new.
+	self assert: encoder hasValidConfiguration.
+	^ encoder
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
 float
 	<gtExample>
 	<return: #GtWireEncodingExamples>
@@ -2099,6 +2145,16 @@ float
 			self assert: byteArray size equals: 9.
 			next := (GtWireDecoder on: byteArray readStream) next.
 			self assert: next equals: f ]
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+gemStoneRemoteObjectEncoderHasInvalidConfigurationWithoutEncoder
+	<gtExample>
+	| encoder |
+	encoder := GtWireGemStoneRemoteObjectEncoder new.
+	self assert: encoder hasValidConfiguration not.
+	^ encoder
 %
 
 category: 'examples'
@@ -3101,6 +3157,13 @@ encode: anObject with: aGtWireEncoderContext
 
 category: 'testing'
 method: GtWireObjectEncoder
+hasValidConfiguration
+
+	^ true
+%
+
+category: 'testing'
+method: GtWireObjectEncoder
 isProxyObjectEncoder
 	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
 	Proxy encoding is platform dependent."
@@ -3687,6 +3750,14 @@ encoder: anObject
 	encoder := anObject
 %
 
+category: 'testing'
+method: GtWireGemStoneRemoteObjectEncoder
+hasValidConfiguration
+	"An encoder must be supplied as using the default encoder will result in an infinite loop"
+	
+	^ encoder isKindOf: GtWireObjectEncoder
+%
+
 ! Class implementation for 'GtWireGemStoneRsrEncoder'
 
 !		Class methods for 'GtWireGemStoneRsrEncoder'
@@ -4058,7 +4129,7 @@ decodeWith: aGtWireEncoderContext
 	className := aGtWireEncoderContext nextString.
 	"Retrieve the number of variable slots"
 	count := aGtWireEncoderContext nextSize.
-	cls := self lookupClass: className.
+	cls := self lookupClass: className context: aGtWireEncoderContext.
 	cls ifNil: [ self error: 'Unknown class: ', className asString ].
 	instance := cls isVariable
 		ifTrue: [ cls basicNew: count ]
@@ -4068,7 +4139,9 @@ decodeWith: aGtWireEncoderContext
 	count := aGtWireEncoderContext nextSize.
 	count timesRepeat:
 		[ | instVarName |
-		instVarName := aGtWireEncoderContext next.
+		instVarName := self
+			gtDo: [ aGtWireEncoderContext next asString ]
+			gemstoneDo: [ aGtWireEncoderContext next asSymbol ].
 		instance
 			instVarNamed: instVarName
 			put: aGtWireEncoderContext next ].
@@ -4089,7 +4162,7 @@ encode: anObject with: aGtWireEncoderContext
 			namesAndValues add: name -> value ] ].
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
-		putString: anObject class name.
+		putString: anObject class name asString.
 	anObject class isVariable ifTrue:
 		[ | basicSize |
 		basicSize := anObject basicSize.
@@ -4102,19 +4175,21 @@ encode: anObject with: aGtWireEncoderContext
 		[ aGtWireEncoderContext putSize: 0 ].
 	aGtWireEncoderContext putSize: namesAndValues size.
 	namesAndValues do: [ :assoc |
-		aGtWireEncoderContext nextPut: assoc key.
+		aGtWireEncoderContext nextPut: assoc key asString.
 		aGtWireEncoderContext nextPut: assoc value ].
 %
 
 category: 'private'
 method: GtWireObjectByNameEncoder
-lookupClass: className
+lookupClass: className context: aGtWireEncoderContext
 	"Answer the class with the supplied name or nil if not found.
 	For GemStone, see STONReader>>lookupClass: for inspiration."
 
 	^ self
-		gtDo: [ self class environment classOrTraitNamed: className ]
-		gemstoneDo: [ System myUserProfile objectNamed: className asSymbol ]
+		gtDo: [ aGtWireEncoderContext classCache
+			at: className
+			ifAbsentPut: [ self class environment classOrTraitNamed: className ] ]
+		gemstoneDo: [ System myUserProfile objectNamed: className asSymbol ].
 %
 
 ! Class implementation for 'GtWireReplicationEncoder'
