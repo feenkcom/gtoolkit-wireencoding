@@ -1,16 +1,16 @@
 Class {
-	#name : 'GtWireObjectByNameEncoder',
-	#superclass : 'GtWireObjectEncoder',
-	#category : 'GToolkit-WireEncoding'
+	#name : #GtWireObjectByNameEncoder,
+	#superclass : #GtWireObjectEncoder,
+	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : 'instance creation' }
+{ #category : #'instance creation' }
 GtWireObjectByNameEncoder class >> typeIdentifier [
 
 	^ 22
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 	| count instance className cls |
 
@@ -36,7 +36,7 @@ GtWireObjectByNameEncoder >> decodeWith: aGtWireEncoderContext [
 	^ instance
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 	| instVarNames namesAndValues |
 
@@ -66,7 +66,7 @@ GtWireObjectByNameEncoder >> encode: anObject with: aGtWireEncoderContext [
 		aGtWireEncoderContext nextPut: assoc value ].
 ]
 
-{ #category : 'private' }
+{ #category : #private }
 GtWireObjectByNameEncoder >> lookupClass: className context: aGtWireEncoderContext [
 	"Answer the class with the supplied name or nil if not found.
 	For GemStone, see STONReader>>lookupClass: for inspiration."
