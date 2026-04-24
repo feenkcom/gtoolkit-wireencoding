@@ -1518,7 +1518,7 @@ method: GtWireEncoder
 initialize
 
 	super initialize.
-	maxObjects := 500000.
+	maxObjects := 5000000.
 	objectCount := 0.
 	remainingDepth := maxObjects.
 	maxDepthEncoder := GtWireNilEncoder new.
