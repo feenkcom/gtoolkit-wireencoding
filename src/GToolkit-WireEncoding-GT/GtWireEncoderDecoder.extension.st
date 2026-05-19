@@ -27,6 +27,7 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: Character put: GtWireCharacterEncoder new;
 		at: Array put: GtWireArrayEncoder new;
 		at: Dictionary put: GtWireDictionaryEncoder new;
+		at: GtGsBareProxy put: GtWireGsBareProxyEncoder new;
 		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
 		at: Set put: GtWireSetEncoder new;
 		at: SmallInteger put: GtWireIntegerEncoder new;
@@ -77,6 +78,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: GspoRowanProjectService put: GtWireGemStoneRsrEncoder new;
 		at: GspoSmallFraction put: GtWireGemStoneRsrEncoder new;
 		at: GspoString put: GtWireGemStoneRsrEncoder new;
+		at: GtGsBareProxy put: GtWireGsBareProxyEncoder new;
 		at: GtRsrEvaluatorFeaturesService put: GtWireGemStoneRsrEncoder new;
 		at: GtRsrEvaluatorFeaturesServiceClient put: GtWireGemStoneRsrEncoder new;
 		at: GtRsrEvaluatorService put: GtWireGemStoneRsrEncoder new;
@@ -200,4 +202,5 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 26 put: GtWireBitmapEncoder new;
 		at: 27 put: GtWireGemStoneWithRsrEncoder new;
 		yourself.
+
 ]
