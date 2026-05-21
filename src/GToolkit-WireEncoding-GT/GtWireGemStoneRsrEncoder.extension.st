@@ -17,8 +17,9 @@ GtWireGemStoneRsrEncoder >> decodeWith: aGtWireEncoderContext [
 	(which would allow the oop to be reused and the wrong object returned), or that the
 	session is aborted."
 
-	^ (self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument
-		gtPharoProxyInitializeWithSession: self gtSession.
+	^ ((self connection serviceAt: aGtWireEncoderContext next) asGtGsArgument
+		gtPharoProxyInitializeWithSession: self gtSession)
+			asGtBareProxyObject.
 ]
 
 { #category : #'*GToolkit-WireEncoding-GT' }

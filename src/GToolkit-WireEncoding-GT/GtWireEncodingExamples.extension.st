@@ -58,7 +58,7 @@ GtWireEncodingExamples >> rsrProxy [
 			value: session
 			during: [ GtWireInspectionDecoder byteArray: byteArray ] ].
 	next := root object.
-	self assert: next class equals: GtRsrProxyServiceClient.
-	self assert: next _id equals: 42.
-	self assert: next remoteClass equals: self class name.
+	self assert: next class equals: GtGsBareProxy.
+	self assert: next proxyObject _id equals: 42.
+	self assert: next proxyObject remoteClass equals: self class name.
 ]
