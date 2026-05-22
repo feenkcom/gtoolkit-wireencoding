@@ -1,6 +1,8 @@
 Class {
 	#name : #GtWireEncodingExamples,
 	#superclass : #Object,
+	#traits : 'TAssertable',
+	#classTraits : 'TAssertable classTrait',
 	#category : #'GToolkit-WireEncoding-Examples'
 }
 
@@ -143,6 +145,20 @@ GtWireEncodingExamples >> character [
 	next := (GtWireDecoder on: byteArray readStream) next.
 	self assert: next class equals: Character.
 	self assert: next == $§
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> classByName [
+	<gtExample>
+	| exampleClass encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	exampleClass := Array.
+	encoder nextPut: exampleClass.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: exampleClass name size + 3.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next identicalTo: exampleClass.
 ]
 
 { #category : #examples }
@@ -306,6 +322,20 @@ GtWireEncodingExamples >> maxDepth [
 	next := next second.
 	self assert: next equals: #(2 nil).
 	^ byteArray
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> metaClassByName [
+	<gtExample>
+	| exampleClass encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	exampleClass := Array class.
+	encoder nextPut: exampleClass.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: exampleClass instanceSide name size + 3.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next identicalTo: exampleClass.
 ]
 
 { #category : #examples }
