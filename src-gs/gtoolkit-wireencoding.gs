@@ -455,6 +455,25 @@ removeallclassmethods GtWireCharacterEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireClassEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireClassEncoder passes class references by name, assuming that the local and remote class definitions are equivalent.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireClassEncoder
+removeallclassmethods GtWireClassEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireCollectionEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -678,6 +697,24 @@ true.
 
 removeallmethods GtWireGemStoneWithRsrEncoder
 removeallclassmethods GtWireGemStoneWithRsrEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireGsBareProxyEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireGsBareProxyEncoder
+removeallclassmethods GtWireGsBareProxyEncoder
 
 doit
 (GtWireObjectEncoder
@@ -1033,7 +1070,7 @@ generateDefaultReverseMapMethodFrom: aDictionary
 	"Answer the source code for the #defaultMap method from the supplied map dictionary"
 	| source maxKey |
 
-	maxKey := aDictionary keys max.
+	maxKey := aDictionary keys asArray max.
 	source := String streamContents: [ :stream |
 		stream
 			<< 'getDefaultReverseMap'; lf;
@@ -1595,7 +1632,11 @@ nextPut: anObject objectEncoder: objectEncoder
 category: 'accessing'
 method: GtWireEncoder
 objectEncoderFor: anObject
+	"Answer the encoder for anObject.
+	Classes (and meta-classes) are a special case as asking a class for its class doesn't result in a unique class."
 
+	anObject isClass ifTrue:
+		[ ^ GtWireClassEncoder new ].
 	^ self map  at: anObject class ifAbsent: [ self defaultEncoder value: anObject ]
 %
 
@@ -2041,6 +2082,21 @@ character
 
 category: 'examples'
 method: GtWireEncodingExamples
+classByName
+	<gtExample>
+	| exampleClass encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	exampleClass := Array.
+	encoder nextPut: exampleClass.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: exampleClass name size + 3.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next identicalTo: exampleClass.
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
 dateAndTime
 	<gtExample>
 	<return: #GtWireEncodingExamples>
@@ -2210,6 +2266,21 @@ maxDepth
 	next := next second.
 	self assert: next equals: #(2 nil).
 	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+metaClassByName
+	<gtExample>
+	| exampleClass encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	exampleClass := Array class.
+	encoder nextPut: exampleClass.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: exampleClass instanceSide name size + 3.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: next identicalTo: exampleClass.
 %
 
 category: 'examples'
@@ -2926,7 +2997,7 @@ defaultReverseMapIsArray
 
 	reverseMap := GtWireEncoderDecoder defaultReverseMap.
 	self assert: reverseMap isArray.
-	self assert: reverseMap size equals: 27.
+	self assert: reverseMap size equals: 28.
 	self assert: (reverseMap at: 1) class equals: GtWireNilEncoder.
 	^ reverseMap
 %
@@ -3428,6 +3499,46 @@ encode: aCharacter with: aGtWireEncoderContext
 		putPackedInteger: aCharacter codePoint.
 %
 
+! Class implementation for 'GtWireClassEncoder'
+
+!		Class methods for 'GtWireClassEncoder'
+
+category: 'accessing'
+classmethod: GtWireClassEncoder
+typeIdentifier
+
+	^ 28
+%
+
+!		Instance methods for 'GtWireClassEncoder'
+
+category: 'encoding - decoding'
+method: GtWireClassEncoder
+decodeWith: aGtWireEncoderContext
+	| className isMeta instanceClass |
+
+	className := aGtWireEncoderContext nextString.
+	isMeta := aGtWireEncoderContext next.
+	instanceClass := self
+		gtDo: [ self class environment classOrTraitNamed: className ]
+		gemstoneDo: [ (System myUserProfile resolveSymbol: className asSymbol) value ].
+	^ isMeta
+		ifTrue: [ instanceClass class ]
+		ifFalse: [ instanceClass ].
+%
+
+category: 'encoding - decoding'
+method: GtWireClassEncoder
+encode: aClass with: aGtWireEncoderContext
+
+	aGtWireEncoderContext 
+		putTypeIdentifier: self typeIdentifier;
+		putString: (self
+			gtDo: [ aClass instanceSide name ]
+			gemstoneDo: [ aClass thisClass name ]);
+		nextPut: aClass isMeta.
+%
+
 ! Class implementation for 'GtWireCollectionEncoder'
 
 !		Instance methods for 'GtWireCollectionEncoder'
@@ -3795,6 +3906,36 @@ typeIdentifier
 
 category: 'testing'
 method: GtWireGemStoneWithRsrEncoder
+isProxyObjectEncoder
+	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
+	Proxy encoding is platform dependent."
+
+	^ true.
+%
+
+! Class implementation for 'GtWireGsBareProxyEncoder'
+
+!		Instance methods for 'GtWireGsBareProxyEncoder'
+
+category: 'encoding - decoding'
+method: GtWireGsBareProxyEncoder
+decodeWith: aGtWireEncoderContext
+
+	^ GtWireGemStoneRsrEncoder new
+		decodeWith: aGtWireEncoderContext
+%
+
+category: 'encoding - decoding'
+method: GtWireGsBareProxyEncoder
+encode: aBareProxy with: aGtWireEncoderContext
+
+	^ GtWireGemStoneRsrEncoder new
+		encode: aBareProxy asGtProxyObject
+		with: aGtWireEncoderContext
+%
+
+category: 'testing'
+method: GtWireGsBareProxyEncoder
 isProxyObjectEncoder
 	"Answer a boolean indicating whether the receiver is a type of proxy encoder.
 	Proxy encoding is platform dependent."
@@ -4587,7 +4728,7 @@ getDefaultReverseMap
 	"Generated by #generateDefaultReverseMapMethodFrom:.
 	Original source is #defaultMapping, changes should be made there and the code regenerated."
 
-	^ IdentityDictionary new
+	^ (Array new: 28)
 		at: 1 put: GtWireNilEncoder new;
 		at: 2 put: GtWireTrueEncoder new;
 		at: 3 put: GtWireFalseEncoder new;
@@ -4613,6 +4754,7 @@ getDefaultReverseMap
 		at: 24 put: GtWireGemStoneRsrEncoder new;
 		at: 25 put: GtWireDummyProxyEncoder new;
 		at: 27 put: GtWireGemStoneWithRsrEncoder new;
+		at: 28 put: GtWireClassEncoder new;
 		yourself.
 %
 
