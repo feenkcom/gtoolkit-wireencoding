@@ -130,7 +130,7 @@ GtWireEncoderDecoder class >> generateDefaultReverseMapMethodFrom: aDictionary [
 	"Answer the source code for the #defaultMap method from the supplied map dictionary"
 	| source maxKey |
 
-	maxKey := aDictionary keys max.
+	maxKey := aDictionary keys asArray max.
 	source := String streamContents: [ :stream |
 		stream
 			<< 'getDefaultReverseMap'; lf;

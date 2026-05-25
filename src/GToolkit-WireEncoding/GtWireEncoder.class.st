@@ -154,7 +154,11 @@ GtWireEncoder >> nextPut: anObject objectEncoder: objectEncoder [
 
 { #category : #accessing }
 GtWireEncoder >> objectEncoderFor: anObject [
+	"Answer the encoder for anObject.
+	Classes (and meta-classes) are a special case as asking a class for its class doesn't result in a unique class."
 
+	anObject isClass ifTrue:
+		[ ^ GtWireClassEncoder new ].
 	^ self map  at: anObject class ifAbsent: [ self defaultEncoder value: anObject ]
 ]
 
