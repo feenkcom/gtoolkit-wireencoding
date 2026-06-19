@@ -54,7 +54,7 @@ GtWireNestedEncodingExamples >> defaultReverseMapIsArray [
 
 	reverseMap := GtWireEncoderDecoder defaultReverseMap.
 	self assert: reverseMap isArray.
-	self assert: reverseMap size equals: 28.
+	self assert: reverseMap size equals: 29.
 	self assert: (reverseMap at: 1) class equals: GtWireNilEncoder.
 	^ reverseMap
 ]
