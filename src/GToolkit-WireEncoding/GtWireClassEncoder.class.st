@@ -2,18 +2,18 @@
 GtWireClassEncoder passes class references by name, assuming that the local and remote class definitions are equivalent.
 "
 Class {
-	#name : 'GtWireClassEncoder',
-	#superclass : 'GtWireObjectEncoder',
-	#category : 'GToolkit-WireEncoding'
+	#name : #GtWireClassEncoder,
+	#superclass : #GtWireObjectEncoder,
+	#category : #'GToolkit-WireEncoding'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GtWireClassEncoder class >> typeIdentifier [
 
 	^ 28
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireClassEncoder >> decodeWith: aGtWireEncoderContext [
 	| className isMeta instanceClass |
 
@@ -27,7 +27,7 @@ GtWireClassEncoder >> decodeWith: aGtWireEncoderContext [
 		ifFalse: [ instanceClass ].
 ]
 
-{ #category : 'encoding - decoding' }
+{ #category : #'encoding - decoding' }
 GtWireClassEncoder >> encode: aClass with: aGtWireEncoderContext [
 
 	aGtWireEncoderContext 
