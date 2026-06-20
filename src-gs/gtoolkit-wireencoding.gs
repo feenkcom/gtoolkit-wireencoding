@@ -619,6 +619,24 @@ removeallclassmethods GtWireFloatEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireFloatPrintStringEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireFloatPrintStringEncoder
+removeallclassmethods GtWireFloatPrintStringEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireGemStoneOopEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -2187,6 +2205,7 @@ encoderHasValidConfigurationByDefault
 category: 'examples'
 method: GtWireEncodingExamples
 float
+	"Check float encoding using the default encoder"
 	<gtExample>
 	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
@@ -2198,7 +2217,28 @@ float
 			encoder reset.
 			encoder nextPut: f.
 			byteArray := encoder contents.
-			self assert: byteArray size equals: 9.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+floatString
+	"Check float encoding forcing GtWireFloatPrintStringEncoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder fpsEncoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	fpsEncoder := GtWireFloatPrintStringEncoder new.
+	{Float fmin.
+		Float fmax.
+		1.25.
+		Float pi. }
+		doWithIndex: [ :f :i | 
+			encoder reset.
+			fpsEncoder encode: f with: encoder.
+			byteArray := encoder contents.
 			next := (GtWireDecoder on: byteArray readStream) next.
 			self assert: next equals: f ]
 %
@@ -3780,6 +3820,35 @@ encode: aFloat with: aGtWireEncoderContext
 		putFloat64: aFloat
 %
 
+! Class implementation for 'GtWireFloatPrintStringEncoder'
+
+!		Class methods for 'GtWireFloatPrintStringEncoder'
+
+category: 'accessing'
+classmethod: GtWireFloatPrintStringEncoder
+typeIdentifier
+
+	^ 29
+%
+
+!		Instance methods for 'GtWireFloatPrintStringEncoder'
+
+category: 'encoding - decoding'
+method: GtWireFloatPrintStringEncoder
+decodeWith: aGtWireEncoderContext
+
+	^ aGtWireEncoderContext nextString asNumber
+%
+
+category: 'encoding - decoding'
+method: GtWireFloatPrintStringEncoder
+encode: aFloat with: aGtWireEncoderContext
+
+	aGtWireEncoderContext 
+		putPackedInteger: self typeIdentifier;
+		putString: aFloat asString
+%
+
 ! Class implementation for 'GtWireGemStoneOopEncoder'
 
 !		Class methods for 'GtWireGemStoneOopEncoder'
@@ -4646,8 +4715,9 @@ defaultMapping
 		at: Set put: GtWireSetEncoder new;
 		at: SmallInteger put: GtWireIntegerEncoder new;
 		at: LargeInteger put: GtWireIntegerEncoder new;
-		at: Float put: GtWireFloatEncoder new;
-		at: SmallDouble put: GtWireFloatEncoder new;
+		at: Float put: GtWireFloatPrintStringEncoder new;
+		at: SmallDouble put: GtWireFloatPrintStringEncoder new;
+		at: SmallFloat put: GtWireFloatPrintStringEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
 		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new.
@@ -4687,7 +4757,7 @@ getDefaultMap
 		at: ((self lookupClass: #ExecBlock4) ifNil: [ self error: 'Unable to find: ExecBlock4' ]) put: GtWireBlockClosureEncoder new;
 		at: ((self lookupClass: #ExecBlock5) ifNil: [ self error: 'Unable to find: ExecBlock5' ]) put: GtWireBlockClosureEncoder new;
 		at: ((self lookupClass: #ExecBlockN) ifNil: [ self error: 'Unable to find: ExecBlockN' ]) put: GtWireBlockClosureEncoder new;
-		at: ((self lookupClass: #Float) ifNil: [ self error: 'Unable to find: Float' ]) put: GtWireFloatEncoder new;
+		at: ((self lookupClass: #Float) ifNil: [ self error: 'Unable to find: Float' ]) put: GtWireFloatPrintStringEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorFeaturesService) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorFeaturesService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorFeaturesServiceServer) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorFeaturesServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorService) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorService' ]) put: GtWireGemStoneRsrEncoder new;
@@ -4711,7 +4781,8 @@ getDefaultMap
 		at: ((self lookupClass: #RsrService) ifNil: [ self error: 'Unable to find: RsrService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #Set) ifNil: [ self error: 'Unable to find: Set' ]) put: GtWireSetEncoder new;
 		at: ((self lookupClass: #SmallDateAndTime) ifNil: [ self error: 'Unable to find: SmallDateAndTime' ]) put: GtWireDateAndTimeEncoder new;
-		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatEncoder new;
+		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatPrintStringEncoder new;
+		at: ((self lookupClass: #SmallFloat) ifNil: [ self error: 'Unable to find: SmallFloat' ]) put: GtWireFloatPrintStringEncoder new;
 		at: ((self lookupClass: #SmallInteger) ifNil: [ self error: 'Unable to find: SmallInteger' ]) put: GtWireIntegerEncoder new;
 		at: ((self lookupClass: #String) ifNil: [ self error: 'Unable to find: String' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Symbol) ifNil: [ self error: 'Unable to find: Symbol' ]) put: GtWireSymbolEncoder new;
@@ -4728,7 +4799,7 @@ getDefaultReverseMap
 	"Generated by #generateDefaultReverseMapMethodFrom:.
 	Original source is #defaultMapping, changes should be made there and the code regenerated."
 
-	^ (Array new: 28)
+	^ (Array new: 29)
 		at: 1 put: GtWireNilEncoder new;
 		at: 2 put: GtWireTrueEncoder new;
 		at: 3 put: GtWireFalseEncoder new;
@@ -4755,6 +4826,7 @@ getDefaultReverseMap
 		at: 25 put: GtWireDummyProxyEncoder new;
 		at: 27 put: GtWireGemStoneWithRsrEncoder new;
 		at: 28 put: GtWireClassEncoder new;
+		at: 29 put: GtWireFloatPrintStringEncoder new;
 		yourself.
 %
 

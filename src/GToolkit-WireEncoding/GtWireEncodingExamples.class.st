@@ -246,6 +246,7 @@ GtWireEncodingExamples >> encoderHasValidConfigurationByDefault [
 
 { #category : #examples }
 GtWireEncodingExamples >> float [
+	"Check float encoding using the default encoder"
 	<gtExample>
 	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
@@ -257,7 +258,27 @@ GtWireEncodingExamples >> float [
 			encoder reset.
 			encoder nextPut: f.
 			byteArray := encoder contents.
-			self assert: byteArray size equals: 9.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> floatString [
+	"Check float encoding forcing GtWireFloatPrintStringEncoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder fpsEncoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	fpsEncoder := GtWireFloatPrintStringEncoder new.
+	{Float fmin.
+		Float fmax.
+		1.25.
+		Float pi. }
+		doWithIndex: [ :f :i | 
+			encoder reset.
+			fpsEncoder encode: f with: encoder.
+			byteArray := encoder contents.
 			next := (GtWireDecoder on: byteArray readStream) next.
 			self assert: next equals: f ]
 ]
