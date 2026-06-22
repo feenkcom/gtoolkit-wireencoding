@@ -263,6 +263,27 @@ GtWireEncodingExamples >> float [
 ]
 
 { #category : #examples }
+GtWireEncodingExamples >> floatBinary [
+	"Check float encoding forcing GtWireFloatEncoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder fbEncoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	fbEncoder := GtWireFloatEncoder new.
+	{Float fmin.
+		Float fmax.
+		1.25.
+		Float pi. }
+		doWithIndex: [ :f :i | 
+			encoder reset.
+			fbEncoder encode: f with: encoder.
+			byteArray := encoder contents.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
+]
+
+{ #category : #examples }
 GtWireEncodingExamples >> floatString [
 	"Check float encoding forcing GtWireFloatPrintStringEncoder"
 	<gtExample>
@@ -280,6 +301,25 @@ GtWireEncodingExamples >> floatString [
 			fpsEncoder encode: f with: encoder.
 			byteArray := encoder contents.
 			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> fraction [
+	"Check fraction encoding using the default encoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder byteArray next |
+	encoder := GtWireEncoder onByteArray.
+	{ 3/5. SmallInteger maxVal * 20 / 17. }
+		doWithIndex: [ :f :i | 
+			self assert: (encoder objectEncoderFor: f) class
+				identicalTo: GtWireFractionEncoder.
+			encoder reset.
+			encoder nextPut: f.
+			byteArray := encoder contents.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next class identicalTo: Fraction.
 			self assert: next equals: f ]
 ]
 

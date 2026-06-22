@@ -34,12 +34,14 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: Set put: GtWireSetEncoder new;
 		at: SmallInteger put: GtWireIntegerEncoder new;
 		at: LargeInteger put: GtWireIntegerEncoder new;
-		at: Float put: GtWireFloatPrintStringEncoder new;
-		at: SmallDouble put: GtWireFloatPrintStringEncoder new;
-		at: SmallFloat put: GtWireFloatPrintStringEncoder new;
+		at: Float put: GtWireFloatEncoder new;
+		at: SmallDouble put: GtWireFloatEncoder new;
+		at: SmallFloat put: GtWireFloatEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new.
+		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
+		at: Fraction put: GtWireFractionEncoder new;
+		at: SmallFraction put: GtWireFractionEncoder new.
 	^ mapping
 ]
 
@@ -74,7 +76,8 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: ((self lookupClass: #ExecBlock4) ifNil: [ self error: 'Unable to find: ExecBlock4' ]) put: GtWireBlockClosureEncoder new;
 		at: ((self lookupClass: #ExecBlock5) ifNil: [ self error: 'Unable to find: ExecBlock5' ]) put: GtWireBlockClosureEncoder new;
 		at: ((self lookupClass: #ExecBlockN) ifNil: [ self error: 'Unable to find: ExecBlockN' ]) put: GtWireBlockClosureEncoder new;
-		at: ((self lookupClass: #Float) ifNil: [ self error: 'Unable to find: Float' ]) put: GtWireFloatPrintStringEncoder new;
+		at: ((self lookupClass: #Float) ifNil: [ self error: 'Unable to find: Float' ]) put: GtWireFloatEncoder new;
+		at: ((self lookupClass: #Fraction) ifNil: [ self error: 'Unable to find: Fraction' ]) put: GtWireFractionEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorFeaturesService) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorFeaturesService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorFeaturesServiceServer) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorFeaturesServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrEvaluatorService) ifNil: [ self error: 'Unable to find: GtRsrEvaluatorService' ]) put: GtWireGemStoneRsrEncoder new;
@@ -98,8 +101,9 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: ((self lookupClass: #RsrService) ifNil: [ self error: 'Unable to find: RsrService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #Set) ifNil: [ self error: 'Unable to find: Set' ]) put: GtWireSetEncoder new;
 		at: ((self lookupClass: #SmallDateAndTime) ifNil: [ self error: 'Unable to find: SmallDateAndTime' ]) put: GtWireDateAndTimeEncoder new;
-		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatPrintStringEncoder new;
-		at: ((self lookupClass: #SmallFloat) ifNil: [ self error: 'Unable to find: SmallFloat' ]) put: GtWireFloatPrintStringEncoder new;
+		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatEncoder new;
+		at: ((self lookupClass: #SmallFloat) ifNil: [ self error: 'Unable to find: SmallFloat' ]) put: GtWireFloatEncoder new;
+		at: ((self lookupClass: #SmallFraction) ifNil: [ self error: 'Unable to find: SmallFraction' ]) put: GtWireFractionEncoder new;
 		at: ((self lookupClass: #SmallInteger) ifNil: [ self error: 'Unable to find: SmallInteger' ]) put: GtWireIntegerEncoder new;
 		at: ((self lookupClass: #String) ifNil: [ self error: 'Unable to find: String' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Symbol) ifNil: [ self error: 'Unable to find: Symbol' ]) put: GtWireSymbolEncoder new;
@@ -143,5 +147,6 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 27 put: GtWireGemStoneWithRsrEncoder new;
 		at: 28 put: GtWireClassEncoder new;
 		at: 29 put: GtWireFloatPrintStringEncoder new;
+		at: 30 put: GtWireFractionEncoder new;
 		yourself.
 ]

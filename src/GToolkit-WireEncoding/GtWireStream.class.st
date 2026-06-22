@@ -20,23 +20,6 @@ GtWireStream >> contents [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireStream >> float64 [
-	| byteArray |
-
-	byteArray := self next: 8.
-	^ byteArray doubleAt: 1.
-]
-
-{ #category : #'encoding - decoding' }
-GtWireStream >> float64: aFloat [
-	| byteArray |
-
-	byteArray := ByteArray new: 8.
-	byteArray doubleAt: 1 put: aFloat.
-	self nextPutAll: byteArray.
-]
-
-{ #category : #'as yet unclassified' }
 GtWireStream >> int64 [
 	"Answer the next signed, 32-bit integer from this (binary) stream."
 	"Details: As a fast check for negative number, check the high bit of the first digit"
@@ -53,7 +36,7 @@ GtWireStream >> int64 [
 	^ n
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'encoding - decoding' }
 GtWireStream >> int64: anInteger [
 	| n |
 	(anInteger < -16r8000000000000000) | (anInteger >= 16r8000000000000000)
