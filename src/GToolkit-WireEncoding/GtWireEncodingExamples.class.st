@@ -284,6 +284,25 @@ GtWireEncodingExamples >> floatString [
 ]
 
 { #category : #examples }
+GtWireEncodingExamples >> fraction [
+	"Check fraction encoding using the default encoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder byteArray next |
+	encoder := GtWireEncoder onByteArray.
+	{ 3/5. SmallInteger maxVal * 20 / 17. }
+		doWithIndex: [ :f :i | 
+			self assert: (encoder objectEncoderFor: f) class
+				identicalTo: GtWireFractionEncoder.
+			encoder reset.
+			encoder nextPut: f.
+			byteArray := encoder contents.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next class identicalTo: Fraction.
+			self assert: next equals: f ]
+]
+
+{ #category : #examples }
 GtWireEncodingExamples >> gemStoneRemoteObjectEncoderHasInvalidConfigurationWithoutEncoder [
 	<gtExample>
 	| encoder |
