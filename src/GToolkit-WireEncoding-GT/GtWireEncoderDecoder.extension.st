@@ -33,8 +33,8 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: SmallInteger put: GtWireIntegerEncoder new;
 		at: LargePositiveInteger put: GtWirePositiveIntegerEncoder new;
 		at: LargeNegativeInteger put: GtWireNegativeIntegerEncoder new;
-		at: SmallFloat64 put: GtWireFloatPrintStringEncoder new;
-		at: BoxedFloat64 put: GtWireFloatPrintStringEncoder new;
+		at: SmallFloat64 put: GtWireFloatEncoder new;
+		at: BoxedFloat64 put: GtWireFloatEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
 		at: FullBlockClosure put: GtWireBlockClosureEncoder new;
@@ -58,7 +58,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: Array put: GtWireArrayEncoder new;
 		at: Association put: GtWireAssociationEncoder new;
 		at: Bitmap put: GtWireBitmapEncoder new;
-		at: BoxedFloat64 put: GtWireFloatPrintStringEncoder new;
+		at: BoxedFloat64 put: GtWireFloatEncoder new;
 		at: ByteArray put: GtWireByteArrayEncoder new;
 		at: ByteString put: GtWireStringEncoder new;
 		at: ByteSymbol put: GtWireSymbolEncoder new;
@@ -160,7 +160,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: RsrValueHolderClient put: GtWireGemStoneRsrEncoder new;
 		at: RsrValueHolderServer put: GtWireGemStoneRsrEncoder new;
 		at: Set put: GtWireSetEncoder new;
-		at: SmallFloat64 put: GtWireFloatPrintStringEncoder new;
+		at: SmallFloat64 put: GtWireFloatEncoder new;
 		at: SmallInteger put: GtWireIntegerEncoder new;
 		at: True put: GtWireTrueEncoder new;
 		at: UndefinedObject put: GtWireNilEncoder new;

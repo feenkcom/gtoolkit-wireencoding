@@ -263,6 +263,27 @@ GtWireEncodingExamples >> float [
 ]
 
 { #category : #examples }
+GtWireEncodingExamples >> floatBinary [
+	"Check float encoding forcing GtWireFloatEncoder"
+	<gtExample>
+	<return: #GtWireEncodingExamples>
+	| encoder fbEncoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	fbEncoder := GtWireFloatEncoder new.
+	{Float fmin.
+		Float fmax.
+		1.25.
+		Float pi. }
+		doWithIndex: [ :f :i | 
+			encoder reset.
+			fbEncoder encode: f with: encoder.
+			byteArray := encoder contents.
+			next := (GtWireDecoder on: byteArray readStream) next.
+			self assert: next equals: f ]
+]
+
+{ #category : #examples }
 GtWireEncodingExamples >> floatString [
 	"Check float encoding forcing GtWireFloatPrintStringEncoder"
 	<gtExample>
