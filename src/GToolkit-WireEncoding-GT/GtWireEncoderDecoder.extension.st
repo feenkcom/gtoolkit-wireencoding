@@ -14,6 +14,7 @@ GtWireEncoderDecoder class >> defaultMapping [
 
 	mapping := IdentityDictionary new.
 	self map: RsrService withSubclassesTo: GtWireGemStoneRsrEncoder new in: mapping.
+	self map: CleanBlockClosure withSubclassesTo: GtWireBlockClosureEncoder new in: mapping.
 	mapping
 		at: Association put: GtWireAssociationEncoder new;
 		at: False put: GtWireFalseEncoder new;
@@ -38,7 +39,6 @@ GtWireEncoderDecoder class >> defaultMapping [
 		at: UndefinedObject put: GtWireNilEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
 		at: FullBlockClosure put: GtWireBlockClosureEncoder new;
-		at: ConstantBlockClosure put: GtWireBlockClosureEncoder new;
 		at: Fraction put: GtWireFractionEncoder new.
 	^ mapping
 ]
@@ -63,13 +63,18 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: ByteString put: GtWireStringEncoder new;
 		at: ByteSymbol put: GtWireSymbolEncoder new;
 		at: Character put: GtWireCharacterEncoder new;
+		at: CleanBlockClosure put: GtWireBlockClosureEncoder new;
 		at: ConstantBlockClosure put: GtWireBlockClosureEncoder new;
+		at: ConstantBlockClosure1Arg put: GtWireBlockClosureEncoder new;
+		at: ConstantBlockClosure2Arg put: GtWireBlockClosureEncoder new;
+		at: ConstantBlockClosure3Arg put: GtWireBlockClosureEncoder new;
 		at: DateAndTime put: GtWireDateAndTimeEncoder new;
 		at: Dictionary put: GtWireDictionaryEncoder new;
 		at: False put: GtWireFalseEncoder new;
 		at: Fraction put: GtWireFractionEncoder new;
 		at: FullBlockClosure put: GtWireBlockClosureEncoder new;
 		at: GspoByteArray put: GtWireGemStoneRsrEncoder new;
+		at: GspoCharacter put: GtWireGemStoneRsrEncoder new;
 		at: GspoDictionary put: GtWireGemStoneRsrEncoder new;
 		at: GspoGtRemotePhlowDeclarativeTestForCustomProxyInspectable put: GtWireGemStoneRsrEncoder new;
 		at: GspoGtRemotePhlowDeclarativeTestInspectable put: GtWireGemStoneRsrEncoder new;
@@ -102,6 +107,7 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: GtpoGtGemStoneRPackage put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowColumnedListViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowColumnedTreeViewSpecification put: GtWireGemStoneRsrEncoder new;
+		at: GtpoGtPhlowDetailsViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowForwardViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowListViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowTextEditorViewSpecification put: GtWireGemStoneRsrEncoder new;
@@ -109,10 +115,13 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: GtpoGtPhlowTextualViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowTreeViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtPhlowViewSpecification put: GtWireGemStoneRsrEncoder new;
+		at: GtpoGtRemotePhlowDataBasedViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRemotePhlowDeclarativeBlockActionDataSource put: GtWireGemStoneRsrEncoder new;
+		at: GtpoGtRemotePhlowExplicitViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRemotePhlowSequenceableCollectionIterator put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRemotePhlowSpawnObjectWrapper put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRemotePhlowViewedObject put: GtWireGemStoneRsrEncoder new;
+		at: GtpoGtRemotePhlowWebBrowserViewSpecification put: GtWireGemStoneRsrEncoder new;
 		at: GtpoGtRsrEvaluationExceptionInformation put: GtWireGemStoneRsrEncoder new;
 		at: GtpoMetaclass3 put: GtWireGemStoneRsrEncoder new;
 		at: GtpoModule put: GtWireGemStoneRsrEncoder new;
