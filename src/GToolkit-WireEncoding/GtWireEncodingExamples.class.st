@@ -169,7 +169,7 @@ GtWireEncodingExamples >> constantBlockClosure1Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a | #('lala') ].
-	self assert: blockClosure class identicalTo: ConstantBlockClosure1Arg.
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure1Arg.
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 21.
@@ -187,7 +187,7 @@ GtWireEncodingExamples >> constantBlockClosure2Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a :b | #('lala') ].
-	self assert: blockClosure class identicalTo: ConstantBlockClosure2Arg.
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure2Arg.
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 24.
@@ -205,7 +205,7 @@ GtWireEncodingExamples >> constantBlockClosure3Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a :b :c | #('lala') ].
-	self assert: blockClosure class identicalTo: ConstantBlockClosure3Arg.
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure3Arg.
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 27.
