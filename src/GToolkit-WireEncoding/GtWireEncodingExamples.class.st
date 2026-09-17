@@ -162,6 +162,60 @@ GtWireEncodingExamples >> classByName [
 ]
 
 { #category : #examples }
+GtWireEncodingExamples >> constantBlockClosure1Arg [
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a | #('lala') ].
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure1Arg.
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 21.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure1Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil) equals: #('lala').
+	^ byteArray
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> constantBlockClosure2Arg [
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a :b | #('lala') ].
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure2Arg.
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 24.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure2Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil value: nil) equals: #('lala').
+	^ byteArray
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> constantBlockClosure3Arg [
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a :b :c | #('lala') ].
+	self assert: blockClosure class name identicalTo: #ConstantBlockClosure3Arg.
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 27.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure3Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil value: nil value: nil) equals: #('lala').
+	^ byteArray
+]
+
+{ #category : #examples }
 GtWireEncodingExamples >> dateAndTime [
 	<gtExample>
 	<return: #GtWireEncodingExamples>
