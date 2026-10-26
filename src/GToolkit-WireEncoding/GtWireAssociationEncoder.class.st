@@ -19,10 +19,10 @@ GtWireAssociationEncoder >> decodeWith: aGtWireEncoderContext [
 ]
 
 { #category : #'encoding - decoding' }
-GtWireAssociationEncoder >> encode: anInteger with: aGtWireEncoderContext [
+GtWireAssociationEncoder >> encode: anAssociation with: aGtWireEncoderContext [
 
 	aGtWireEncoderContext putTypeIdentifier: self typeIdentifier.
 	aGtWireEncoderContext
-		nextPut: anInteger key;
-		nextPut: anInteger value
+		nextPut: anAssociation key;
+		nextPut: anAssociation value
 ]

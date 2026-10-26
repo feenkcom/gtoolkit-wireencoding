@@ -17,31 +17,43 @@ GtWireEncoderDecoder class >> defaultMapping [
 	self map: ExecBlock withSubclassesTo: GtWireBlockClosureEncoder new in: mapping.
 	self map: RsrService withSubclassesTo: GtWireGemStoneRsrEncoder new in: mapping.
 	mapping
-		at: Association put: GtWireAssociationEncoder new;
-		at: Boolean put: GtWireBooleanEncoder new;
-		at: ByteArray put: GtWireByteArrayEncoder new;
-		at: String  put: GtWireStringEncoder new;
-		at: DoubleByteString put: GtWireStringEncoder new;
-		at: Unicode7 put: GtWireStringEncoder new;
-		at: Unicode16 put: GtWireStringEncoder new;
-		at: Unicode32 put: GtWireStringEncoder new;
-		at: Symbol put: GtWireSymbolEncoder new;
-		at: DoubleByteSymbol put: GtWireSymbolEncoder new;
-		at: Character put: GtWireCharacterEncoder new;
-		at: Array put: GtWireArrayEncoder new;
-		at: Dictionary put: GtWireDictionaryEncoder new;
-		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
-		at: Set put: GtWireSetEncoder new;
-		at: SmallInteger put: GtWireIntegerEncoder new;
-		at: LargeInteger put: GtWireIntegerEncoder new;
-		at: Float put: GtWireFloatEncoder new;
-		at: SmallDouble put: GtWireFloatEncoder new;
-		at: SmallFloat put: GtWireFloatEncoder new;
-		at: UndefinedObject put: GtWireNilEncoder new;
-		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
-		at: Fraction put: GtWireFractionEncoder new;
-		at: SmallFraction put: GtWireFractionEncoder new.
+                at: Association put: GtWireAssociationEncoder new;
+                at: SymbolAssociation put: GtWireAssociationEncoder new;
+                at: Bag put: GtWireBagEncoder new;
+                at: IdentityBag put: GtWireIdentityBagEncoder new;
+                at: Boolean put: GtWireBooleanEncoder new;
+                at: ByteArray put: GtWireByteArrayEncoder new;
+                at: Date put: GtWireDateEncoder new;
+                at: SmallDate put: GtWireDateEncoder new;
+                at: Interval put: GtWireIntervalEncoder new;
+                at: ScaledDecimal put: GtWireScaledDecimalEncoder new;
+                at: SmallScaledDecimal put: GtWireScaledDecimalEncoder new;
+                at: Set put: GtWireSetEncoder new;
+                at: IdentitySet put: GtWireIdentitySetEncoder new;
+                at: String  put: GtWireStringEncoder new;
+                at: DoubleByteString put: GtWireStringEncoder new;
+                at: Time put: GtWireLocalTimeEncoder new;
+                at: SmallTime put: GtWireLocalTimeEncoder new;
+                at: Unicode7 put: GtWireStringEncoder new;
+                at: Unicode16 put: GtWireStringEncoder new;
+                at: Unicode32 put: GtWireStringEncoder new;
+                at: Symbol put: GtWireSymbolEncoder new;
+                at: DoubleByteSymbol put: GtWireSymbolEncoder new;
+                at: Character put: GtWireCharacterEncoder new;
+                at: Array put: GtWireArrayEncoder new;
+                at: Dictionary put: GtWireDictionaryEncoder new;
+                at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
+                at: Set put: GtWireSetEncoder new;
+                at: SmallInteger put: GtWireIntegerEncoder new;
+                at: LargeInteger put: GtWireIntegerEncoder new;
+                at: Float put: GtWireFloatEncoder new;
+                at: SmallDouble put: GtWireFloatEncoder new;
+                at: SmallFloat put: GtWireFloatEncoder new;
+                at: UndefinedObject put: GtWireNilEncoder new;
+                at: DateAndTime put: GtWireDateAndTimeEncoder new;
+                at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
+                at: Fraction put: GtWireFractionEncoder new;
+                at: SmallFraction put: GtWireFractionEncoder new.
 	^ mapping
 ]
 
@@ -61,9 +73,11 @@ GtWireEncoderDecoder class >> getDefaultMap [
 	^ IdentityDictionary new
 		at: ((self lookupClass: #Array) ifNil: [ self error: 'Unable to find: Array' ]) put: GtWireArrayEncoder new;
 		at: ((self lookupClass: #Association) ifNil: [ self error: 'Unable to find: Association' ]) put: GtWireAssociationEncoder new;
+		at: ((self lookupClass: #Bag) ifNil: [ self error: 'Unable to find: Bag' ]) put: GtWireBagEncoder new;
 		at: ((self lookupClass: #Boolean) ifNil: [ self error: 'Unable to find: Boolean' ]) put: GtWireBooleanEncoder new;
 		at: ((self lookupClass: #ByteArray) ifNil: [ self error: 'Unable to find: ByteArray' ]) put: GtWireByteArrayEncoder new;
 		at: ((self lookupClass: #Character) ifNil: [ self error: 'Unable to find: Character' ]) put: GtWireCharacterEncoder new;
+		at: ((self lookupClass: #Date) ifNil: [ self error: 'Unable to find: Date' ]) put: GtWireDateEncoder new;
 		at: ((self lookupClass: #DateAndTime) ifNil: [ self error: 'Unable to find: DateAndTime' ]) put: GtWireDateAndTimeEncoder new;
 		at: ((self lookupClass: #Dictionary) ifNil: [ self error: 'Unable to find: Dictionary' ]) put: GtWireDictionaryEncoder new;
 		at: ((self lookupClass: #DoubleByteString) ifNil: [ self error: 'Unable to find: DoubleByteString' ]) put: GtWireStringEncoder new;
@@ -89,24 +103,68 @@ GtWireEncoderDecoder class >> getDefaultMap [
 		at: ((self lookupClass: #GtRsrTestServiceServer) ifNil: [ self error: 'Unable to find: GtRsrTestServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrWireTransferService) ifNil: [ self error: 'Unable to find: GtRsrWireTransferService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrWireTransferServiceServer) ifNil: [ self error: 'Unable to find: GtRsrWireTransferServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #IdentityBag) ifNil: [ self error: 'Unable to find: IdentityBag' ]) put: GtWireIdentityBagEncoder new;
+		at: ((self lookupClass: #IdentitySet) ifNil: [ self error: 'Unable to find: IdentitySet' ]) put: GtWireIdentitySetEncoder new;
+		at: ((self lookupClass: #Interval) ifNil: [ self error: 'Unable to find: Interval' ]) put: GtWireIntervalEncoder new;
 		at: ((self lookupClass: #LargeInteger) ifNil: [ self error: 'Unable to find: LargeInteger' ]) put: GtWireIntegerEncoder new;
 		at: ((self lookupClass: #OrderedCollection) ifNil: [ self error: 'Unable to find: OrderedCollection' ]) put: GtWireOrderedCollectionEncoder new;
+		at: ((self lookupClass: #RsrClientNoInstVars) ifNil: [ self error: 'Unable to find: RsrClientNoInstVars' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrClientReferenceService) ifNil: [ self error: 'Unable to find: RsrClientReferenceService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrClientTestService) ifNil: [ self error: 'Unable to find: RsrClientTestService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrConcurrentTestClient) ifNil: [ self error: 'Unable to find: RsrConcurrentTestClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrConcurrentTestServer) ifNil: [ self error: 'Unable to find: RsrConcurrentTestServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrConcurrentTestService) ifNil: [ self error: 'Unable to find: RsrConcurrentTestService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrInstrumentedClient) ifNil: [ self error: 'Unable to find: RsrInstrumentedClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrInstrumentedServer) ifNil: [ self error: 'Unable to find: RsrInstrumentedServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrInstrumentedService) ifNil: [ self error: 'Unable to find: RsrInstrumentedService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrKnownClient) ifNil: [ self error: 'Unable to find: RsrKnownClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrKnownServer) ifNil: [ self error: 'Unable to find: RsrKnownServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrMockClient) ifNil: [ self error: 'Unable to find: RsrMockClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrMockServer) ifNil: [ self error: 'Unable to find: RsrMockServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrMockService) ifNil: [ self error: 'Unable to find: RsrMockService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrPolicyRejectedService) ifNil: [ self error: 'Unable to find: RsrPolicyRejectedService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrPolicyRejectedServiceClient) ifNil: [ self error: 'Unable to find: RsrPolicyRejectedServiceClient' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrPolicyRejectedServiceServer) ifNil: [ self error: 'Unable to find: RsrPolicyRejectedServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrReasonService) ifNil: [ self error: 'Unable to find: RsrReasonService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrReflectedVariableTestClient) ifNil: [ self error: 'Unable to find: RsrReflectedVariableTestClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrReflectedVariableTestServer) ifNil: [ self error: 'Unable to find: RsrReflectedVariableTestServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrReflectedVariableTestServiceA) ifNil: [ self error: 'Unable to find: RsrReflectedVariableTestServiceA' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrReflectedVariableTestServiceB) ifNil: [ self error: 'Unable to find: RsrReflectedVariableTestServiceB' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrRemoteAction) ifNil: [ self error: 'Unable to find: RsrRemoteAction' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrRemoteActionClient) ifNil: [ self error: 'Unable to find: RsrRemoteActionClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrRemoteActionServer) ifNil: [ self error: 'Unable to find: RsrRemoteActionServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrRemoteException) ifNil: [ self error: 'Unable to find: RsrRemoteException' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrRemoteExceptionClient) ifNil: [ self error: 'Unable to find: RsrRemoteExceptionClient' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrRemoteExceptionServer) ifNil: [ self error: 'Unable to find: RsrRemoteExceptionServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrReturnUnknownService) ifNil: [ self error: 'Unable to find: RsrReturnUnknownService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrSendUnknownService) ifNil: [ self error: 'Unable to find: RsrSendUnknownService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrServerNoInstVars) ifNil: [ self error: 'Unable to find: RsrServerNoInstVars' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrServerReferenceService) ifNil: [ self error: 'Unable to find: RsrServerReferenceService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrServerTestService) ifNil: [ self error: 'Unable to find: RsrServerTestService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrService) ifNil: [ self error: 'Unable to find: RsrService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrServiceNoInstVars) ifNil: [ self error: 'Unable to find: RsrServiceNoInstVars' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrServiceReferenceService) ifNil: [ self error: 'Unable to find: RsrServiceReferenceService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrTestService) ifNil: [ self error: 'Unable to find: RsrTestService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrValueHolder) ifNil: [ self error: 'Unable to find: RsrValueHolder' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrValueHolderClient) ifNil: [ self error: 'Unable to find: RsrValueHolderClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrValueHolderServer) ifNil: [ self error: 'Unable to find: RsrValueHolderServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrVersionService) ifNil: [ self error: 'Unable to find: RsrVersionService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrVersionServiceClient) ifNil: [ self error: 'Unable to find: RsrVersionServiceClient' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #RsrVersionServiceServer) ifNil: [ self error: 'Unable to find: RsrVersionServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #ScaledDecimal) ifNil: [ self error: 'Unable to find: ScaledDecimal' ]) put: GtWireScaledDecimalEncoder new;
 		at: ((self lookupClass: #Set) ifNil: [ self error: 'Unable to find: Set' ]) put: GtWireSetEncoder new;
+		at: ((self lookupClass: #SmallDate) ifNil: [ self error: 'Unable to find: SmallDate' ]) put: GtWireDateEncoder new;
 		at: ((self lookupClass: #SmallDateAndTime) ifNil: [ self error: 'Unable to find: SmallDateAndTime' ]) put: GtWireDateAndTimeEncoder new;
 		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatEncoder new;
 		at: ((self lookupClass: #SmallFloat) ifNil: [ self error: 'Unable to find: SmallFloat' ]) put: GtWireFloatEncoder new;
 		at: ((self lookupClass: #SmallFraction) ifNil: [ self error: 'Unable to find: SmallFraction' ]) put: GtWireFractionEncoder new;
 		at: ((self lookupClass: #SmallInteger) ifNil: [ self error: 'Unable to find: SmallInteger' ]) put: GtWireIntegerEncoder new;
+		at: ((self lookupClass: #SmallScaledDecimal) ifNil: [ self error: 'Unable to find: SmallScaledDecimal' ]) put: GtWireScaledDecimalEncoder new;
+		at: ((self lookupClass: #SmallTime) ifNil: [ self error: 'Unable to find: SmallTime' ]) put: GtWireLocalTimeEncoder new;
 		at: ((self lookupClass: #String) ifNil: [ self error: 'Unable to find: String' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Symbol) ifNil: [ self error: 'Unable to find: Symbol' ]) put: GtWireSymbolEncoder new;
+		at: ((self lookupClass: #SymbolAssociation) ifNil: [ self error: 'Unable to find: SymbolAssociation' ]) put: GtWireAssociationEncoder new;
+		at: ((self lookupClass: #Time) ifNil: [ self error: 'Unable to find: Time' ]) put: GtWireLocalTimeEncoder new;
 		at: ((self lookupClass: #UndefinedObject) ifNil: [ self error: 'Unable to find: UndefinedObject' ]) put: GtWireNilEncoder new;
 		at: ((self lookupClass: #Unicode16) ifNil: [ self error: 'Unable to find: Unicode16' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Unicode32) ifNil: [ self error: 'Unable to find: Unicode32' ]) put: GtWireStringEncoder new;
@@ -119,7 +177,7 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 	"Generated by #generateDefaultReverseMapMethodFrom:.
 	Original source is #defaultMapping, changes should be made there and the code regenerated."
 
-	^ (Array new: 29)
+	^ (Array new: 37)
 		at: 1 put: GtWireNilEncoder new;
 		at: 2 put: GtWireTrueEncoder new;
 		at: 3 put: GtWireFalseEncoder new;
@@ -148,5 +206,12 @@ GtWireEncoderDecoder class >> getDefaultReverseMap [
 		at: 28 put: GtWireClassEncoder new;
 		at: 29 put: GtWireFloatPrintStringEncoder new;
 		at: 30 put: GtWireFractionEncoder new;
+		at: 31 put: GtWireScaledDecimalEncoder new;
+		at: 32 put: GtWireLocalTimeEncoder new;
+		at: 33 put: GtWireIntervalEncoder new;
+		at: 34 put: GtWireBagEncoder new;
+		at: 35 put: GtWireIdentityBagEncoder new;
+		at: 36 put: GtWireIdentitySetEncoder new;
+		at: 37 put: GtWireDateEncoder new;
 		yourself.
 ]
