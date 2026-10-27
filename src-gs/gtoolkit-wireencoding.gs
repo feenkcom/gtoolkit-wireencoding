@@ -21,6 +21,63 @@ removeallclassmethods GtWireUnsupportedObject
 
 doit
 (Object
+	subclass: 'GtWireBagEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Portable bag round trips and object/count wire-format examples.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireBagEncoderExamples
+removeallclassmethods GtWireBagEncoderExamples
+
+doit
+(Object
+	subclass: 'GtWireDateAndTimeEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Regression examples for DateAndTime wire decoding: preserve the instant, nanoseconds and explicit UTC offset.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireDateAndTimeEncoderExamples
+removeallclassmethods GtWireDateAndTimeEncoderExamples
+
+doit
+(Object
+	subclass: 'GtWireDateEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Examples for Date wire payloads, offset preservation, and timezone compatibility checks.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireDateEncoderExamples
+removeallclassmethods GtWireDateEncoderExamples
+
+doit
+(Object
 	subclass: 'GtWireEncoderDecoder'
 	instVarNames: #(stream map reverseMap classCache)
 	classVars: #(GtDefaultMap GtDefaultReverseMap)
@@ -239,6 +296,44 @@ removeallclassmethods GtWireGbsReplicationSpecEncodingExamples
 
 doit
 (Object
+	subclass: 'GtWireIntervalEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Examples for interval wire encoding: original constructor parameters, payload boundaries, empty and descending intervals, and non-integer steps.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireIntervalEncoderExamples
+removeallclassmethods GtWireIntervalEncoderExamples
+
+doit
+(Object
+	subclass: 'GtWireLocalTimeEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Examples of local-time wire encoding, including payload order, precision conversion, and day boundaries.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireLocalTimeEncoderExamples
+removeallclassmethods GtWireLocalTimeEncoderExamples
+
+doit
+(Object
 	subclass: 'GtWireNestedEncodingExamples'
 	instVarNames: #(signals)
 	classVars: #()
@@ -266,6 +361,9 @@ doit
 	options: #( #logCreation )
 )
 		category: 'GToolkit-WireEncoding';
+		comment: 'GtWireObjectEncoders are responsible for serialising on and off a supplied GtWireStream.  The serialisation format is designed to mostly avoid the need for additional buffering.
+
+Every encoder is assigned a unique number that is used to identify the encoder on the stream.  The next typeIdentifier that should be used can be found by evaluating {{gtMethod:GtWireObjectEncoder class>>#validateTypeIdentifiers}} (and adding 1).';
 		immediateInvariant.
 true.
 %
@@ -290,6 +388,44 @@ true.
 
 removeallmethods GtWireAssociationEncoder
 removeallclassmethods GtWireAssociationEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireBagEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Portable bag encoding: type identifier, number of distinct entries (wire size), then ordinary wire object/count pairs. Does not transmit platform-specific storage. GemStone bags cannot represent nil elements.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireBagEncoder
+removeallclassmethods GtWireBagEncoder
+
+doit
+(GtWireBagEncoder
+	subclass: 'GtWireIdentityBagEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'IdentityBag wire encoding. Each distinct identity is transmitted once with its multiplicity. Inherits the pair format from GtWireBagEncoder; GemStone IdentityBag is not a Bag and its counts are collected in an IdentityDictionary. As with other wire encoders, global shared-reference identity is not preserved.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireIdentityBagEncoder
+removeallclassmethods GtWireIdentityBagEncoder
 
 doit
 (GtWireObjectEncoder
@@ -545,24 +681,6 @@ removeallmethods GtWireOrderedCollectionEncoder
 removeallclassmethods GtWireOrderedCollectionEncoder
 
 doit
-(GtWireCollectionEncoder
-	subclass: 'GtWireSetEncoder'
-	instVarNames: #()
-	classVars: #()
-	classInstVars: #()
-	poolDictionaries: #()
-	inDictionary: Globals
-	options: #( #logCreation )
-)
-		category: 'GToolkit-WireEncoding';
-		immediateInvariant.
-true.
-%
-
-removeallmethods GtWireSetEncoder
-removeallclassmethods GtWireSetEncoder
-
-doit
 (GtWireObjectEncoder
 	subclass: 'GtWireDateAndTimeEncoder'
 	instVarNames: #()
@@ -579,6 +697,25 @@ true.
 
 removeallmethods GtWireDateAndTimeEncoder
 removeallclassmethods GtWireDateAndTimeEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireDateEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Encodes a Date as year, numeric month, day of month, and UTC offset in seconds. GT preserves the supplied offset. GemStone uses the system timezone offset at midnight on the supplied date and rejects incompatible offsets.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireDateEncoder
+removeallclassmethods GtWireDateEncoder
 
 doit
 (GtWireObjectEncoder
@@ -754,6 +891,25 @@ removeallclassmethods GtWireGsBareProxyEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireIdentitySetEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Portable identity-set encoding. Uses the same count/elements format as GtWireSetEncoder with a separate type identifier. Reconstructs through IdentitySet''s public API; does not preserve shared references between separately encoded elements.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireIdentitySetEncoder
+removeallclassmethods GtWireIdentitySetEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireInstVarEncoder'
 	instVarNames: #(instVarMap)
 	classVars: #()
@@ -824,6 +980,44 @@ true.
 
 removeallmethods GtWirePositiveIntegerEncoder
 removeallclassmethods GtWirePositiveIntegerEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireIntervalEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Encodes an Interval as its original from:, to:, and by: parameters, in that order, using three wire objects. Preserves empty intervals and bounds that are not elements of the interval. Uses platform-specific accessors on GT and GemStone; decoding uses the common Interval from:to:by: constructor.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireIntervalEncoder
+removeallclassmethods GtWireIntervalEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireLocalTimeEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Encodes a local time of day as three packed integers: whole seconds since midnight, fractionalSeconds, and scale. The fractional component is fractionalSeconds / (10 raisedTo: scale). GT uses scale 9 (nanoseconds); GemStone uses scale 6 (microseconds). Decoding converts to the receiving platform''s precision, truncating sub-microsecond digits on GemStone. No timezone conversion is performed.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireLocalTimeEncoder
+removeallclassmethods GtWireLocalTimeEncoder
 
 doit
 (GtWireObjectEncoder
@@ -918,6 +1112,43 @@ removeallclassmethods GtWireReplicationEncoder
 
 doit
 (GtWireObjectEncoder
+	subclass: 'GtWireScaledDecimalEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		comment: 'Encodes a ScaledDecimal as its numerator, denominator, and display scale, each written as an object in that order. Decoding reconstructs the exact numeric value and preserves the original display scale. This three-object payload is not compatible with the previous two-object payload that omitted the scale.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireScaledDecimalEncoder
+removeallclassmethods GtWireScaledDecimalEncoder
+
+doit
+(GtWireObjectEncoder
+	subclass: 'GtWireSetEncoder'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireSetEncoder
+removeallclassmethods GtWireSetEncoder
+
+doit
+(GtWireObjectEncoder
 	subclass: 'GtWireStonEncoder'
 	instVarNames: #()
 	classVars: #()
@@ -933,6 +1164,25 @@ true.
 
 removeallmethods GtWireStonEncoder
 removeallclassmethods GtWireStonEncoder
+
+doit
+(Object
+	subclass: 'GtWireSetEncoderExamples'
+	instVarNames: #()
+	classVars: #()
+	classInstVars: #()
+	poolDictionaries: #()
+	inDictionary: Globals
+	options: #( #logCreation )
+)
+		category: 'GToolkit-WireEncoding-Examples';
+		comment: 'Portable Set and IdentitySet wire-format and round-trip examples.';
+		immediateInvariant.
+true.
+%
+
+removeallmethods GtWireSetEncoderExamples
+removeallclassmethods GtWireSetEncoderExamples
 
 doit
 (Stream
@@ -978,6 +1228,313 @@ category: 'accessing'
 method: GtWireUnsupportedObject
 object: anObject
 	object := anObject
+%
+
+! Class implementation for 'GtWireBagEncoderExamples'
+
+!		Instance methods for 'GtWireBagEncoderExamples'
+
+category: 'examples'
+method: GtWireBagEncoderExamples
+equalButNotIdentical
+	<gtExample>
+	| first second results |
+	GtWireEncoderDecoder reset.
+	first := String with: $a.
+	second := String with: $a.
+	self assert: first equals: second.
+	self assert: first ~~ second.
+	results := { Bag. IdentityBag } collect: [ :bagClass | | bag encoder decoder decoded counts |
+		bag := bagClass new add: first withOccurrences: 2; add: second withOccurrences: 3; yourself.
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: bag.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		counts := (bagClass == Bag ifTrue: [ GtWireBagEncoder new ] ifFalse: [ GtWireIdentityBagEncoder new ]) countsFor: decoded.
+		self assert: decoded size equals: 5.
+		self assert: counts size equals: (bagClass == Bag ifTrue: [ 1 ] ifFalse: [ 2 ]).
+		self assert: counts values asArray sorted equals: (bagClass == Bag ifTrue: [ #(5) ] ifFalse: [ #(2 3) ]).
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireBagEncoderExamples
+invalidCounts
+	<gtExample>
+	GtWireEncoderDecoder reset.
+	{ GtWireBagEncoder new. GtWireIdentityBagEncoder new } do: [ :wireEncoder |
+		{ 0. -1. 1.5. #invalid } do: [ :count | | encoder decoder rejected |
+			encoder := GtWireEncoder onByteArray.
+			encoder putTypeIdentifier: wireEncoder typeIdentifier; putSize: 1; nextPut: #object; nextPut: count.
+			decoder := GtWireDecoder on: encoder contents readStream.
+			rejected := [ decoder next. false ] on: Error do: [ :error | error messageText = 'Bag occurrence count must be a positive integer' ].
+			self assert: rejected ] ].
+	^ self
+%
+
+category: 'examples'
+method: GtWireBagEncoderExamples
+nestedBags
+	<gtExample>
+	| inner outer encoder decoder decoded |
+	GtWireEncoderDecoder reset.
+	inner := Bag new add: #inner withOccurrences: 4; yourself.
+	outer := IdentityBag new add: inner withOccurrences: 3; yourself.
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: outer; nextPut: #sentinel.
+	decoder := GtWireDecoder on: encoder contents readStream.
+	decoded := decoder next.
+	self assert: decoded class equals: IdentityBag.
+	self assert: decoded size equals: 3.
+	decoded do: [ :bag |
+		self assert: bag class equals: Bag.
+		self assert: (bag occurrencesOf: #inner) equals: 4.
+		self assert: (decoded occurrencesOf: bag) equals: 3 ].
+	self assert: decoder next equals: #sentinel.
+	^ decoded
+%
+
+category: 'examples'
+method: GtWireBagEncoderExamples
+roundTrips
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	GtWireObjectEncoder validateTypeIdentifiers.
+	results := { Bag. IdentityBag } collect: [ :bagClass |
+		{ bagClass new. (bagClass new add: #one withOccurrences: 3; add: #two withOccurrences: 7; yourself). (bagClass new add: #many withOccurrences: 1000000; yourself) }
+			collect: [ :bag | | encoder decoder decoded |
+				encoder := GtWireEncoder onByteArray.
+				encoder nextPut: bag; nextPut: #sentinel.
+				decoder := GtWireDecoder on: encoder contents readStream.
+				decoded := decoder next.
+				self assert: decoded class equals: bagClass.
+				self assert: decoded size equals: bag size.
+				bag do: [ :object | self assert: (decoded occurrencesOf: object) equals: (bag occurrencesOf: object) ].
+				self assert: decoder next equals: #sentinel.
+				decoded ] ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireBagEncoderExamples
+wireFormat
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	results := { Bag. IdentityBag } collect: [ :bagClass | | encoder decoder bag wireEncoder |
+		bag := bagClass new add: #repeated withOccurrences: 1000000; yourself.
+		wireEncoder := bagClass == Bag ifTrue: [ GtWireBagEncoder new ] ifFalse: [ GtWireIdentityBagEncoder new ].
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: bag; nextPut: #sentinel.
+		self assert: encoder contents first equals: wireEncoder typeIdentifier.
+		decoder := GtWireDecoder on: encoder contents allButFirst readStream.
+		self assert: decoder nextSize equals: 1.
+		self assert: decoder next equals: #repeated.
+		self assert: decoder next equals: 1000000.
+		self assert: decoder next equals: #sentinel.
+		encoder contents ].
+	^ results
+%
+
+! Class implementation for 'GtWireDateAndTimeEncoderExamples'
+
+!		Instance methods for 'GtWireDateAndTimeEncoderExamples'
+
+category: 'examples'
+method: GtWireDateAndTimeEncoderExamples
+roundTrips
+	<gtExample>
+	| dates |
+	GtWireEncoderDecoder reset.
+	dates := #(0 19800 -12600) collect: [ :offset |
+		self gtDo:
+			[ DateAndTime year: 2020 month: 1 day: 2 hour: 3 minute: 4 second: 5 nanoSecond: 123456000 offset: (Duration seconds: offset) ]
+		gemstoneDo:
+			[ DateAndTime year: 2020 month: 1 day: 2 hour: 3 minute: 4 second: 5 offset: (Duration seconds: offset) ] ].
+	^ dates collect: [ :date | | encoder decoded |
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: date; nextPut: #sentinel.
+		decoded := GtWireDecoder on: encoder contents readStream.
+		[ | result |
+		result := decoded next.
+		self assert: result equals: date.
+		self assert: result offset equals: date offset.
+		self assert: result nanoSecond equals: date nanoSecond.
+		self assert: decoded next equals: #sentinel.
+		result ] value ]
+%
+
+! Class implementation for 'GtWireDateEncoderExamples'
+
+!		Instance methods for 'GtWireDateEncoderExamples'
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+calendarBoundaries
+	"Calendar components, including century leap rules and year boundaries, survive round trips."
+	<gtExample>
+	^ #(#(1900 2 28) #(1900 3 1) #(2000 2 29) #(2023 12 31) #(2024 1 1) #(2024 2 29) #(2024 7 1)) collect: [ :parts |
+		| date encoder decoder decoded |
+		date := self
+			gtDo: [ (DateAndTime year: parts first month: parts second day: parts third hour: 0 minute: 0 second: 0) asDate ]
+			gemstoneDo: [ Date newDay: parts third monthNumber: parts second year: parts first ].
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: date; nextPut: #sentinel.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		self assert: (decoded isKindOf: Date).
+		self assert: decoded year equals: parts first.
+		self assert: decoded monthIndex equals: parts second.
+		self assert: decoded dayOfMonth equals: parts third.
+		self assert: decoded equals: date.
+		self gtDo: [ self assert: decoded offset equals: date offset ] gemstoneDo: [ ].
+		self assert: decoder next equals: #sentinel.
+		decoded ]
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+decodesDifferentOffset
+	"GT preserves a foreign offset; GemStone must reject it rather than silently lose it."
+	<gtExample>
+	| systemOffset offset decoder result |
+	systemOffset := GtWireDateEncoder new systemOffsetForYear: 2024 month: 2 day: 29.
+	offset := systemOffset = 19800 ifTrue: [ -12600 ] ifFalse: [ 19800 ].
+	decoder := GtWireDecoder on: (self payloadForYear: 2024 month: 2 day: 29 offset: offset) readStream.
+	self
+		gtDo: [
+			result := decoder next.
+			self assert: (result isKindOf: Date).
+			self assert: result year equals: 2024.
+			self assert: result monthIndex equals: 2.
+			self assert: result dayOfMonth equals: 29.
+			self assert: result offset asSeconds equals: offset ]
+		gemstoneDo: [
+			result := nil.
+			[ decoder next ] on: Error do: [ :error | result := error ].
+			self assert: result notNil.
+			self assert: result messageText equals: 'Date UTC offset ', offset printString,
+				' does not match the system timezone offset ', systemOffset printString ].
+	self assert: decoder next equals: #sentinel.
+	^ result
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+decodesMatchingOffset
+	"A system-compatible payload is accepted on both platforms and consumes exactly one object."
+	<gtExample>
+	| offset decoder date |
+	offset := GtWireDateEncoder new systemOffsetForYear: 2024 month: 2 day: 29.
+	decoder := GtWireDecoder on: (self payloadForYear: 2024 month: 2 day: 29 offset: offset) readStream.
+	date := decoder next.
+	self assert: (date isKindOf: Date).
+	self assert: date year equals: 2024.
+	self assert: date monthIndex equals: 2.
+	self assert: date dayOfMonth equals: 29.
+	self gtDo: [ self assert: date offset asSeconds equals: offset ] gemstoneDo: [ ].
+	self assert: decoder next equals: #sentinel.
+	^ date
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+nestedDates
+	"Date dispatch works inside collections, without confusing Dates with DateAndTimes."
+	<gtExample>
+	| dates encoder decoder decoded |
+	dates := self calendarBoundaries.
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: { dates. dates first. #sentinel }.
+	decoder := GtWireDecoder on: encoder contents readStream.
+	decoded := decoder next.
+	self assert: decoded first equals: dates.
+	self assert: decoded second equals: dates first.
+	self assert: (decoded second isKindOf: Date).
+	self assert: decoded third equals: #sentinel.
+	decoded first do: [ :date | self assert: (date isKindOf: Date) ].
+	^ decoded
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+offsetValidation
+	"Exercise the GemStone guard on dates in different seasons, without changing the timezone."
+	<gtExample>
+	| encoder |
+	encoder := GtWireDateEncoder new.
+	#(#(2024 2 29) #(2024 7 1) #(2023 12 31)) do: [ :parts |
+		| offset caught |
+		offset := encoder systemOffsetForYear: parts first month: parts second day: parts third.
+		encoder validateOffset: offset forYear: parts first month: parts second day: parts third.
+		caught := nil.
+		[ encoder validateOffset: offset + 1 forYear: parts first month: parts second day: parts third ]
+			on: Error do: [ :error | caught := error ].
+		self assert: caught notNil.
+		self assert: caught messageText equals: 'Date UTC offset ', (offset + 1) printString,
+			' does not match the system timezone offset ', offset printString ].
+	^ encoder
+%
+
+category: 'private'
+method: GtWireDateEncoderExamples
+payloadForYear: year month: month day: day offset: offset
+	"Construct an independent Date payload followed by another object to detect over-reading."
+	| encoder |
+	encoder := GtWireEncoder onByteArray.
+	encoder
+		putTypeIdentifier: GtWireDateEncoder typeIdentifier;
+		putPackedInteger: year;
+		putPackedInteger: month;
+		putPackedInteger: day;
+		nextPut: offset;
+		nextPut: #sentinel.
+	^ encoder contents
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+roundTrips
+	<gtExample>
+	| dates |
+	GtWireEncoderDecoder reset.
+	GtWireObjectEncoder validateTypeIdentifiers.
+	dates := self
+		gtDo: [ #(0 19800 -12600) collect: [ :offset |
+			(DateAndTime year: 2024 month: 2 day: 29 hour: 0 minute: 0 second: 0 offset: (Duration seconds: offset)) asDate ] ]
+		gemstoneDo: [ { Date newDay: 29 monthNumber: 2 year: 2024. Date newDay: 31 monthNumber: 12 year: 2023 } ].
+	^ dates collect: [ :date | | encoder decoded |
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: date.
+		decoded := (GtWireDecoder on: encoder contents readStream) next.
+		self assert: (decoded isKindOf: Date).
+		self assert: decoded equals: date.
+		self gtDo: [ self assert: decoded offset equals: date offset ] gemstoneDo: [ ].
+		decoded ]
+%
+
+category: 'examples'
+method: GtWireDateEncoderExamples
+wireFormat
+	<gtExample>
+	| date encoder decoder offset |
+	GtWireEncoderDecoder reset.
+	date := self
+		gtDo: [ (DateAndTime year: 2024 month: 2 day: 29 hour: 0 minute: 0 second: 0 offset: (Duration seconds: -12600)) asDate ]
+		gemstoneDo: [ Date newDay: 29 monthNumber: 2 year: 2024 ].
+	offset := self gtDo: [ -12600 ] gemstoneDo: [ GtWireDateEncoder new systemOffsetForYear: 2024 month: 2 day: 29 ].
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: date; nextPut: #sentinel.
+	self assert: encoder contents first equals: GtWireDateEncoder typeIdentifier.
+	decoder := GtWireDecoder on: encoder contents allButFirst readStream.
+	self assert: decoder nextPackedInteger equals: 2024.
+	self assert: decoder nextPackedInteger equals: 2.
+	self assert: decoder nextPackedInteger equals: 29.
+	self assert: decoder next equals: offset.
+	self assert: decoder next equals: #sentinel.
+	^ encoder contents
 %
 
 ! Class implementation for 'GtWireEncoderDecoder'
@@ -1130,15 +1687,6 @@ generateDefaultReverseMapMethodFrom: aDictionary
 	^ source
 %
 
-category: 'initialization'
-classmethod: GtWireEncoderDecoder
-initialize
-	"NOTE: GtDefaultMap and GtDefaultReverseMap should only be used on GT.
-	On GemStone they should always be nil."
-
-	GtDefaultMap := GtDefaultReverseMap := nil
-%
-
 category: 'private'
 classmethod: GtWireEncoderDecoder
 lookupClass: className
@@ -1159,6 +1707,20 @@ map: aClass withSubclassesTo: anEncoder in: mapping
 	mapping at: aClass put: anEncoder.
 	aClass allSubclasses do: [ :cls |
 		mapping at: cls put: anEncoder ].
+%
+
+category: 'initialization'
+classmethod: GtWireEncoderDecoder
+reset
+	"NOTE: GtDefaultMap and GtDefaultReverseMap should only be used on GT.
+	On GemStone they should always be nil."
+
+	self gtDo:
+		[ GtDefaultMap := GtDefaultReverseMap := nil ]
+	gemstoneDo:
+		[ SessionTemps current
+			removeKey: #gtGsWireEncodingDefaultMap ifAbsent: [];
+			removeKey: #gtGsWireEncodingDefaultReverseMap ifAbsent: [] ].
 %
 
 category: 'accessing'
@@ -1212,7 +1774,8 @@ method: GtWireEncoderDecoder
 hasValidConfiguration
 
 	^ (self map values allSatisfy: [ :each | each hasValidConfiguration ]) and:
-		[ self reverseMap allSatisfy: [ :each | each hasValidConfiguration ] ]
+		[ self reverseMap allSatisfy: [ :each | 
+			each isNil or: [ each hasValidConfiguration ] ] ]
 %
 
 category: 'accessing'
@@ -2133,6 +2696,63 @@ classByName
 
 category: 'examples'
 method: GtWireEncodingExamples
+constantBlockClosure1Arg
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a | #('lala') ].
+	self assert: (#(ConstantBlockClosure1Arg ExecBlock) includes: blockClosure class name).
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 21.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure1Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil) equals: #('lala').
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+constantBlockClosure2Arg
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a :b | #('lala') ].
+	self assert: (#(ConstantBlockClosure2Arg ExecBlock) includes: blockClosure class name).
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 24.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure2Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil value: nil) equals: #('lala').
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+constantBlockClosure3Arg
+	<gtExample>
+	<return: #ByteArray>
+	| blockClosure encoder byteArray next |
+	
+	encoder := GtWireEncoder onByteArray.
+	blockClosure := [ :a :b :c | #('lala') ].
+	self assert: (#(ConstantBlockClosure3Arg ExecBlock) includes: blockClosure class name).
+	encoder nextPut: blockClosure.
+	byteArray := encoder contents.
+	self assert: byteArray size equals: 27.
+	next := (GtWireDecoder on: byteArray readStream) next.
+	self assert: (#(ConstantBlockClosure3Arg ExecBlock) includes: next class name).
+	self assert: (next value: nil value: nil value: nil) equals: #('lala').
+	^ byteArray
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
 dateAndTime
 	<gtExample>
 	<return: #GtWireEncodingExamples>
@@ -2291,15 +2911,17 @@ fraction
 	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
 	encoder := GtWireEncoder onByteArray.
-	{ 3/5. SmallInteger maxVal * 20 / 17. }
-		doWithIndex: [ :f :i | 
+	{ 3/5. 
+	( self gtDo: [ SmallInteger maxVal ]
+			gemstoneDo: [ SmallInteger maximumValue ]) * 20 / 17. 
+	} doWithIndex: [ :f :i | 
 			self assert: (encoder objectEncoderFor: f) class
 				identicalTo: GtWireFractionEncoder.
 			encoder reset.
 			encoder nextPut: f.
 			byteArray := encoder contents.
 			next := (GtWireDecoder on: byteArray readStream) next.
-			self assert: next class identicalTo: Fraction.
+			self assert: (#(#Fraction #SmallFraction) includes: next class name).
 			self assert: next equals: f ]
 %
 
@@ -2440,6 +3062,51 @@ packedInteger
 				assert: (GtWireDecoder on: byteArray readStream) next
 				equals: integer negated.
 			integer := (1.001 * integer) ceiling ]
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+scaledDecimal
+	"Round-trip exact numeric values and display scales, including trailing zeros and non-terminating decimals."
+	<gtExample>
+	| encoder values decoded |
+	encoder := GtWireEncoder onByteArray.
+	values := { 1.25s2. -1.25s2. 0s0. 42s0. 0.0000s4. 42.0000s4.
+		((self gtDo: [ SmallInteger maxVal ]
+			gemstoneDo: [ SmallInteger maximumValue ]) * 20 / 17) asScaledDecimal.
+		(1 / (10 raisedTo: 30)) asScaledDecimal.
+		(1 / 3) asScaledDecimal. (1 / 3) asScaledDecimal: 7.
+		1.2500s4 }.
+	decoded := values collect: [ :value | | next |
+		self assert: (encoder objectEncoderFor: value) class identicalTo: GtWireScaledDecimalEncoder.
+		encoder reset.
+		encoder nextPut: value.
+		next := (GtWireDecoder on: encoder contents readStream) next.
+		self assert: (#(#ScaledDecimal #SmallScaledDecimal) includes: next class name).
+		self assert: next equals: value.
+		self assert: next numerator equals: value numerator.
+		self assert: next denominator equals: value denominator.
+		self assert: next scale equals: value scale.
+		next ].
+	^ decoded
+%
+
+category: 'examples'
+method: GtWireEncodingExamples
+scaledDecimalWireFormat
+	"The payload is exactly three objects: numerator, denominator, then scale."
+	<gtExample>
+	| encoder expected value bytes |
+	self assert: GtWireObjectEncoder validateTypeIdentifiers >= GtWireScaledDecimalEncoder typeIdentifier.
+	encoder := GtWireEncoder onByteArray.
+	value := -123.4500s4.
+	encoder nextPut: value.
+	bytes := encoder contents.
+	expected := GtWireEncoder onByteArray.
+	expected nextPut: value numerator; nextPut: value denominator; nextPut: value scale.
+	self assert: bytes first equals: GtWireScaledDecimalEncoder typeIdentifier.
+	self assert: bytes allButFirst equals: expected contents.
+	^ bytes
 %
 
 category: 'examples'
@@ -3043,6 +3710,127 @@ gbsToWireExample1
 	self assert: next var4 var1 equals: 'default replication'
 %
 
+! Class implementation for 'GtWireIntervalEncoderExamples'
+
+!		Instance methods for 'GtWireIntervalEncoderExamples'
+
+category: 'examples'
+method: GtWireIntervalEncoderExamples
+roundTrips
+	<gtExample>
+	| parameters results |
+	GtWireEncoderDecoder reset.
+	GtWireObjectEncoder validateTypeIdentifiers.
+	parameters := #(#(1 10 2) #(10 1 -2) #(5 1 1) #(1 5 -1) #(3 3 1) #(-10 -1 3) #(0 1 0.25)).
+	parameters := parameters , { { 1 / 3. 7 / 3. 1 / 2 }. { 1. 10 raisedTo: 30. 3 } }.
+	results := parameters collect: [ :triple | | interval encoder decoder decoded |
+		interval := Interval from: triple first to: triple second by: triple third.
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: interval; nextPut: #sentinel.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		self assert: decoded class equals: Interval.
+		self assert: (self gtDo: [ decoded first ] gemstoneDo: [ decoded _from ]) equals: triple first.
+		self assert: (self gtDo: [ decoded stop ] gemstoneDo: [ decoded _to ]) equals: triple second.
+		self assert: decoded increment equals: triple third.
+		self assert: decoded size equals: interval size.
+		self assert: decoder next equals: #sentinel.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireIntervalEncoderExamples
+wireFormat
+	"Exactly three ordinary wire values preserve the original bounds, even when the upper bound is not an element."
+	<gtExample>
+	| encoder decoder |
+	GtWireEncoderDecoder reset.
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: (Interval from: 1 to: 10 by: 2); nextPut: #sentinel.
+	self assert: encoder contents first equals: GtWireIntervalEncoder typeIdentifier.
+	decoder := GtWireDecoder on: encoder contents allButFirst readStream.
+	self assert: decoder next equals: 1.
+	self assert: decoder next equals: 10.
+	self assert: decoder next equals: 2.
+	self assert: decoder next equals: #sentinel.
+	^ encoder contents
+%
+
+! Class implementation for 'GtWireLocalTimeEncoderExamples'
+
+!		Instance methods for 'GtWireLocalTimeEncoderExamples'
+
+category: 'examples'
+method: GtWireLocalTimeEncoderExamples
+decodesDifferentScales
+	"Read both platforms' payloads as well as other decimal scales using exact arithmetic."
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	results := { { 0. 0 }. { 125. 3 }. { 123456. 6 }. { 123456789. 9 } } collect: [ :pair |
+		| encoder decoder decoded expectedFraction |
+		encoder := GtWireEncoder onByteArray.
+		encoder
+			putTypeIdentifier: GtWireLocalTimeEncoder typeIdentifier;
+			putPackedInteger: 45296;
+			putPackedInteger: pair first;
+			putPackedInteger: pair second;
+			putPackedInteger: 77.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		expectedFraction := pair first / (10 raisedTo: pair second).
+		self assert: decoded asSeconds equals: 45296.
+		self
+			gtDo: [ self assert: decoded nanoSecond equals: (expectedFraction * 1000000000) truncated ]
+			gemstoneDo: [ self assert: decoded asMicroseconds equals: 45296000000 + (expectedFraction * 1000000) truncated ].
+		self assert: decoder nextPackedInteger equals: 77.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireLocalTimeEncoderExamples
+roundTrips
+	<gtExample>
+	| times results |
+	GtWireEncoderDecoder reset.
+	GtWireObjectEncoder validateTypeIdentifiers.
+	times := self
+		gtDo: [ { Time midnight. Time noon. Time seconds: 45296 nanoSeconds: 123456789. Time seconds: 86399 nanoSeconds: 999999999 } ]
+		gemstoneDo: [ { Time fromMicroseconds: 0. Time fromMicroseconds: 43200000000. Time fromMicroseconds: 45296123456. Time fromMicroseconds: 86399999999 } ].
+	results := times collect: [ :time | | encoder decoded |
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: time.
+		decoded := (GtWireDecoder on: encoder contents readStream) next.
+		self assert: decoded equals: time.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireLocalTimeEncoderExamples
+wireFormat
+	"The payload contains exactly three packed integers, followed by a sentinel to verify its boundary."
+	<gtExample>
+	| encoder decoder time fraction scale |
+	GtWireEncoderDecoder reset.
+	time := self
+		gtDo: [ Time seconds: 45296 nanoSeconds: 123456789 ]
+		gemstoneDo: [ Time fromMicroseconds: 45296123456 ].
+	fraction := self gtDo: [ 123456789 ] gemstoneDo: [ 123456 ].
+	scale := self gtDo: [ 9 ] gemstoneDo: [ 6 ].
+	encoder := GtWireEncoder onByteArray.
+	encoder nextPut: time; putPackedInteger: 77.
+	self assert: encoder contents first equals: GtWireLocalTimeEncoder typeIdentifier.
+	decoder := GtWireDecoder on: encoder contents allButFirst readStream.
+	self assert: decoder nextPackedInteger equals: 45296.
+	self assert: decoder nextPackedInteger equals: fraction.
+	self assert: decoder nextPackedInteger equals: scale.
+	self assert: decoder nextPackedInteger equals: 77.
+	^ encoder contents
+%
+
 ! Class implementation for 'GtWireNestedEncodingExamples'
 
 !		Instance methods for 'GtWireNestedEncodingExamples'
@@ -3097,8 +3885,9 @@ defaultReverseMapIsArray
 
 	reverseMap := GtWireEncoderDecoder defaultReverseMap.
 	self assert: reverseMap isArray.
-	self assert: reverseMap size equals: 30.
+	self assert: reverseMap size equals: GtWireObjectEncoder validateTypeIdentifiers.
 	self assert: (reverseMap at: 1) class equals: GtWireNilEncoder.
+	self assert: (reverseMap at: GtWireScaledDecimalEncoder typeIdentifier) class equals: GtWireScaledDecimalEncoder.
 	^ reverseMap
 %
 
@@ -3298,10 +4087,13 @@ category: 'test'
 classmethod: GtWireObjectEncoder
 validateTypeIdentifiers
 	 "Validate that there aren't duplicate type identifiers and answer the maximum value"
-	| visited |
+	| visited allSubclasses |
 	
 	visited := Set new.
-	self allSubclassesDo: [ :cls | | typeIdentifier |
+	allSubclasses := self 
+		gtDo: [ self allSubclasses ]
+		gemstoneDo: [ ClassOrganizer gtDefault allSubclassesOf: self ].
+	allSubclasses do: [ :cls | | typeIdentifier |
 		typeIdentifier := cls typeIdentifierOrNil.
 		typeIdentifier ifNotNil:
 			[ (visited includes: typeIdentifier) ifTrue:
@@ -3388,12 +4180,100 @@ decodeWith: aGtWireEncoderContext
 
 category: 'encoding - decoding'
 method: GtWireAssociationEncoder
-encode: anInteger with: aGtWireEncoderContext
+encode: anAssociation with: aGtWireEncoderContext
 
 	aGtWireEncoderContext putTypeIdentifier: self typeIdentifier.
 	aGtWireEncoderContext
-		nextPut: anInteger key;
-		nextPut: anInteger value
+		nextPut: anAssociation key;
+		nextPut: anAssociation value
+%
+
+! Class implementation for 'GtWireBagEncoder'
+
+!		Class methods for 'GtWireBagEncoder'
+
+category: 'accessing'
+classmethod: GtWireBagEncoder
+typeIdentifier
+	^ 34
+%
+
+!		Instance methods for 'GtWireBagEncoder'
+
+category: 'accessing'
+method: GtWireBagEncoder
+bagClass
+	^ Bag
+%
+
+category: 'encoding'
+method: GtWireBagEncoder
+countsFor: aBag
+	^ self
+		gtDo: [ aBag valuesAndCounts ]
+		gemstoneDo: [ | counts |
+			counts := Dictionary new.
+			aBag _keysAndValuesDo: [ :object :count | counts at: object put: count ].
+			counts ]
+%
+
+category: 'decoding'
+method: GtWireBagEncoder
+decodeWith: aContext
+	| entryCount bag |
+	entryCount := aContext nextSize.
+	bag := self bagClass new: entryCount.
+	entryCount timesRepeat: [ | object count |
+		object := aContext next.
+		count := aContext next.
+		(count isInteger and: [ count > 0 ])
+			ifFalse: [ self error: 'Bag occurrence count must be a positive integer' ].
+		bag add: object withOccurrences: count ].
+	^ bag
+%
+
+category: 'encoding'
+method: GtWireBagEncoder
+encode: aBag with: aContext
+	"Transmit distinct objects and multiplicities, never the internal bag representation."
+	| counts |
+	counts := self countsFor: aBag.
+	aContext
+		putTypeIdentifier: self typeIdentifier;
+		putSize: counts size.
+	counts keysAndValuesDo: [ :object :count |
+		aContext nextPut: object; nextPut: count ].
+%
+
+! Class implementation for 'GtWireIdentityBagEncoder'
+
+!		Class methods for 'GtWireIdentityBagEncoder'
+
+category: 'accessing'
+classmethod: GtWireIdentityBagEncoder
+typeIdentifier
+	^ 35
+%
+
+!		Instance methods for 'GtWireIdentityBagEncoder'
+
+category: 'accessing'
+method: GtWireIdentityBagEncoder
+bagClass
+	^ IdentityBag
+%
+
+category: 'encoding'
+method: GtWireIdentityBagEncoder
+countsFor: aBag
+	"GemStone IdentityBag has no dictionary-backed count iteration. Never coalesce equal but non-identical entries."
+	^ self
+		gtDo: [ aBag valuesAndCounts ]
+		gemstoneDo: [ | counts |
+			counts := IdentityDictionary new.
+			aBag do: [ :object |
+				counts at: object put: (counts at: object ifAbsent: [ 0 ]) + 1 ].
+			counts ]
 %
 
 ! Class implementation for 'GtWireBlockClosureEncoder'
@@ -3743,32 +4623,6 @@ decodeWith: aGtWireEncoderContext
 			[ arrayStream nextPut: aGtWireEncoderContext next ] ]
 %
 
-! Class implementation for 'GtWireSetEncoder'
-
-!		Class methods for 'GtWireSetEncoder'
-
-category: 'accessing'
-classmethod: GtWireSetEncoder
-typeIdentifier
-
-	^ 11
-%
-
-!		Instance methods for 'GtWireSetEncoder'
-
-category: 'encoding - decoding'
-method: GtWireSetEncoder
-decodeWith: aGtWireEncoderContext
-	"Decode the OrderedCollection on the supplied context"
-	| count set |
-
-	count := aGtWireEncoderContext nextSize.
-	set := Set new: count * 2.
-	count timesRepeat:
-		[ set add: aGtWireEncoderContext next ].
-	^ set
-%
-
 ! Class implementation for 'GtWireDateAndTimeEncoder'
 
 !		Class methods for 'GtWireDateAndTimeEncoder'
@@ -3782,19 +4636,19 @@ typeIdentifier
 
 !		Instance methods for 'GtWireDateAndTimeEncoder'
 
-category: 'encoding - decoding'
+category: 'encoding'
 method: GtWireDateAndTimeEncoder
 decodeWith: aGtWireEncoderContext
-	"Decode the array on the supplied context"
+	"Restore the encoded instant and offset, not the local wall-clock representation."
 	| unixSeconds nanoSeconds offset |
 
-	unixSeconds :=  aGtWireEncoderContext nextPackedInteger.
+	unixSeconds := aGtWireEncoderContext nextPackedInteger.
 	nanoSeconds := aGtWireEncoderContext nextPackedInteger.
 	offset := aGtWireEncoderContext next.
 	^ self
 		gtDo: [ (DateAndTime fromUnixTime: unixSeconds)
 			setNanoSeconds: nanoSeconds;
-			translateTo: offset ]
+			offset: (Duration seconds: offset) ]
 		gemstoneDo: [ DateAndTime posixSeconds: (unixSeconds + (nanoSeconds / (10 raisedTo: 9))) offset: (Duration seconds: offset) ].
 %
 
@@ -3807,6 +4661,65 @@ encode: aDateAndTime with: aGtWireEncoderContext
 		putPackedInteger: aDateAndTime asUnixTime truncated;
 		putPackedInteger: aDateAndTime nanoSecond;
 		nextPut: aDateAndTime offset asSeconds.
+%
+
+! Class implementation for 'GtWireDateEncoder'
+
+!		Class methods for 'GtWireDateEncoder'
+
+category: 'accessing'
+classmethod: GtWireDateEncoder
+typeIdentifier
+	^ 37
+%
+
+!		Instance methods for 'GtWireDateEncoder'
+
+category: 'encoding'
+method: GtWireDateEncoder
+decodeWith: aContext
+	| year month day offset |
+	year := aContext nextPackedInteger.
+	month := aContext nextPackedInteger.
+	day := aContext nextPackedInteger.
+	offset := aContext next.
+	^ self
+		gtDo: [ (DateAndTime year: year month: month day: day hour: 0 minute: 0 second: 0 offset: (Duration seconds: offset)) asDate ]
+		gemstoneDo: [
+			self validateOffset: offset forYear: year month: month day: day.
+			Date newDay: day monthNumber: month year: year ]
+%
+
+category: 'encoding'
+method: GtWireDateEncoder
+encode: aDate with: aContext
+	| offset |
+	offset := self
+		gtDo: [ aDate offset asSeconds ]
+		gemstoneDo: [ self systemOffsetForYear: aDate year month: aDate monthIndex day: aDate dayOfMonth ].
+	aContext
+		putTypeIdentifier: self typeIdentifier;
+		putPackedInteger: aDate year;
+		putPackedInteger: aDate monthIndex;
+		putPackedInteger: aDate dayOfMonth;
+		nextPut: offset
+%
+
+category: 'private'
+method: GtWireDateEncoder
+systemOffsetForYear: year month: month day: day
+	"Resolve the system timezone at this date, not at today's date (DST may differ)."
+	^ (DateAndTime year: year month: month day: day hour: 0 minute: 0 second: 0) offset asSeconds
+%
+
+category: 'private'
+method: GtWireDateEncoder
+validateOffset: offset forYear: year month: month day: day
+	| systemOffset |
+	systemOffset := self systemOffsetForYear: year month: month day: day.
+	offset = systemOffset ifFalse: [
+		self error: 'Date UTC offset ', offset printString,
+			' does not match the system timezone offset ', systemOffset printString ]
 %
 
 ! Class implementation for 'GtWireDummyProxyEncoder'
@@ -4112,6 +5025,37 @@ isProxyObjectEncoder
 	^ true.
 %
 
+! Class implementation for 'GtWireIdentitySetEncoder'
+
+!		Class methods for 'GtWireIdentitySetEncoder'
+
+category: 'accessing'
+classmethod: GtWireIdentitySetEncoder
+typeIdentifier
+	^ 36
+%
+
+!		Instance methods for 'GtWireIdentitySetEncoder'
+
+category: 'encoding'
+method: GtWireIdentitySetEncoder
+decodeWith: aContext
+	"IdentitySet is not a subclass of Set on GemStone. Use its public API."
+	| count set |
+	count := aContext nextSize.
+	set := IdentitySet new: count.
+	count timesRepeat: [ set add: aContext next ].
+	^ set
+%
+
+category: 'encoding'
+method: GtWireIdentitySetEncoder
+encode: aSet with: aContext
+	"Transmit logical elements rather than platform-specific identity-set storage."
+	aContext putTypeIdentifier: self typeIdentifier; putSize: aSet size.
+	aSet do: [ :each | aContext nextPut: each ].
+%
+
 ! Class implementation for 'GtWireInstVarEncoder'
 
 !		Class methods for 'GtWireInstVarEncoder'
@@ -4259,6 +5203,80 @@ encode: anInteger with: aGtWireEncoderContext
 	aGtWireEncoderContext
 		putTypeIdentifier: self typeIdentifier;
 		putPackedInteger: anInteger
+%
+
+! Class implementation for 'GtWireIntervalEncoder'
+
+!		Class methods for 'GtWireIntervalEncoder'
+
+category: 'accessing'
+classmethod: GtWireIntervalEncoder
+typeIdentifier
+	^ 33
+%
+
+!		Instance methods for 'GtWireIntervalEncoder'
+
+category: 'encoding'
+method: GtWireIntervalEncoder
+decodeWith: aGtWireEncoderContext
+	^ Interval
+		from: aGtWireEncoderContext next
+		to: aGtWireEncoderContext next
+		by: aGtWireEncoderContext next
+%
+
+category: 'encoding'
+method: GtWireIntervalEncoder
+encode: anInterval with: aGtWireEncoderContext
+	| start stop |
+	start := self gtDo: [ anInterval first ] gemstoneDo: [ anInterval _from ].
+	stop := self gtDo: [ anInterval stop ] gemstoneDo: [ anInterval _to ].
+	aGtWireEncoderContext putTypeIdentifier: self typeIdentifier.
+	aGtWireEncoderContext
+		nextPut: start;
+		nextPut: stop;
+		nextPut: anInterval increment
+%
+
+! Class implementation for 'GtWireLocalTimeEncoder'
+
+!		Class methods for 'GtWireLocalTimeEncoder'
+
+category: 'accessing'
+classmethod: GtWireLocalTimeEncoder
+typeIdentifier
+	^ 32
+%
+
+!		Instance methods for 'GtWireLocalTimeEncoder'
+
+category: 'encoding'
+method: GtWireLocalTimeEncoder
+decodeWith: aContext
+	| seconds fractionalSeconds scale fraction |
+	seconds := aContext nextPackedInteger.
+	fractionalSeconds := aContext nextPackedInteger.
+	scale := aContext nextPackedInteger.
+	fraction := fractionalSeconds / (10 raisedTo: scale).
+	^ self
+		gtDo: [ Time seconds: seconds nanoSeconds: (fraction * 1000000000) truncated ]
+		gemstoneDo: [ Time fromMicroseconds: (seconds * 1000000 + (fraction * 1000000) truncated) ]
+%
+
+category: 'encoding'
+method: GtWireLocalTimeEncoder
+encode: aTime with: aContext
+	| seconds fractionalSeconds scale |
+	seconds := aTime asSeconds truncated.
+	self
+		gtDo: [ fractionalSeconds := aTime nanoSecond. scale := 9 ]
+		gemstoneDo: [ fractionalSeconds := aTime asMicroseconds \\ 1000000. scale := 6 ].
+	aContext
+		putTypeIdentifier: self typeIdentifier;
+		putPackedInteger: seconds;
+		putPackedInteger: fractionalSeconds;
+		putPackedInteger: scale
 %
 
 ! Class implementation for 'GtWireMaxDepthEncoder'
@@ -4525,6 +5543,71 @@ encode: anObject with: aGtWireEncoderContext
 	encoder encode: anObject with: aGtWireEncoderContext.
 %
 
+! Class implementation for 'GtWireScaledDecimalEncoder'
+
+!		Class methods for 'GtWireScaledDecimalEncoder'
+
+category: 'accessing'
+classmethod: GtWireScaledDecimalEncoder
+typeIdentifier
+	^ 31
+%
+
+!		Instance methods for 'GtWireScaledDecimalEncoder'
+
+category: 'encoding'
+method: GtWireScaledDecimalEncoder
+decodeWith: aGtWireEncoderContext
+	| numerator denominator scale |
+	numerator := aGtWireEncoderContext next.
+	denominator := aGtWireEncoderContext next.
+	scale := aGtWireEncoderContext next.
+	^ (numerator / denominator) asScaledDecimal: scale
+%
+
+category: 'encoding'
+method: GtWireScaledDecimalEncoder
+encode: aScaledDecimal with: aGtWireEncoderContext
+	aGtWireEncoderContext putTypeIdentifier: self typeIdentifier.
+	aGtWireEncoderContext
+		nextPut: aScaledDecimal numerator;
+		nextPut: aScaledDecimal denominator;
+		nextPut: aScaledDecimal scale
+%
+
+! Class implementation for 'GtWireSetEncoder'
+
+!		Class methods for 'GtWireSetEncoder'
+
+category: 'accessing'
+classmethod: GtWireSetEncoder
+typeIdentifier
+
+	^ 11
+%
+
+!		Instance methods for 'GtWireSetEncoder'
+
+category: 'encoding'
+method: GtWireSetEncoder
+decodeWith: aContext
+	"Rebuild hashing on the receiving platform through the public collection API."
+	| count set |
+	count := aContext nextSize.
+	set := Set new: count.
+	count timesRepeat: [ set add: aContext next ].
+	^ set
+%
+
+category: 'encoding'
+method: GtWireSetEncoder
+encode: aSet with: aContext
+	"Use logical elements, never the platform-specific backing storage.
+	Keep the existing Set wire format: size followed by ordinary wire objects."
+	aContext putTypeIdentifier: self typeIdentifier; putSize: aSet size.
+	aSet do: [ :each | aContext nextPut: each ].
+%
+
 ! Class implementation for 'GtWireStonEncoder'
 
 !		Class methods for 'GtWireStonEncoder'
@@ -4554,6 +5637,146 @@ encode: anObject with: aGtWireEncoderContext
 	aGtWireEncoderContext
 		putTypeIdentifier: self class typeIdentifier;
 		putByteArray: stonEncoded.
+%
+
+! Class implementation for 'GtWireSetEncoderExamples'
+
+!		Instance methods for 'GtWireSetEncoderExamples'
+
+category: 'examples'
+method: GtWireSetEncoderExamples
+duplicateElements
+	"Decode every declared element even when insertion collapses duplicates, leaving the next wire object intact."
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	results := { GtWireSetEncoder. GtWireIdentitySetEncoder } collect: [ :encoderClass | | encoder decoder decoded expectedClass |
+		expectedClass := encoderClass == GtWireSetEncoder ifTrue: [ Set ] ifFalse: [ IdentitySet ].
+		encoder := GtWireEncoder onByteArray.
+		encoder putTypeIdentifier: encoderClass typeIdentifier; putSize: 3.
+		encoder nextPut: #repeated; nextPut: #repeated; nextPut: #repeated; nextPut: #sentinel.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		self assert: decoded class equals: expectedClass.
+		self assert: decoded size equals: 1.
+		self assert: (decoded includes: #repeated).
+		self assert: decoder next equals: #sentinel.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireSetEncoderExamples
+equalButNotIdentical
+	"Equal strings collapse in Set but remain separate elements in IdentitySet, including after decoding."
+	<gtExample>
+	| first second results |
+	GtWireEncoderDecoder reset.
+	first := String with: $a.
+	second := String with: $a.
+	self assert: first equals: second.
+	self assert: first ~~ second.
+	results := { Set. IdentitySet } collect: [ :setClass | | set encoder decoder decoded elements expectedSize |
+		set := setClass new add: first; add: second; yourself.
+		expectedSize := setClass == Set ifTrue: [ 1 ] ifFalse: [ 2 ].
+		self assert: set size equals: expectedSize.
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: set; nextPut: #sentinel.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		self assert: decoded class equals: setClass.
+		self assert: decoded size equals: expectedSize.
+		decoded do: [ :each |
+			self assert: each equals: first.
+			self assert: (decoded includes: each) ].
+		elements := decoded asArray.
+		setClass == IdentitySet ifTrue: [
+			self assert: elements first ~~ elements second.
+			self assert: elements first equals: elements second ].
+		self assert: decoder next equals: #sentinel.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireSetEncoderExamples
+nestedSets
+	"Both kinds of set can contain the other kind, reconstructed through their public collection APIs."
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	results := { Set. IdentitySet } collect: [ :outerClass | | innerClass inner outer encoder decoder decoded decodedInner |
+		innerClass := outerClass == Set ifTrue: [ IdentitySet ] ifFalse: [ Set ].
+		inner := innerClass new add: #inner; add: 42; yourself.
+		outer := outerClass new add: inner; add: #outer; yourself.
+		encoder := GtWireEncoder onByteArray.
+		encoder nextPut: outer; nextPut: #sentinel.
+		decoder := GtWireDecoder on: encoder contents readStream.
+		decoded := decoder next.
+		self assert: decoded class equals: outerClass.
+		self assert: decoded size equals: 2.
+		self assert: (decoded includes: #outer).
+		decodedInner := decoded detect: [ :each | each class == innerClass ].
+		self assert: decodedInner size equals: 2.
+		self assert: (decodedInner includes: #inner).
+		self assert: (decodedInner includes: 42).
+		self assert: (decoded includes: decodedInner).
+		self assert: decoder next equals: #sentinel.
+		decoded ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireSetEncoderExamples
+roundTrips
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	GtWireObjectEncoder validateTypeIdentifiers.
+	results := { Set. IdentitySet } collect: [ :setClass |
+		{ setClass new.
+			(setClass new add: #one; yourself).
+			(setClass new add: nil; add: true; add: false; add: 42; add: #symbol; add: 'text'; yourself).
+			(setClass new addAll: (1 to: 300); yourself) }
+			collect: [ :set | | encoder decoder decoded |
+				encoder := GtWireEncoder onByteArray.
+				encoder nextPut: set; nextPut: #sentinel.
+				decoder := GtWireDecoder on: encoder contents readStream.
+				decoded := decoder next.
+				self assert: decoded class equals: setClass.
+				self assert: decoded size equals: set size.
+				self assert: (Set withAll: decoded) equals: (Set withAll: set).
+				decoded do: [ :each | self assert: (decoded includes: each) ].
+				self assert: decoder next equals: #sentinel.
+				decoded ] ].
+	^ results
+%
+
+category: 'examples'
+method: GtWireSetEncoderExamples
+wireFormat
+	"The payload is a logical element count followed by ordinary wire objects, not backing storage. Element order is unspecified."
+	<gtExample>
+	| results |
+	GtWireEncoderDecoder reset.
+	self assert: GtWireSetEncoder typeIdentifier equals: 11.
+	self assert: GtWireIdentitySetEncoder typeIdentifier equals: 36.
+	results := { Set. IdentitySet } collect: [ :setClass |
+		{ setClass new. (setClass new addAll: #(one two three); yourself) }
+			collect: [ :set | | encoder decoder elements typeIdentifier |
+				typeIdentifier := setClass == Set
+					ifTrue: [ GtWireSetEncoder typeIdentifier ]
+					ifFalse: [ GtWireIdentitySetEncoder typeIdentifier ].
+				encoder := GtWireEncoder onByteArray.
+				encoder nextPut: set; nextPut: #sentinel.
+				self assert: encoder contents first equals: typeIdentifier.
+				decoder := GtWireDecoder on: encoder contents allButFirst readStream.
+				self assert: decoder nextSize equals: set size.
+				elements := (1 to: set size) collect: [ :index | decoder next ].
+				self assert: elements asSet equals: set asSet.
+				self assert: decoder next equals: #sentinel.
+				encoder contents ] ].
+	^ results
 %
 
 ! Class implementation for 'GtWireStream'
@@ -4779,31 +6002,43 @@ defaultMapping
 	self map: ExecBlock withSubclassesTo: GtWireBlockClosureEncoder new in: mapping.
 	self map: RsrService withSubclassesTo: GtWireGemStoneRsrEncoder new in: mapping.
 	mapping
-		at: Association put: GtWireAssociationEncoder new;
-		at: Boolean put: GtWireBooleanEncoder new;
-		at: ByteArray put: GtWireByteArrayEncoder new;
-		at: String  put: GtWireStringEncoder new;
-		at: DoubleByteString put: GtWireStringEncoder new;
-		at: Unicode7 put: GtWireStringEncoder new;
-		at: Unicode16 put: GtWireStringEncoder new;
-		at: Unicode32 put: GtWireStringEncoder new;
-		at: Symbol put: GtWireSymbolEncoder new;
-		at: DoubleByteSymbol put: GtWireSymbolEncoder new;
-		at: Character put: GtWireCharacterEncoder new;
-		at: Array put: GtWireArrayEncoder new;
-		at: Dictionary put: GtWireDictionaryEncoder new;
-		at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
-		at: Set put: GtWireSetEncoder new;
-		at: SmallInteger put: GtWireIntegerEncoder new;
-		at: LargeInteger put: GtWireIntegerEncoder new;
-		at: Float put: GtWireFloatEncoder new;
-		at: SmallDouble put: GtWireFloatEncoder new;
-		at: SmallFloat put: GtWireFloatEncoder new;
-		at: UndefinedObject put: GtWireNilEncoder new;
-		at: DateAndTime put: GtWireDateAndTimeEncoder new;
-		at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
-		at: Fraction put: GtWireFractionEncoder new;
-		at: SmallFraction put: GtWireFractionEncoder new.
+                at: Association put: GtWireAssociationEncoder new;
+                at: SymbolAssociation put: GtWireAssociationEncoder new;
+                at: Bag put: GtWireBagEncoder new;
+                at: IdentityBag put: GtWireIdentityBagEncoder new;
+                at: Boolean put: GtWireBooleanEncoder new;
+                at: ByteArray put: GtWireByteArrayEncoder new;
+                at: Date put: GtWireDateEncoder new;
+                at: SmallDate put: GtWireDateEncoder new;
+                at: Interval put: GtWireIntervalEncoder new;
+                at: ScaledDecimal put: GtWireScaledDecimalEncoder new;
+                at: SmallScaledDecimal put: GtWireScaledDecimalEncoder new;
+                at: Set put: GtWireSetEncoder new;
+                at: IdentitySet put: GtWireIdentitySetEncoder new;
+                at: String  put: GtWireStringEncoder new;
+                at: DoubleByteString put: GtWireStringEncoder new;
+                at: Time put: GtWireLocalTimeEncoder new;
+                at: SmallTime put: GtWireLocalTimeEncoder new;
+                at: Unicode7 put: GtWireStringEncoder new;
+                at: Unicode16 put: GtWireStringEncoder new;
+                at: Unicode32 put: GtWireStringEncoder new;
+                at: Symbol put: GtWireSymbolEncoder new;
+                at: DoubleByteSymbol put: GtWireSymbolEncoder new;
+                at: Character put: GtWireCharacterEncoder new;
+                at: Array put: GtWireArrayEncoder new;
+                at: Dictionary put: GtWireDictionaryEncoder new;
+                at: OrderedCollection put: GtWireOrderedCollectionEncoder new;
+                at: Set put: GtWireSetEncoder new;
+                at: SmallInteger put: GtWireIntegerEncoder new;
+                at: LargeInteger put: GtWireIntegerEncoder new;
+                at: Float put: GtWireFloatEncoder new;
+                at: SmallDouble put: GtWireFloatEncoder new;
+                at: SmallFloat put: GtWireFloatEncoder new;
+                at: UndefinedObject put: GtWireNilEncoder new;
+                at: DateAndTime put: GtWireDateAndTimeEncoder new;
+                at: SmallDateAndTime put: GtWireDateAndTimeEncoder new;
+                at: Fraction put: GtWireFractionEncoder new;
+                at: SmallFraction put: GtWireFractionEncoder new.
 	^ mapping
 %
 
@@ -4825,9 +6060,11 @@ getDefaultMap
 	^ IdentityDictionary new
 		at: ((self lookupClass: #Array) ifNil: [ self error: 'Unable to find: Array' ]) put: GtWireArrayEncoder new;
 		at: ((self lookupClass: #Association) ifNil: [ self error: 'Unable to find: Association' ]) put: GtWireAssociationEncoder new;
+		at: ((self lookupClass: #Bag) ifNil: [ self error: 'Unable to find: Bag' ]) put: GtWireBagEncoder new;
 		at: ((self lookupClass: #Boolean) ifNil: [ self error: 'Unable to find: Boolean' ]) put: GtWireBooleanEncoder new;
 		at: ((self lookupClass: #ByteArray) ifNil: [ self error: 'Unable to find: ByteArray' ]) put: GtWireByteArrayEncoder new;
 		at: ((self lookupClass: #Character) ifNil: [ self error: 'Unable to find: Character' ]) put: GtWireCharacterEncoder new;
+		at: ((self lookupClass: #Date) ifNil: [ self error: 'Unable to find: Date' ]) put: GtWireDateEncoder new;
 		at: ((self lookupClass: #DateAndTime) ifNil: [ self error: 'Unable to find: DateAndTime' ]) put: GtWireDateAndTimeEncoder new;
 		at: ((self lookupClass: #Dictionary) ifNil: [ self error: 'Unable to find: Dictionary' ]) put: GtWireDictionaryEncoder new;
 		at: ((self lookupClass: #DoubleByteString) ifNil: [ self error: 'Unable to find: DoubleByteString' ]) put: GtWireStringEncoder new;
@@ -4853,6 +6090,9 @@ getDefaultMap
 		at: ((self lookupClass: #GtRsrTestServiceServer) ifNil: [ self error: 'Unable to find: GtRsrTestServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrWireTransferService) ifNil: [ self error: 'Unable to find: GtRsrWireTransferService' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #GtRsrWireTransferServiceServer) ifNil: [ self error: 'Unable to find: GtRsrWireTransferServiceServer' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #IdentityBag) ifNil: [ self error: 'Unable to find: IdentityBag' ]) put: GtWireIdentityBagEncoder new;
+		at: ((self lookupClass: #IdentitySet) ifNil: [ self error: 'Unable to find: IdentitySet' ]) put: GtWireIdentitySetEncoder new;
+		at: ((self lookupClass: #Interval) ifNil: [ self error: 'Unable to find: Interval' ]) put: GtWireIntervalEncoder new;
 		at: ((self lookupClass: #LargeInteger) ifNil: [ self error: 'Unable to find: LargeInteger' ]) put: GtWireIntegerEncoder new;
 		at: ((self lookupClass: #OrderedCollection) ifNil: [ self error: 'Unable to find: OrderedCollection' ]) put: GtWireOrderedCollectionEncoder new;
 		at: ((self lookupClass: #RsrPolicyRejectedService) ifNil: [ self error: 'Unable to find: RsrPolicyRejectedService' ]) put: GtWireGemStoneRsrEncoder new;
@@ -4863,14 +6103,20 @@ getDefaultMap
 		at: ((self lookupClass: #RsrRemoteExceptionClient) ifNil: [ self error: 'Unable to find: RsrRemoteExceptionClient' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrRemoteExceptionServer) ifNil: [ self error: 'Unable to find: RsrRemoteExceptionServer' ]) put: GtWireGemStoneRsrEncoder new;
 		at: ((self lookupClass: #RsrService) ifNil: [ self error: 'Unable to find: RsrService' ]) put: GtWireGemStoneRsrEncoder new;
+		at: ((self lookupClass: #ScaledDecimal) ifNil: [ self error: 'Unable to find: ScaledDecimal' ]) put: GtWireScaledDecimalEncoder new;
 		at: ((self lookupClass: #Set) ifNil: [ self error: 'Unable to find: Set' ]) put: GtWireSetEncoder new;
+		at: ((self lookupClass: #SmallDate) ifNil: [ self error: 'Unable to find: SmallDate' ]) put: GtWireDateEncoder new;
 		at: ((self lookupClass: #SmallDateAndTime) ifNil: [ self error: 'Unable to find: SmallDateAndTime' ]) put: GtWireDateAndTimeEncoder new;
 		at: ((self lookupClass: #SmallDouble) ifNil: [ self error: 'Unable to find: SmallDouble' ]) put: GtWireFloatEncoder new;
 		at: ((self lookupClass: #SmallFloat) ifNil: [ self error: 'Unable to find: SmallFloat' ]) put: GtWireFloatEncoder new;
 		at: ((self lookupClass: #SmallFraction) ifNil: [ self error: 'Unable to find: SmallFraction' ]) put: GtWireFractionEncoder new;
 		at: ((self lookupClass: #SmallInteger) ifNil: [ self error: 'Unable to find: SmallInteger' ]) put: GtWireIntegerEncoder new;
+		at: ((self lookupClass: #SmallScaledDecimal) ifNil: [ self error: 'Unable to find: SmallScaledDecimal' ]) put: GtWireScaledDecimalEncoder new;
+		at: ((self lookupClass: #SmallTime) ifNil: [ self error: 'Unable to find: SmallTime' ]) put: GtWireLocalTimeEncoder new;
 		at: ((self lookupClass: #String) ifNil: [ self error: 'Unable to find: String' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Symbol) ifNil: [ self error: 'Unable to find: Symbol' ]) put: GtWireSymbolEncoder new;
+		at: ((self lookupClass: #SymbolAssociation) ifNil: [ self error: 'Unable to find: SymbolAssociation' ]) put: GtWireAssociationEncoder new;
+		at: ((self lookupClass: #Time) ifNil: [ self error: 'Unable to find: Time' ]) put: GtWireLocalTimeEncoder new;
 		at: ((self lookupClass: #UndefinedObject) ifNil: [ self error: 'Unable to find: UndefinedObject' ]) put: GtWireNilEncoder new;
 		at: ((self lookupClass: #Unicode16) ifNil: [ self error: 'Unable to find: Unicode16' ]) put: GtWireStringEncoder new;
 		at: ((self lookupClass: #Unicode32) ifNil: [ self error: 'Unable to find: Unicode32' ]) put: GtWireStringEncoder new;
@@ -4884,7 +6130,7 @@ getDefaultReverseMap
 	"Generated by #generateDefaultReverseMapMethodFrom:.
 	Original source is #defaultMapping, changes should be made there and the code regenerated."
 
-	^ (Array new: 29)
+	^ (Array new: 37)
 		at: 1 put: GtWireNilEncoder new;
 		at: 2 put: GtWireTrueEncoder new;
 		at: 3 put: GtWireFalseEncoder new;
@@ -4913,6 +6159,13 @@ getDefaultReverseMap
 		at: 28 put: GtWireClassEncoder new;
 		at: 29 put: GtWireFloatPrintStringEncoder new;
 		at: 30 put: GtWireFractionEncoder new;
+		at: 31 put: GtWireScaledDecimalEncoder new;
+		at: 32 put: GtWireLocalTimeEncoder new;
+		at: 33 put: GtWireIntervalEncoder new;
+		at: 34 put: GtWireBagEncoder new;
+		at: 35 put: GtWireIdentityBagEncoder new;
+		at: 36 put: GtWireIdentitySetEncoder new;
+		at: 37 put: GtWireDateEncoder new;
 		yourself.
 %
 
@@ -5052,9 +6305,3 @@ float64: aFloat
 	self nextPutAll: byteArray.
 %
 
-! Class Initialization
-
-run
-GtWireEncoderDecoder initialize.
-true
-%

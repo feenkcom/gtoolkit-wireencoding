@@ -169,7 +169,7 @@ GtWireEncodingExamples >> constantBlockClosure1Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a | #('lala') ].
-	self assert: blockClosure class name identicalTo: #ConstantBlockClosure1Arg.
+	self assert: (#(ConstantBlockClosure1Arg ExecBlock) includes: blockClosure class name).
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 21.
@@ -187,7 +187,7 @@ GtWireEncodingExamples >> constantBlockClosure2Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a :b | #('lala') ].
-	self assert: blockClosure class name identicalTo: #ConstantBlockClosure2Arg.
+	self assert: (#(ConstantBlockClosure2Arg ExecBlock) includes: blockClosure class name).
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 24.
@@ -205,7 +205,7 @@ GtWireEncodingExamples >> constantBlockClosure3Arg [
 	
 	encoder := GtWireEncoder onByteArray.
 	blockClosure := [ :a :b :c | #('lala') ].
-	self assert: blockClosure class name identicalTo: #ConstantBlockClosure3Arg.
+	self assert: (#(ConstantBlockClosure3Arg ExecBlock) includes: blockClosure class name).
 	encoder nextPut: blockClosure.
 	byteArray := encoder contents.
 	self assert: byteArray size equals: 27.
@@ -365,15 +365,17 @@ GtWireEncodingExamples >> fraction [
 	<return: #GtWireEncodingExamples>
 	| encoder byteArray next |
 	encoder := GtWireEncoder onByteArray.
-	{ 3/5. SmallInteger maxVal * 20 / 17. }
-		doWithIndex: [ :f :i | 
+	{ 3/5. 
+	( self gtDo: [ SmallInteger maxVal ]
+			gemstoneDo: [ SmallInteger maximumValue ]) * 20 / 17. 
+	} doWithIndex: [ :f :i | 
 			self assert: (encoder objectEncoderFor: f) class
 				identicalTo: GtWireFractionEncoder.
 			encoder reset.
 			encoder nextPut: f.
 			byteArray := encoder contents.
 			next := (GtWireDecoder on: byteArray readStream) next.
-			self assert: next class identicalTo: Fraction.
+			self assert: (#(#Fraction #SmallFraction) includes: next class name).
 			self assert: next equals: f ]
 ]
 
@@ -507,6 +509,49 @@ GtWireEncodingExamples >> packedInteger [
 				assert: (GtWireDecoder on: byteArray readStream) next
 				equals: integer negated.
 			integer := (1.001 * integer) ceiling ]
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> scaledDecimal [
+	"Round-trip exact numeric values and display scales, including trailing zeros and non-terminating decimals."
+	<gtExample>
+	| encoder values decoded |
+	encoder := GtWireEncoder onByteArray.
+	values := { 1.25s2. -1.25s2. 0s0. 42s0. 0.0000s4. 42.0000s4.
+		((self gtDo: [ SmallInteger maxVal ]
+			gemstoneDo: [ SmallInteger maximumValue ]) * 20 / 17) asScaledDecimal.
+		(1 / (10 raisedTo: 30)) asScaledDecimal.
+		(1 / 3) asScaledDecimal. (1 / 3) asScaledDecimal: 7.
+		1.2500s4 }.
+	decoded := values collect: [ :value | | next |
+		self assert: (encoder objectEncoderFor: value) class identicalTo: GtWireScaledDecimalEncoder.
+		encoder reset.
+		encoder nextPut: value.
+		next := (GtWireDecoder on: encoder contents readStream) next.
+		self assert: (#(#ScaledDecimal #SmallScaledDecimal) includes: next class name).
+		self assert: next equals: value.
+		self assert: next numerator equals: value numerator.
+		self assert: next denominator equals: value denominator.
+		self assert: next scale equals: value scale.
+		next ].
+	^ decoded
+]
+
+{ #category : #examples }
+GtWireEncodingExamples >> scaledDecimalWireFormat [
+	"The payload is exactly three objects: numerator, denominator, then scale."
+	<gtExample>
+	| encoder expected value bytes |
+	self assert: GtWireObjectEncoder validateTypeIdentifiers >= GtWireScaledDecimalEncoder typeIdentifier.
+	encoder := GtWireEncoder onByteArray.
+	value := -123.4500s4.
+	encoder nextPut: value.
+	bytes := encoder contents.
+	expected := GtWireEncoder onByteArray.
+	expected nextPut: value numerator; nextPut: value denominator; nextPut: value scale.
+	self assert: bytes first equals: GtWireScaledDecimalEncoder typeIdentifier.
+	self assert: bytes allButFirst equals: expected contents.
+	^ bytes
 ]
 
 { #category : #examples }

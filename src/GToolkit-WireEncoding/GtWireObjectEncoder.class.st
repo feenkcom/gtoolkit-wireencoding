@@ -1,3 +1,8 @@
+"
+GtWireObjectEncoders are responsible for serialising on and off a supplied GtWireStream.  The serialisation format is designed to mostly avoid the need for additional buffering.
+
+Every encoder is assigned a unique number that is used to identify the encoder on the stream.  The next typeIdentifier that should be used can be found by evaluating {{gtMethod:GtWireObjectEncoder class>>#validateTypeIdentifiers}} (and adding 1).
+"
 Class {
 	#name : #GtWireObjectEncoder,
 	#superclass : #Object,
@@ -27,16 +32,20 @@ GtWireObjectEncoder class >> typeIdentifierOrNil [
 { #category : #test }
 GtWireObjectEncoder class >> validateTypeIdentifiers [
 	 "Validate that there aren't duplicate type identifiers and answer the maximum value"
-	| visited |
+	| visited allSubclasses |
 	
 	visited := Set new.
-	self allSubclassesDo: [ :cls | | typeIdentifier |
+	allSubclasses := self 
+		gtDo: [ self allSubclasses ]
+		gemstoneDo: [ ClassOrganizer gtDefault allSubclassesOf: self ].
+	allSubclasses do: [ :cls | | typeIdentifier |
 		typeIdentifier := cls typeIdentifierOrNil.
 		typeIdentifier ifNotNil:
 			[ (visited includes: typeIdentifier) ifTrue:
 				[ self error: 'Duplicate typeIdentifier found' ].
 			visited add: typeIdentifier ] ].
 	^ visited max
+
 ]
 
 { #category : #'encoding - decoding' }

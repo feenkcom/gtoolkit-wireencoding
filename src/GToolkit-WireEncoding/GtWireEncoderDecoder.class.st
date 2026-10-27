@@ -154,14 +154,6 @@ GtWireEncoderDecoder class >> generateDefaultReverseMapMethodFrom: aDictionary [
 	^ source
 ]
 
-{ #category : #initialization }
-GtWireEncoderDecoder class >> initialize [
-	"NOTE: GtDefaultMap and GtDefaultReverseMap should only be used on GT.
-	On GemStone they should always be nil."
-
-	GtDefaultMap := GtDefaultReverseMap := nil
-]
-
 { #category : #private }
 GtWireEncoderDecoder class >> lookupClass: className [
 	"Answer the class with the supplied name or nil if not found.
@@ -180,6 +172,19 @@ GtWireEncoderDecoder class >> map: aClass withSubclassesTo: anEncoder in: mappin
 	mapping at: aClass put: anEncoder.
 	aClass allSubclasses do: [ :cls |
 		mapping at: cls put: anEncoder ].
+]
+
+{ #category : #initialization }
+GtWireEncoderDecoder class >> reset [
+	"NOTE: GtDefaultMap and GtDefaultReverseMap should only be used on GT.
+	On GemStone they should always be nil."
+
+	self gtDo:
+		[ GtDefaultMap := GtDefaultReverseMap := nil ]
+	gemstoneDo:
+		[ SessionTemps current
+			removeKey: #gtGsWireEncodingDefaultMap ifAbsent: [];
+			removeKey: #gtGsWireEncodingDefaultReverseMap ifAbsent: [] ].
 ]
 
 { #category : #accessing }
@@ -227,7 +232,8 @@ GtWireEncoderDecoder >> contents [
 GtWireEncoderDecoder >> hasValidConfiguration [
 
 	^ (self map values allSatisfy: [ :each | each hasValidConfiguration ]) and:
-		[ self reverseMap allSatisfy: [ :each | each hasValidConfiguration ] ]
+		[ self reverseMap allSatisfy: [ :each | 
+			each isNil or: [ each hasValidConfiguration ] ] ]
 ]
 
 { #category : #accessing }

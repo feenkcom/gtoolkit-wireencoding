@@ -10,18 +10,18 @@ GtWireDateAndTimeEncoder class >> typeIdentifier [
 	^ 12
 ]
 
-{ #category : #'encoding - decoding' }
+{ #category : #encoding }
 GtWireDateAndTimeEncoder >> decodeWith: aGtWireEncoderContext [
-	"Decode the array on the supplied context"
+	"Restore the encoded instant and offset, not the local wall-clock representation."
 	| unixSeconds nanoSeconds offset |
 
-	unixSeconds :=  aGtWireEncoderContext nextPackedInteger.
+	unixSeconds := aGtWireEncoderContext nextPackedInteger.
 	nanoSeconds := aGtWireEncoderContext nextPackedInteger.
 	offset := aGtWireEncoderContext next.
 	^ self
 		gtDo: [ (DateAndTime fromUnixTime: unixSeconds)
 			setNanoSeconds: nanoSeconds;
-			translateTo: offset ]
+			offset: (Duration seconds: offset) ]
 		gemstoneDo: [ DateAndTime posixSeconds: (unixSeconds + (nanoSeconds / (10 raisedTo: 9))) offset: (Duration seconds: offset) ].
 ]
 
